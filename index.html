@@ -281,6 +281,7 @@
         .control-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
         textarea#main-content {
             flex-grow: 1; width: 100%; padding: 1.25rem; font-size: 12px; line-height: 1.7; resize: none; 
+            box-sizing: border-box; /* <--- THIS FIXES THE EXPANSION */
             background-color: var(--widget-bg-color); color: var(--text-color); border: 1.5px solid var(--border-color);
             border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 6px 12px var(--shadow-color);
             transition: border-color 0.4s ease, background-color 0.4s ease, color 0.4s ease;
@@ -1036,7 +1037,7 @@
 
         function openInNewWindow() {
             const features = `popup=yes,width=400,height=${screen.availHeight},top=0,left=0,scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no`;
-            const url = 'https://sites.google.com/gustocare.com/srwgst';
+            const url = 'https://github.com/angelolim-gst/bpotoolset';
             window.open(url, 'GustoToolsetWindow', features);
             document.body.innerHTML = `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif; background-color: #eef0f2; color: #1c1c1e; text-align: center; padding: 20px;"><h2 style="margin-bottom: 1rem;">Opened in a New Window</h2><p style="margin: 0;">The toolset is now running in a separate pop-out window.</p><p style="margin-top: 0.5rem;">You can safely close this tab.</p></div>`;
         }
