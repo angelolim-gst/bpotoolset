@@ -8,19 +8,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-        #save-status {
-            font-size: 0.75rem;
-            color: var(--secondary-text-color);
-            margin-left: 10px;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        #save-status.show {
-            opacity: 1;
-        }
-
         :root {
             --light-bg: #eef0f2;
             --light-line: #e2e4e8;
@@ -243,6 +230,18 @@
         .workspace-tab:hover { color: var(--text-color); }
         .workspace-tab.active { background-color: var(--focus-bg); color: var(--focus-color); }
         
+        #save-status {
+            font-size: 0.75rem;
+            color: var(--secondary-text-color);
+            margin-left: 10px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #save-status.show {
+            opacity: 1;
+        }
+
         .font-controls { display: flex; gap: 5px; align-items: center; transition: visibility 0.2s; }
         .hidden-view { display: none !important; }
         
@@ -855,6 +854,9 @@
         const tabQuicklinks = document.getElementById('tab-quicklinks');
         const fontControls = document.getElementById('font-controls');
         const quicklinksView = document.getElementById('quicklinks-view');
+        
+        const saveStatus = document.getElementById('save-status');
+        let saveTimeout;
 
         const setAlarmsButton = document.getElementById('set-alarms-button');
         const alarmModal = document.getElementById('alarm-modal');
@@ -914,6 +916,76 @@
         
         const calcDisplay = document.getElementById('calc-display');
         
+        // Helper to save Notepad and Alarms to local storage
+        function saveToLocalStorage() {
+            saveStatus.textContent = 'Saving...';
+            saveStatus.classList.add('show');
+
+            // Extract alarms to a saveable format
+            const serializableAlarms = {};
+            for (const key in alarms) {
+                if (alarms[key] && alarms[key].time) {
+                    serializableAlarms[key] = { time: alarms[key].time };
+                }
+            }
+
+            const dataToSave = {
+                notes: textarea.value,
+                alarms: serializableAlarms
+            };
+
+            localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
+
+            // Show 'Saved' momentarily, then fade out
+            setTimeout(() => {
+                saveStatus.textContent = 'Saved locally';
+                setTimeout(() => {
+                    saveStatus.classList.remove('show');
+                }, 2000);
+            }, 500);
+        }
+
+        // Helper to load data and populate the Alarm settings modal
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('gusto_local_save');
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    
+                    // Load Notepad
+                    if (parsed.notes !== undefined) {
+                        textarea.value = parsed.notes;
+                    }
+                    
+                    // Load Alarms
+                    if (parsed.alarms) {
+                        const mapping = {
+                            'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
+                            'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
+                            'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
+                            'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
+                            'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
+                            'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
+                            'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
+                        };
+
+                        // Populate the inputs in the modal so they aren't blank
+                        for (const [label, alarm] of Object.entries(parsed.alarms)) {
+                            if (alarm && alarm.time && mapping[label]) {
+                                const { time, ampm } = convertTo12HourParts(alarm.time);
+                                document.getElementById(mapping[label].timeId).value = time;
+                                document.getElementById(mapping[label].ampmId).value = ampm;
+                            }
+                        }
+                        // Process the loaded alarms into the active system
+                        processAndSetAlarms(parsed.alarms);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse local storage data', e);
+                }
+            }
+        }
+
         // Allow "Enter" key to trigger the calculation for Normal Calculator
         calcDisplay.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
@@ -981,79 +1053,6 @@
             const wfmURL = `https://gusto.nicecloudsvc.com/agent/displayMyScheduleAction.mvc?startDay=${wfmdate}&viewFormat=daily`;
             window.open(wfmURL, "_blank");
         });
-
-        const saveStatus = document.getElementById('save-status');
-        let saveTimeout;
-        
-        // Helper to save Notepad and Alarms to local storage
-        function saveToLocalStorage() {
-            saveStatus.textContent = 'Saving...';
-            saveStatus.classList.add('show');
-        
-            // Extract alarms to a saveable format
-            const serializableAlarms = {};
-            for (const key in alarms) {
-                if (alarms[key] && alarms[key].time) {
-                    serializableAlarms[key] = { time: alarms[key].time };
-                }
-            }
-        
-            const dataToSave = {
-                notes: textarea.value,
-                alarms: serializableAlarms
-            };
-        
-            localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
-        
-            // Show 'Saved' momentarily, then fade out
-            setTimeout(() => {
-                saveStatus.textContent = 'Saved locally';
-                setTimeout(() => {
-                    saveStatus.classList.remove('show');
-                }, 2000);
-            }, 500);
-        }
-        
-        // Helper to load data and populate the Alarm settings modal
-        function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('gusto_local_save');
-            if (savedData) {
-                try {
-                    const parsed = JSON.parse(savedData);
-                    
-                    // Load Notepad
-                    if (parsed.notes !== undefined) {
-                        textarea.value = parsed.notes;
-                    }
-                    
-                    // Load Alarms
-                    if (parsed.alarms) {
-                        const mapping = {
-                            'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
-                            'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
-                            'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
-                            'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
-                            'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
-                            'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
-                            'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
-                        };
-        
-                        // Populate the inputs in the modal so they aren't blank
-                        for (const [label, alarm] of Object.entries(parsed.alarms)) {
-                            if (alarm && alarm.time && mapping[label]) {
-                                const { time, ampm } = convertTo12HourParts(alarm.time);
-                                document.getElementById(mapping[label].timeId).value = time;
-                                document.getElementById(mapping[label].ampmId).value = ampm;
-                            }
-                        }
-                        // Process the loaded alarms into the active system
-                        processAndSetAlarms(parsed.alarms);
-                    }
-                } catch (e) {
-                    console.error('Failed to parse local storage data', e);
-                }
-            }
-        }
 
         dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
         document.addEventListener('click', () => { if (dropdownMenu.classList.contains('show')) { dropdownMenu.classList.remove('show'); } });
@@ -1135,8 +1134,9 @@
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
         resetNotesBtn.addEventListener('click', () => { 
             textarea.value = defaultNotesTemplate;
-            saveToLocalStorage(); // Added this
+            saveToLocalStorage();
         });
+        
         textarea.addEventListener('input', () => {
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(saveToLocalStorage, 1000);
@@ -1229,10 +1229,6 @@
 
         saveAlarmsButton.addEventListener('click', () => {
             const inputs = [...document.querySelectorAll('.alarm-time-input')];
-            processAndSetAlarms(tempAlarms);
-                saveToLocalStorage(); // Added this
-                alarmModal.classList.remove('show');
-            });
             if (!inputs.every(validateAndFormatTime)) {
                 alert('Please correct the invalid time formats (highlighted in red).\nHours must be 01-12 and minutes must be 00-59.');
                 return;
@@ -1249,6 +1245,7 @@
             };
 
             processAndSetAlarms(tempAlarms);
+            saveToLocalStorage();
             alarmModal.classList.remove('show');
         });
 
@@ -1911,9 +1908,9 @@
 
         async function initialize() {
             textarea.value = defaultNotesTemplate;
-
+            
             // Attempt to load previously saved data before showing default states
-            loadFromLocalStorage();
+            loadFromLocalStorage(); 
             
             setTheme('light');
             checkWindowSize();
