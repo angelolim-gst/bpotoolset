@@ -215,13 +215,12 @@
             opacity: 0; animation: fadeInUp 0.5s ease-out 0.1s forwards;
         }
         
-        /* Modded for Tabs */
         .textarea-controls {
             display: flex; justify-content: space-between; align-items: center; gap: 5px; padding: 4px 8px;
             background-color: var(--bg-color); border: 1.5px solid var(--border-color); border-bottom: none;
             border-radius: 8px 8px 0 0; transition: background-color 0.4s ease, border-color 0.4s ease;
         }
-        .workspace-tabs { display: flex; gap: 5px; align-items: center; }
+        .workspace-tabs { display: flex; gap: 5px; align-items: center; position: relative; }
         .workspace-tab {
             background-color: transparent; border: none; color: var(--secondary-text-color);
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
@@ -233,10 +232,14 @@
         #save-status {
             font-size: 0.75rem;
             color: var(--secondary-text-color);
-            margin-left: 10px;
             font-weight: 500;
             opacity: 0;
             transition: opacity 0.3s ease;
+            position: absolute;
+            left: 100%;
+            margin-left: 10px;
+            white-space: nowrap;
+            pointer-events: none;
         }
         #save-status.show {
             opacity: 1;
@@ -268,7 +271,6 @@
         .quicklink-btn:hover {
             border-color: var(--focus-color); color: var(--focus-color); background-color: var(--focus-bg);
         }
-        /* End Tab Mods */
 
         .control-button {
             background-color: var(--widget-bg-color); border: 1px solid var(--border-color); color: var(--secondary-text-color);
@@ -857,6 +859,8 @@
         
         const saveStatus = document.getElementById('save-status');
         let saveTimeout;
+        let saveStatusTimeout1;
+        let saveStatusTimeout2;
 
         const setAlarmsButton = document.getElementById('set-alarms-button');
         const alarmModal = document.getElementById('alarm-modal');
@@ -916,48 +920,52 @@
         
         const calcDisplay = document.getElementById('calc-display');
         
-        // Helper to save Notepad and Alarms to local storage
+        // Helper to save Notepad and Alarms to local storage safely
         function saveToLocalStorage() {
-            saveStatus.textContent = 'Saving...';
-            saveStatus.classList.add('show');
+            try {
+                saveStatus.textContent = 'Saving...';
+                saveStatus.classList.add('show');
 
-            // Extract alarms to a saveable format
-            const serializableAlarms = {};
-            for (const key in alarms) {
-                if (alarms[key] && alarms[key].time) {
-                    serializableAlarms[key] = { time: alarms[key].time };
+                const serializableAlarms = {};
+                for (const key in alarms) {
+                    if (alarms[key] && alarms[key].time) {
+                        serializableAlarms[key] = { time: alarms[key].time };
+                    }
                 }
+
+                const dataToSave = {
+                    notes: textarea.value,
+                    alarms: serializableAlarms
+                };
+
+                localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
+
+                // Clear previous timeouts to stop flickering on fast typing
+                clearTimeout(saveStatusTimeout1);
+                clearTimeout(saveStatusTimeout2);
+
+                saveStatusTimeout1 = setTimeout(() => {
+                    saveStatus.textContent = 'Saved locally';
+                    saveStatusTimeout2 = setTimeout(() => {
+                        saveStatus.classList.remove('show');
+                    }, 2000);
+                }, 500);
+            } catch (error) {
+                console.warn('Local storage save blocked or unavailable:', error);
             }
-
-            const dataToSave = {
-                notes: textarea.value,
-                alarms: serializableAlarms
-            };
-
-            localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
-
-            // Show 'Saved' momentarily, then fade out
-            setTimeout(() => {
-                saveStatus.textContent = 'Saved locally';
-                setTimeout(() => {
-                    saveStatus.classList.remove('show');
-                }, 2000);
-            }, 500);
         }
 
-        // Helper to load data and populate the Alarm settings modal
+        // Helper to load data and populate safely
         function loadFromLocalStorage() {
-            const savedData = localStorage.getItem('gusto_local_save');
-            if (savedData) {
-                try {
+            try {
+                const savedData = localStorage.getItem('gusto_local_save');
+                if (savedData) {
                     const parsed = JSON.parse(savedData);
                     
-                    // Load Notepad
                     if (parsed.notes !== undefined) {
                         textarea.value = parsed.notes;
                     }
                     
-                    // Load Alarms
                     if (parsed.alarms) {
                         const mapping = {
                             'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
@@ -969,7 +977,6 @@
                             'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
                         };
 
-                        // Populate the inputs in the modal so they aren't blank
                         for (const [label, alarm] of Object.entries(parsed.alarms)) {
                             if (alarm && alarm.time && mapping[label]) {
                                 const { time, ampm } = convertTo12HourParts(alarm.time);
@@ -977,12 +984,11 @@
                                 document.getElementById(mapping[label].ampmId).value = ampm;
                             }
                         }
-                        // Process the loaded alarms into the active system
                         processAndSetAlarms(parsed.alarms);
                     }
-                } catch (e) {
-                    console.error('Failed to parse local storage data', e);
                 }
+            } catch (error) {
+                console.warn('Local storage load failed (first run or blocked):', error);
             }
         }
 
@@ -1030,7 +1036,7 @@
 
         function openInNewWindow() {
             const features = `popup=yes,width=400,height=${screen.availHeight},top=0,left=0,scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no`;
-            const url = 'https://angelolim-gst.github.io/bpotoolset';
+            const url = 'https://sites.google.com/gustocare.com/srwgst';
             window.open(url, 'GustoToolsetWindow', features);
             document.body.innerHTML = `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif; background-color: #eef0f2; color: #1c1c1e; text-align: center; padding: 20px;"><h2 style="margin-bottom: 1rem;">Opened in a New Window</h2><p style="margin: 0;">The toolset is now running in a separate pop-out window.</p><p style="margin-top: 0.5rem;">You can safely close this tab.</p></div>`;
         }
@@ -1132,6 +1138,7 @@
         const updateFontSize = () => textarea.style.fontSize = `${currentFontSize}px`;
         increaseFontBtn.addEventListener('click', () => { currentFontSize++; updateFontSize(); });
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
+        
         resetNotesBtn.addEventListener('click', () => { 
             textarea.value = defaultNotesTemplate;
             saveToLocalStorage();
