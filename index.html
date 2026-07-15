@@ -154,6 +154,9 @@
             font-size: 1.2rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease, max-width 0.4s ease-in-out;
             max-width: 200px; overflow: hidden; white-space: nowrap;
         }
+        .top-bar-title.text-success {
+            color: #28a745 !important;
+        }
         .top-bar-title span { display: inline-block; }
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
@@ -229,22 +232,6 @@
         .workspace-tab:hover { color: var(--text-color); }
         .workspace-tab.active { background-color: var(--focus-bg); color: var(--focus-color); }
         
-        #save-status {
-            font-size: 0.75rem;
-            color: var(--secondary-text-color);
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            position: absolute;
-            left: 100%;
-            margin-left: 10px;
-            white-space: nowrap;
-            pointer-events: none;
-        }
-        #save-status.show {
-            opacity: 1;
-        }
-
         .font-controls { display: flex; gap: 5px; align-items: center; transition: visibility 0.2s; }
         .hidden-view { display: none !important; }
         
@@ -279,9 +266,10 @@
         }
         .control-button.resize { width: 28px; }
         .control-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
+        
         textarea#main-content {
             flex-grow: 1; width: 100%; padding: 1.25rem; font-size: 12px; line-height: 1.7; resize: none; 
-            box-sizing: border-box; /* <--- THIS FIXES THE EXPANSION */
+            box-sizing: border-box; /* Fixes layout expansion */
             background-color: var(--widget-bg-color); color: var(--text-color); border: 1.5px solid var(--border-color);
             border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 6px 12px var(--shadow-color);
             transition: border-color 0.4s ease, background-color 0.4s ease, color 0.4s ease;
@@ -614,7 +602,6 @@
                 <div class="workspace-tabs">
                     <button id="tab-notepad" class="workspace-tab active">Notepad</button>
                     <button id="tab-quicklinks" class="workspace-tab">Quicklinks</button>
-                    <span id="save-status"></span>
                 </div>
                 <div class="font-controls" id="font-controls">
                     <button class="control-button" id="reset-notes">Reset</button>
@@ -858,10 +845,9 @@
         const fontControls = document.getElementById('font-controls');
         const quicklinksView = document.getElementById('quicklinks-view');
         
-        const saveStatus = document.getElementById('save-status');
         let saveTimeout;
-        let saveStatusTimeout1;
-        let saveStatusTimeout2;
+        let saveDisplayTimeout;
+        let isDisplayingSaveStatus = false;
 
         const setAlarmsButton = document.getElementById('set-alarms-button');
         const alarmModal = document.getElementById('alarm-modal');
@@ -924,8 +910,12 @@
         // Helper to save Notepad and Alarms to local storage safely
         function saveToLocalStorage() {
             try {
-                saveStatus.textContent = 'Saving...';
-                saveStatus.classList.add('show');
+                isDisplayingSaveStatus = true;
+                
+                // Show 'Saving...' in default color
+                topBarTitleSpan.textContent = 'Saving...';
+                topBarTitleContainer.classList.remove('text-success');
+                topBarTitleContainer.classList.remove('marquee');
 
                 const serializableAlarms = {};
                 for (const key in alarms) {
@@ -941,18 +931,26 @@
 
                 localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
 
-                // Clear previous timeouts to stop flickering on fast typing
-                clearTimeout(saveStatusTimeout1);
-                clearTimeout(saveStatusTimeout2);
+                clearTimeout(saveDisplayTimeout);
 
-                saveStatusTimeout1 = setTimeout(() => {
-                    saveStatus.textContent = 'Saved locally';
-                    saveStatusTimeout2 = setTimeout(() => {
-                        saveStatus.classList.remove('show');
-                    }, 2000);
-                }, 500);
+                // Wait a tiny bit so 'Saving...' is visible, then show Green 'Saved'
+                setTimeout(() => {
+                    topBarTitleSpan.textContent = 'Saved locally';
+                    topBarTitleContainer.classList.add('text-success');
+                    
+                    // Hold the green saved message for 3 seconds
+                    saveDisplayTimeout = setTimeout(() => {
+                        topBarTitleContainer.classList.remove('text-success');
+                        isDisplayingSaveStatus = false;
+                        
+                        // Immediately revert to the default title / alarm countdown
+                        updateTopBarTitle(synchronizedTime);
+                    }, 3000);
+                }, 400);
+
             } catch (error) {
                 console.warn('Local storage save blocked or unavailable:', error);
+                isDisplayingSaveStatus = false;
             }
         }
 
@@ -1037,7 +1035,7 @@
 
         function openInNewWindow() {
             const features = `popup=yes,width=400,height=${screen.availHeight},top=0,left=0,scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no`;
-            const url = 'https://github.com/angelolim-gst/bpotoolset';
+            const url = 'https://angelolim-gst.github.io/bpotoolset';
             window.open(url, 'GustoToolsetWindow', features);
             document.body.innerHTML = `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif; background-color: #eef0f2; color: #1c1c1e; text-align: center; padding: 20px;"><h2 style="margin-bottom: 1rem;">Opened in a New Window</h2><p style="margin: 0;">The toolset is now running in a separate pop-out window.</p><p style="margin-top: 0.5rem;">You can safely close this tab.</p></div>`;
         }
@@ -1379,6 +1377,8 @@
         }
 
         function updateTopBarTitle(now) {
+            if (isDisplayingSaveStatus) return; // Prevent overwriting the save message
+
             let nextUpcomingAlarm = null;
             let minDiff = Infinity;
             for (const [label, alarm] of Object.entries(alarms)) {
