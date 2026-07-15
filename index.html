@@ -269,7 +269,7 @@
         
         textarea#main-content {
             flex-grow: 1; width: 100%; padding: 1.25rem; font-size: 12px; line-height: 1.7; resize: none; 
-            box-sizing: border-box; /* Fixes layout expansion */
+            box-sizing: border-box;
             background-color: var(--widget-bg-color); color: var(--text-color); border: 1.5px solid var(--border-color);
             border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 6px 12px var(--shadow-color);
             transition: border-color 0.4s ease, background-color 0.4s ease, color 0.4s ease;
@@ -530,8 +530,11 @@
         .alarm-input-group { display: flex; gap: 8px; }
         .alarm-input-group input, .alarm-input-group select, #timer-name, #timer-duration { padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1.5px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); box-sizing: border-box; transition: border-color 0.2s, background-color 0.2s; width: 100%;}
         .alarm-input-group input { width: 100%; }
-        .modal-button { width: 100%; padding: 10px; font-size: 1rem; font-weight: 500; border-radius: 8px; border: none; cursor: pointer; background-color: var(--focus-color); color: white; }
+        .modal-button { width: 100%; padding: 10px; font-size: 1rem; font-weight: 500; border-radius: 8px; border: none; cursor: pointer; background-color: var(--focus-color); color: white; transition: background-color 0.2s; }
         
+        .csv-textarea { width: 100%; height: 80px; padding: 10px; border-radius: 6px; border: 1.5px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box; resize: none; transition: border-color 0.2s, background-color 0.2s; }
+        .csv-textarea:focus { outline: none; border-color: var(--focus-color); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+
         #about-modal h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
         #about-modal ul { padding-left: 20px; margin: 0; font-size: 0.9rem; line-height: 1.6; }
         #about-modal .credit { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--secondary-text-color); }
@@ -577,14 +580,12 @@
                     <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Today's Shift Schedule</span></button></li>
                     <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
                     <li><button id="set-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span>Set Timer</span></button></li>
+                    <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
                     <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
                     <li class="dropdown-divider"></li>
                     <li class="dropdown-header">Page Controls</li>
                     <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
                     <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
-                    <li class="dropdown-divider"></li>
-                    <li class="dropdown-header">Data</li>
-                    <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Settings</span></button></li>
                 </ul>
             </div>
             <span id="theme-label">Light Mode</span>
@@ -763,6 +764,24 @@
         </div>
     </div>
 
+    <!-- New CSV Converter Modal -->
+    <div id="csv-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">List to CSV</h2>
+            <p class="alarm-form-note">Paste a list (space or newline separated) below to convert it to comma-separated values.</p>
+            <div class="form-group">
+                <label for="csv-input">Input List</label>
+                <textarea id="csv-input" class="csv-textarea" placeholder="item1&#10;item2&#10;item3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="csv-output">CSV Output</label>
+                <textarea id="csv-output" class="csv-textarea" readonly placeholder="item1,item2,item3"></textarea>
+            </div>
+            <button id="generate-csv-button" class="modal-button">Generate & Copy</button>
+        </div>
+    </div>
+
     <div id="visual-alarm">
         <div id="alarm-text">Time for your break!</div>
         <div class="alarm-actions"><button id="snooze-button" class="alarm-button">Snooze (1 min)</button><button id="dismiss-button" class="alarm-button">Dismiss</button></div>
@@ -800,7 +819,6 @@
                 <li><strong>Calculator:</strong> With normal, formula, and time-summing modes.</li>
                 <li><strong>Calendar View:</strong> A quick-glance monthly calendar with US & PH holidays.</li>
                 <li><strong>Adaptive UI:</strong> Automatically adjusts its layout for small window sizes.</li>
-                <li><strong>Data Portability:</strong> Export settings to a local file.</li>
             </ul>
 
             <h4>Technology & Credits:</h4>
@@ -873,7 +891,6 @@
         const toggleWidthText = document.getElementById('toggle-width-text');
         const toggleScrollButton = document.getElementById('toggle-scroll-button');
         const toggleScrollText = document.getElementById('toggle-scroll-text');
-        const exportSettingsBtn = document.getElementById('export-settings-btn');
         
         const setTimerButton = document.getElementById('set-timer-button');
         const timerModal = document.getElementById('timer-modal');
@@ -881,6 +898,14 @@
         const saveTimerButton = document.getElementById('save-timer-button');
         const timerNameInput = document.getElementById('timer-name');
         const timerDurationInput = document.getElementById('timer-duration');
+
+        // CSV Modal variables
+        const listToCsvButton = document.getElementById('list-to-csv-button');
+        const csvModal = document.getElementById('csv-modal');
+        const closeCsvModalButton = csvModal.querySelector('.modal-close-button');
+        const csvInput = document.getElementById('csv-input');
+        const csvOutput = document.getElementById('csv-output');
+        const generateCsvButton = document.getElementById('generate-csv-button');
 
         const cardSwitcherBtns = document.querySelectorAll('.switcher-button');
         const cardContainers = document.querySelectorAll('#calendar-container, #alarms-view-container, #calculator-container, #timers-view-container');
@@ -907,7 +932,7 @@
         
         const calcDisplay = document.getElementById('calc-display');
         
-        // Helper to save Notepad and Alarms to local storage safely
+        // Helper to save all states to local storage safely
         function saveToLocalStorage() {
             try {
                 isDisplayingSaveStatus = true;
@@ -926,24 +951,25 @@
 
                 const dataToSave = {
                     notes: textarea.value,
-                    alarms: serializableAlarms
+                    alarms: serializableAlarms,
+                    theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
+                    activeTimezone: activeTimezone,
+                    use24HourFormat: use24HourFormat,
+                    isWideMode: document.body.classList.contains('wide-mode'),
+                    isScrollEnabled: document.body.classList.contains('scroll-enabled')
                 };
 
                 localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
 
                 clearTimeout(saveDisplayTimeout);
 
-                // Wait a tiny bit so 'Saving...' is visible, then show Green 'Saved'
                 setTimeout(() => {
                     topBarTitleSpan.textContent = 'Saved locally';
                     topBarTitleContainer.classList.add('text-success');
                     
-                    // Hold the green saved message for 3 seconds
                     saveDisplayTimeout = setTimeout(() => {
                         topBarTitleContainer.classList.remove('text-success');
                         isDisplayingSaveStatus = false;
-                        
-                        // Immediately revert to the default title / alarm countdown
                         updateTopBarTitle(synchronizedTime);
                     }, 3000);
                 }, 400);
@@ -963,6 +989,24 @@
                     
                     if (parsed.notes !== undefined) {
                         textarea.value = parsed.notes;
+                    }
+                    if (parsed.theme) {
+                        setTheme(parsed.theme);
+                    }
+                    if (parsed.activeTimezone) {
+                        activeTimezone = parsed.activeTimezone;
+                    }
+                    if (parsed.use24HourFormat !== undefined) {
+                        use24HourFormat = parsed.use24HourFormat;
+                        formatToggle.checked = use24HourFormat;
+                    }
+                    if (parsed.isWideMode) {
+                        document.body.classList.add('wide-mode');
+                        toggleWidthText.textContent = 'Disable Wide Mode';
+                    }
+                    if (parsed.isScrollEnabled) {
+                        document.body.classList.add('scroll-enabled');
+                        toggleScrollText.textContent = 'Disable Full Page Scroll';
                     }
                     
                     if (parsed.alarms) {
@@ -990,6 +1034,39 @@
                 console.warn('Local storage load failed (first run or blocked):', error);
             }
         }
+
+        // CSV Feature Logic
+        listToCsvButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.remove('show');
+            csvModal.classList.add('show');
+        });
+
+        closeCsvModalButton.addEventListener('click', () => {
+            csvModal.classList.remove('show');
+        });
+
+        generateCsvButton.addEventListener('click', () => {
+            const inputVal = csvInput.value;
+            // Split by space, newline, or tab and remove empty entries
+            const items = inputVal.split(/[\s\n\r\t]+/).filter(item => item.trim() !== '');
+            const csvStr = items.join(',');
+            csvOutput.value = csvStr;
+            
+            if (csvStr) {
+                navigator.clipboard.writeText(csvStr).then(() => {
+                    const originalText = generateCsvButton.textContent;
+                    generateCsvButton.textContent = 'Copied to Clipboard!';
+                    generateCsvButton.style.backgroundColor = '#28a745'; // Success green
+                    setTimeout(() => {
+                        generateCsvButton.textContent = originalText;
+                        generateCsvButton.style.backgroundColor = ''; 
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            }
+        });
 
         // Allow "Enter" key to trigger the calculation for Normal Calculator
         calcDisplay.addEventListener('keydown', function(event) {
@@ -1071,7 +1148,10 @@
             themeToggle.checked = theme === 'dark';
             themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
         }
-        themeToggle.addEventListener('change', (e) => setTheme(e.target.checked ? 'dark' : 'light'));
+        themeToggle.addEventListener('change', (e) => { 
+            setTheme(e.target.checked ? 'dark' : 'light'); 
+            saveToLocalStorage(); 
+        });
         
         async function syncTime() {
             try {
@@ -1114,8 +1194,17 @@
             return `${String(hours).padStart(2, '0')}:${minutes}`;
         };
 
-        tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); }));
-        formatToggle.addEventListener('change', (e) => { use24HourFormat = e.target.checked; updateClock(); });
+        tzButtons.forEach(button => button.addEventListener('click', () => { 
+            activeTimezone = button.dataset.tz; 
+            updateClock(); 
+            saveToLocalStorage(); 
+        }));
+        
+        formatToggle.addEventListener('change', (e) => { 
+            use24HourFormat = e.target.checked; 
+            updateClock(); 
+            saveToLocalStorage(); 
+        });
         
         // Notepad & Quicklinks tab toggling
         tabNotepad.addEventListener('click', () => {
@@ -1231,7 +1320,6 @@
             timeElement.classList.remove('warning-active');
             topBar.classList.remove('snoozed');
         }
-
 
         saveAlarmsButton.addEventListener('click', () => {
             const inputs = [...document.querySelectorAll('.alarm-time-input')];
@@ -1835,12 +1923,14 @@
         function handleWidthToggle() {
             const isWide = document.body.classList.toggle('wide-mode');
             toggleWidthText.textContent = isWide ? 'Disable Wide Mode' : 'Enable Wide Mode';
+            saveToLocalStorage();
         }
         toggleWidthButton.addEventListener('click', handleWidthToggle);
         
         function handleScrollToggle() {
             const isEnabled = document.body.classList.toggle('scroll-enabled');
             toggleScrollText.textContent = isEnabled ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
+            saveToLocalStorage();
         }
         toggleScrollButton.addEventListener('click', handleScrollToggle);
 
@@ -1873,54 +1963,19 @@
         }
         window.addEventListener('resize', checkMinWidth);
         minWidthCloseButton.addEventListener('click', () => minWidthWarningModal.classList.remove('show'));
-
-        function handleExport() {
-            const serializableAlarms = {};
-            for (const key in alarms) {
-                if (alarms[key] && alarms[key].time) {
-                    serializableAlarms[key] = { time: alarms[key].time };
-                }
-            }
-
-            const settings = {
-                notes: textarea.value,
-                theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
-                isWideMode: document.body.classList.contains('wide-mode'),
-                isScrollEnabled: document.body.classList.contains('scroll-enabled'),
-                alarms: serializableAlarms
-            };
-
-            const jsonString = JSON.stringify(settings, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            
-            const filename = `gusto-toolset-settings-${new Date().toISOString().slice(0,10)}.gst`;
-            
-            a.download = filename;
-
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
         
         function handleBeforeUnload(event) {
             event.preventDefault();
             event.returnValue = '';
         }
 
-        exportSettingsBtn.addEventListener('click', () => handleExport());
-
         async function initialize() {
             textarea.value = defaultNotesTemplate;
+            setTheme('light'); 
             
-            // Attempt to load previously saved data before showing default states
+            // Load previously saved state overriding defaults if exists
             loadFromLocalStorage(); 
             
-            setTheme('light');
             checkWindowSize();
             checkMinWidth();
             checkLayoutCompactness();
