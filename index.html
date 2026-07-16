@@ -1420,7 +1420,8 @@
                 let alarmDatePHTString = shiftDateMST;
                 const [alarmHours] = newAlarm.time.split(':');
 
-                if (parseInt(alarmHours) < 15) {
+                // NIGHT SHIFT CROSSOVER LOGIC: AM times roll over to the next PHT calendar day
+                if (parseInt(alarmHours) < 12) {
                     const tempDate = new Date(Date.UTC(mstInfo.year, mstInfo.month - 1, mstInfo.day));
                     tempDate.setUTCDate(tempDate.getUTCDate() + 1);
                     alarmDatePHTString = tempDate.toISOString().split('T')[0];
@@ -1443,11 +1444,13 @@
             const shiftDateMST = `${mstInfo.year}-${String(mstInfo.month).padStart(2, '0')}-${String(mstInfo.day).padStart(2, '0')}`;
 
             teamData.forEach(member => {
+                // If the selected coaching shift day matches the current MST shift day
                 if(member.day === mstInfo.weekday && member.time && member.name) {
                     let alarmDatePHTString = shiftDateMST;
                     const [alarmHours] = member.time.split(':');
 
-                    if (parseInt(alarmHours) < 15) {
+                    // NIGHT SHIFT CROSSOVER LOGIC: AM times roll over to the next PHT calendar day
+                    if (parseInt(alarmHours) < 12) {
                         const tempDate = new Date(Date.UTC(mstInfo.year, mstInfo.month - 1, mstInfo.day));
                         tempDate.setUTCDate(tempDate.getUTCDate() + 1);
                         alarmDatePHTString = tempDate.toISOString().split('T')[0];
