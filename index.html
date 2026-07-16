@@ -270,11 +270,12 @@
 
         /* My Team */
         #team-view { display: flex; flex-direction: column; padding: 1rem; }
-        .team-header-row { display: grid; grid-template-columns: 60px 1fr 65px 95px 25px; gap: 5px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 8px; padding: 0 4px; }
-        #team-list-container { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; overflow-y: auto; margin-bottom: 15px; }
-        .team-row { display: grid; grid-template-columns: 60px 1fr 65px 95px 25px; gap: 5px; align-items: center; }
-        .team-row input, .team-row select { padding: 6px; border: 1.5px solid var(--border-color); border-radius: 4px; background-color: var(--bg-color); color: var(--text-color); font-size: 0.8rem; box-sizing: border-box; width: 100%; font-family: 'Inter', sans-serif;}
-        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px; }
+        .team-header-row { display: grid; grid-template-columns: 60px 1fr 75px 90px 25px; gap: 1px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 4px; padding: 0 4px; }
+        #team-list-container { display: flex; flex-direction: column; gap: 1px; flex-grow: 1; overflow-y: auto; margin-bottom: 15px; padding: 2px; }
+        .team-row { display: grid; grid-template-columns: 60px 1fr 75px 90px 25px; gap: 1px; align-items: center; }
+        .team-row input, .team-row select { padding: 6px; border: 1px solid var(--border-color); border-radius: 0; background-color: var(--bg-color); color: var(--text-color); font-size: 0.8rem; box-sizing: border-box; width: 100%; font-family: 'Inter', sans-serif;}
+        .team-row input:focus, .team-row select:focus { outline: 2px solid var(--focus-color); outline-offset: -2px; z-index: 10; position: relative; border-color: transparent;}
+        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px; padding: 5px; }
         .team-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; padding: 0; }
         .team-delete:hover { color: var(--alarm-color); }
         #add-team-btn { padding: 10px; font-size: 0.9rem; cursor: pointer; border: 1.5px dashed var(--border-color); border-radius: 8px; background-color: transparent; color: var(--secondary-text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
@@ -1206,12 +1207,57 @@
         });
 
         // MY TEAM LOGIC
+        // MY TEAM LOGIC
+        function handleExcelPaste(e, startingIndex, startField) {
+            const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+            
+            // If it's just a single string without tabs or newlines, let the default paste happen
+            if (!pasteData.includes('\t') && !pasteData.includes('\n')) return;
+            
+            e.preventDefault();
+            
+            // Excel separates rows by newlines
+            const rows = pasteData.split(/\r\n|\n|\r/).filter(row => row.trim() !== '');
+            let currentIndex = startingIndex;
+            
+            rows.forEach((row) => {
+                if (currentIndex >= 20) return; // Limit to 20 members
+                
+                // Excel separates columns by tabs
+                const cols = row.split('\t');
+                
+                // Ensure a team member object exists for this row
+                if (!teamData[currentIndex]) {
+                    teamData.push({ id: Date.now() + currentIndex, eid: '', name: '', day: 'Monday', time: '12:00' });
+                }
+                
+                if (startField === 'eid') {
+                    if (cols.length > 0) teamData[currentIndex].eid = cols[0].trim();
+                    if (cols.length > 1) teamData[currentIndex].name = cols[1].trim();
+                    // Optional: Try to map Day if they copied 3 columns
+                    if (cols.length > 2) {
+                        const pastedDay = cols[2].trim();
+                        const validDay = DAYS_OF_WEEK.find(d => d.toLowerCase().startsWith(pastedDay.toLowerCase()));
+                        if (validDay) teamData[currentIndex].day = validDay;
+                    }
+                } else if (startField === 'name') {
+                    if (cols.length > 0) teamData[currentIndex].name = cols[0].trim();
+                }
+                
+                currentIndex++;
+            });
+            
+            renderTeamList();
+            updateTeamAlarms();
+            saveToLocalStorage();
+        }
+
         function renderTeamList() {
             teamListContainer.innerHTML = '';
             addTeamBtn.textContent = `+ Add Team Member (${teamData.length}/20)`;
             addTeamBtn.disabled = teamData.length >= 20;
 
-            teamData.forEach(member => {
+            teamData.forEach((member, index) => {
                 const row = document.createElement('div');
                 row.className = 'team-row';
                 
@@ -1248,6 +1294,10 @@
                 nameInput.addEventListener('input', saveChange);
                 daySelect.addEventListener('change', saveChange);
                 timeInput.addEventListener('input', saveChange);
+                
+                // Add the smart Excel paste listeners
+                eidInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'eid'));
+                nameInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'name'));
                 
                 delBtn.addEventListener('click', () => {
                     teamData = teamData.filter(m => m.id !== member.id);
