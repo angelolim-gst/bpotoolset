@@ -829,6 +829,7 @@
         const csvOutput = document.getElementById('csv-output');
         const generateCsvButton = document.getElementById('generate-csv-button');
 
+        // Card and Calculator elements
         const cardSwitcherBtns = document.querySelectorAll('.switcher-button');
         const cardContainers = document.querySelectorAll('#calendar-container, #alarms-view-container, #calculator-container, #upcoming-view-container');
         const showCalendarBtn = document.getElementById('show-calendar-btn');
@@ -854,6 +855,12 @@
         const showFormulaCalcBtn = document.getElementById('show-formula-calc-btn');
         const showTimeCalcBtn = document.getElementById('show-time-calc-btn');
         const calcDisplay = document.getElementById('calc-display');
+        const formulaInput = document.getElementById('formula-input');
+        const formulaResult = document.getElementById('formula-result');
+        const timeEntriesContainer = document.getElementById('time-entries');
+        const addTimeRowBtn = document.getElementById('add-time-row-btn');
+        const timeCalculateBtn = document.getElementById('time-calculate-btn');
+        const timeResult = document.getElementById('time-result');
 
         // App State
         let activeTimezone = 'Asia/Manila';
