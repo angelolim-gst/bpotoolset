@@ -222,7 +222,6 @@
             overflow-y: auto; overflow-x: hidden;
         }
 
-        /* Scrollbar styles for all workspaces */
         .workspace-content::-webkit-scrollbar, textarea#main-content::-webkit-scrollbar { width: 10px; }
         .workspace-content::-webkit-scrollbar-track, textarea#main-content::-webkit-scrollbar-track { background: transparent; }
         .workspace-content::-webkit-scrollbar-thumb, textarea#main-content::-webkit-scrollbar-thumb {
@@ -268,12 +267,11 @@
         .todo-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0 5px; flex-shrink: 0; }
         .todo-delete:hover { color: var(--alarm-color); }
 
-        /* My Team */
+        /* My Team (Excel Grid Layout) */
         #team-view { display: flex; flex-direction: column; padding: 1rem; }
         .team-header-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
         .team-header-row span { padding: 4px; }
         
-        /* FIX: Removed 'overflow: hidden' so the scrollbar works again */
         #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px; overflow-y: auto; overflow-x: hidden; }
         
         .team-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; align-items: stretch; border-bottom: 1px solid var(--border-color); }
@@ -290,7 +288,6 @@
         
         .team-row input:focus, .team-row select:focus { outline: 2px solid var(--focus-color); outline-offset: -2px; z-index: 10; position: relative; }
         
-        /* Cell Multi-Selection Highlight */
         .cell-selected { background-color: var(--focus-bg) !important; outline: 1px solid var(--focus-color); outline-offset: -1px; z-index: 5; position: relative; }
 
         #add-team-btn { padding: 10px; font-size: 0.9rem; cursor: pointer; border: 1.5px dashed var(--border-color); border-radius: 8px; background-color: transparent; color: var(--secondary-text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
@@ -746,6 +743,7 @@
                 <li>Built with <strong>HTML5</strong>, <strong>CSS3</strong>, and <strong>JavaScript (ES6)</strong>.</li>
                 <li>Fonts 'Inter' and 'JetBrains Mono' served by <strong>Google Fonts</strong>.</li>
                 <li>Formula parsing by <strong>math.js</strong>.</li>
+                <li>Storage managed by <strong>localForage</strong> (IndexedDB).</li>
             </ul>
             
             <p class="credit">Created by Angelo Lim</p>
@@ -753,6 +751,7 @@
     </div>
 
     <!-- SCRIPT SECTION -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
     <script>
         // DOM Variables - Top Bar
@@ -885,7 +884,7 @@
         let localOffset = 0;
         let currentFontSize = 12;
         let showHoldTimer = false;
-        let isAppReady = false; // prevents auto-saving before init finishes
+        let isAppReady = false; 
         
         let saveTimeout;
         let saveDisplayTimeout;
@@ -901,16 +900,16 @@
         let warningInterval = null;
         let currentWarningAlarm = null;
 
-        let todos = {}; // { 'YYYY-MM-DD': [{id, text, done}] }
+        let todos = {}; 
         let currentTodoWeekStart = null;
         let selectedTodoDateStr = '';
 
-        let teamData = []; // [{id, eid, name, day, time}]
+        let teamData = []; 
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
 
-        // ADDED HELPER FUNCTION FOR SHIFT DATE
+        // SHIFT DATE HELPER
         function getShiftDateObj() {
             const now = new Date(new Date().getTime() + localOffset);
             const mstInfo = getShiftDateMSTInfo(now);
@@ -961,8 +960,8 @@
             };
         }
 
-        // LOCAL STORAGE
-        function saveToLocalStorage() {
+        // LOCALFORAGE DATABASE (Replaces LocalStorage)
+        async function saveData() {
             if (!isAppReady) return;
             try {
                 isDisplayingSaveStatus = true;
@@ -989,11 +988,11 @@
                     showHoldTimer: showHoldTimer
                 };
 
-                localStorage.setItem('gusto_local_save', JSON.stringify(dataToSave));
+                await localforage.setItem('gusto_data', dataToSave);
 
                 clearTimeout(saveDisplayTimeout);
                 setTimeout(() => {
-                    topBarTitleSpan.textContent = 'Saved locally';
+                    topBarTitleSpan.textContent = 'Saved to DB';
                     topBarTitleContainer.classList.add('text-success');
                     saveDisplayTimeout = setTimeout(() => {
                         topBarTitleContainer.classList.remove('text-success');
@@ -1002,16 +1001,26 @@
                     }, 3000);
                 }, 400);
             } catch (error) {
-                console.warn('Local storage save blocked or unavailable:', error);
+                console.warn('Database save failed:', error);
                 isDisplayingSaveStatus = false;
             }
         }
 
-        function loadFromLocalStorage(providedData = null) {
+        async function loadData(providedData = null) {
             try {
                 let savedData = providedData;
+                
+                // AUTO-MIGRATOR
                 if (!savedData) {
-                    savedData = localStorage.getItem('gusto_local_save');
+                    const legacyData = localStorage.getItem('gusto_local_save');
+                    if (legacyData) {
+                        savedData = JSON.parse(legacyData);
+                        await localforage.setItem('gusto_data', savedData);
+                        localStorage.removeItem('gusto_local_save'); 
+                        console.log('Successfully migrated data to IndexedDB!');
+                    } else {
+                        savedData = await localforage.getItem('gusto_data');
+                    }
                 }
                 
                 if (savedData) {
@@ -1066,14 +1075,15 @@
                 updateTeamAlarms();
 
             } catch (error) {
-                console.warn('Local storage load failed:', error);
+                console.warn('Database load failed:', error);
             }
         }
 
         // IMPORT / EXPORT
-        exportSettingsBtn.addEventListener('click', () => {
-            const data = localStorage.getItem('gusto_local_save') || '{}';
-            const blob = new Blob([data], { type: 'application/json' });
+        exportSettingsBtn.addEventListener('click', async () => {
+            const rawData = await localforage.getItem('gusto_data') || {};
+            const blob = new Blob([JSON.stringify(rawData)], { type: 'application/json' });
+            
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1093,11 +1103,11 @@
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = async (event) => {
                 try {
                     const importedData = JSON.parse(event.target.result);
-                    loadFromLocalStorage(importedData);
-                    saveToLocalStorage();
+                    await loadData(importedData);
+                    await saveData();
                     alert('Data imported successfully!');
                 } catch (err) {
                     alert('Failed to parse the imported file. Ensure it is a valid .gst file.');
@@ -1124,7 +1134,6 @@
         function renderTodoWeek() {
             todoDaysContainer.innerHTML = '';
             
-            // Make sure we have a valid week start
             if (!currentTodoWeekStart) currentTodoWeekStart = getShiftDateObj();
             
             const start = getStartOfWeek(currentTodoWeekStart);
@@ -1134,7 +1143,6 @@
             const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
             todoWeekLabel.textContent = `${formatter.format(start)} - ${formatter.format(end)}`;
 
-            // Use the Shift Date to determine what "Today" is
             const shiftToday = getShiftDateObj();
             const todayStr = getLocalYMD(shiftToday);
             
@@ -1185,13 +1193,13 @@
                 li.querySelector('.todo-checkbox').addEventListener('change', (e) => {
                     task.done = e.target.checked;
                     renderTodoList();
-                    saveToLocalStorage();
+                    saveData();
                 });
                 
                 li.querySelector('.todo-delete').addEventListener('click', () => {
                     todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== task.id);
                     renderTodoList();
-                    saveToLocalStorage();
+                    saveData();
                 });
                 
                 todoList.appendChild(li);
@@ -1205,7 +1213,7 @@
             todos[selectedTodoDateStr].push({ id: Date.now(), text, done: false });
             todoInput.value = '';
             renderTodoList();
-            saveToLocalStorage();
+            saveData();
         });
 
         todoInput.addEventListener('keydown', (e) => {
@@ -1242,16 +1250,14 @@
             });
         }
 
-        // Global mouse triggers for selection state
         document.addEventListener('mouseup', () => { isDraggingCells = false; });
         document.addEventListener('mousedown', (e) => {
             if (!e.target.classList.contains('selectable-cell') && document.querySelectorAll('.cell-selected').length > 0) clearCellSelection();
         });
 
-        // Intercept Copy event to format multi-selected inputs as Excel table
         document.addEventListener('copy', (e) => {
             const selected = document.querySelectorAll('.cell-selected');
-            if (selected.length > 1) { // Only override native copy if multiple custom cells are highlighted
+            if (selected.length > 1) { 
                 e.preventDefault();
                 const matrix = [];
                 selected.forEach(cell => {
@@ -1297,7 +1303,7 @@
             });
             renderTeamList();
             updateTeamAlarms();
-            saveToLocalStorage();
+            saveData();
         }
 
         function renderTeamList() {
@@ -1339,10 +1345,9 @@
                     member.day = daySelect.value;
                     member.time = timeInput.value;
                     updateTeamAlarms();
-                    saveToLocalStorage();
+                    saveData();
                 };
 
-                // Attach standard listeners
                 eidInput.addEventListener('input', saveChange);
                 nameInput.addEventListener('input', saveChange);
                 daySelect.addEventListener('change', saveChange);
@@ -1351,12 +1356,11 @@
                 eidInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'eid'));
                 nameInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'name'));
                 
-                // Attach multi-select behavior
                 [eidInput, nameInput].forEach(input => {
                     input.addEventListener('mousedown', (e) => {
                         const r = parseInt(input.dataset.row), c = parseInt(input.dataset.col);
                         if (e.shiftKey && lastFocusedCell) {
-                            e.preventDefault(); // Prevents text cursor
+                            e.preventDefault(); 
                             selectCellRange(lastFocusedCell.row, lastFocusedCell.col, r, c);
                             document.activeElement.blur(); 
                         } else {
@@ -1370,18 +1374,18 @@
                     input.addEventListener('mouseenter', () => {
                         if (isDraggingCells && cellDragStart) {
                             selectCellRange(cellDragStart.row, cellDragStart.col, parseInt(input.dataset.row), parseInt(input.dataset.col));
-                            document.activeElement.blur(); // Keeps selection highlight visual
+                            document.activeElement.blur(); 
                         }
                     });
 
-                    input.addEventListener('keydown', () => clearCellSelection()); // Clear visual selection if they start typing
+                    input.addEventListener('keydown', () => clearCellSelection()); 
                 });
 
                 delBtn.addEventListener('click', () => {
                     teamData = teamData.filter(m => m.id !== member.id);
                     renderTeamList();
                     updateTeamAlarms();
-                    saveToLocalStorage();
+                    saveData();
                 });
 
                 row.appendChild(eidInput);
@@ -1398,7 +1402,7 @@
             if(teamData.length >= 20) return;
             teamData.push({ id: Date.now(), eid: '', name: '', day: 'Monday', time: '12:00' });
             renderTeamList();
-            saveToLocalStorage();
+            saveData();
         });
 
         // MENU CONTROLS
@@ -1430,13 +1434,13 @@
             themeToggle.checked = theme === 'dark';
             themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
         }
-        themeToggle.addEventListener('change', (e) => { setTheme(e.target.checked ? 'dark' : 'light'); saveToLocalStorage(); });
+        themeToggle.addEventListener('change', (e) => { setTheme(e.target.checked ? 'dark' : 'light'); saveData(); });
 
         toggleHoldTimerButton.addEventListener('click', () => {
             showHoldTimer = !showHoldTimer;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
             toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
-            saveToLocalStorage();
+            saveData();
         });
 
         // CLOCK AND TIME
@@ -1478,8 +1482,8 @@
             generateCalendar(synchronizedTime); 
         }
 
-        tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); saveToLocalStorage(); }));
-        formatToggle.addEventListener('change', (e) => { use24HourFormat = e.target.checked; updateClock(); saveToLocalStorage(); });
+        tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); saveData(); }));
+        formatToggle.addEventListener('change', (e) => { use24HourFormat = e.target.checked; updateClock(); saveData(); });
         
         // TABS
         tabNotepad.addEventListener('click', () => {
@@ -1504,8 +1508,8 @@
         increaseFontBtn.addEventListener('click', () => { currentFontSize++; updateFontSize(); });
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
         
-        resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveToLocalStorage(); });
-        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveToLocalStorage, 1000); });
+        resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveData(); });
+        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 1000); });
 
         // ALARMS
         setAlarmsButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); alarmModal.classList.add('show'); });
@@ -1548,7 +1552,6 @@
                 let alarmDatePHTString = shiftDateMST;
                 const [alarmHours] = newAlarm.time.split(':');
 
-                // NIGHT SHIFT CROSSOVER LOGIC: AM times roll over to the next PHT calendar day
                 if (parseInt(alarmHours) < 12) {
                     const tempDate = new Date(Date.UTC(mstInfo.year, mstInfo.month - 1, mstInfo.day));
                     tempDate.setUTCDate(tempDate.getUTCDate() + 1);
@@ -1572,12 +1575,10 @@
             const shiftDateMST = `${mstInfo.year}-${String(mstInfo.month).padStart(2, '0')}-${String(mstInfo.day).padStart(2, '0')}`;
 
             teamData.forEach(member => {
-                // If the selected coaching shift day matches the current MST shift day
                 if(member.day === mstInfo.weekday && member.time && member.name) {
                     let alarmDatePHTString = shiftDateMST;
                     const [alarmHours] = member.time.split(':');
 
-                    // NIGHT SHIFT CROSSOVER LOGIC: AM times roll over to the next PHT calendar day
                     if (parseInt(alarmHours) < 12) {
                         const tempDate = new Date(Date.UTC(mstInfo.year, mstInfo.month - 1, mstInfo.day));
                         tempDate.setUTCDate(tempDate.getUTCDate() + 1);
@@ -1621,7 +1622,7 @@
                 'Team Meeting': { time: convertTo24Hour(document.getElementById('meeting-time').value, document.getElementById('meeting-ampm').value) }
             };
             processAndSetAlarms(tempAlarms);
-            saveToLocalStorage();
+            saveData();
             alarmModal.classList.remove('show');
         });
 
@@ -1723,10 +1724,7 @@
             if (isWarningWindow && nextAlarm.label !== currentWarningAlarm) {
                 if (warningInterval) clearInterval(warningInterval);
                 currentWarningAlarm = nextAlarm.label;
-                
-                // FIX: Removed the "Upcoming: " text. It now only displays the activity label.
-                warningDisplaySpan.textContent = currentWarningAlarm; 
-                
+                warningDisplaySpan.textContent = currentWarningAlarm;
                 const warningLoop = () => { timeElement.classList.add('warning-active'); setTimeout(() => timeElement.classList.remove('warning-active'), 5000); };
                 warningLoop();
                 warningInterval = setInterval(warningLoop, 15000);
@@ -1999,14 +1997,14 @@
         function handleWidthToggle() {
             document.body.classList.toggle('wide-mode');
             toggleWidthText.textContent = document.body.classList.contains('wide-mode') ? 'Disable Wide Mode' : 'Enable Wide Mode';
-            saveToLocalStorage();
+            saveData();
         }
         toggleWidthButton.addEventListener('click', handleWidthToggle);
         
         function handleScrollToggle() {
             document.body.classList.toggle('scroll-enabled');
             toggleScrollText.textContent = document.body.classList.contains('scroll-enabled') ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
-            saveToLocalStorage();
+            saveData();
         }
         toggleScrollButton.addEventListener('click', handleScrollToggle);
 
@@ -2023,17 +2021,12 @@
             textarea.value = defaultNotesTemplate;
             setTheme('light'); 
             
-            // 1. Sync time FIRST so the localOffset is known for Shift Date calculation
             await syncTime();
-            
-            // 2. Initialize the To-Do week start to the actual Shift Date
             currentTodoWeekStart = getShiftDateObj();
             
-            // 3. Load state
-            loadFromLocalStorage(); 
+            await loadData(); 
             isAppReady = true;
 
-            // UI checks
             if(window.innerHeight < 680) document.body.classList.add('compact-mode');
             if(window.innerWidth > (screen.width * 0.5) && window.opener === null) resizeWarningModal.classList.add('show');
             if(window.innerWidth < 390 && window.innerWidth > 0) minWidthWarningModal.classList.add('show');
@@ -2041,10 +2034,9 @@
             updateTeamAlarms();
             updateAlarmsView();
             setInterval(updateClock, 1000);
-            setInterval(syncTime, 300000); // sync clock every 5 mins
+            setInterval(syncTime, 300000);
         }
 
-        // Fire application up
         initialize();
     </script>
 </body>
