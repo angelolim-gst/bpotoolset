@@ -273,7 +273,9 @@
         .team-header-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
         .team-header-row span { padding: 4px; }
         
-        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px; overflow: hidden; }
+        /* FIX: Removed 'overflow: hidden' so the scrollbar works again */
+        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px; overflow-y: auto; overflow-x: hidden; }
+        
         .team-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; align-items: stretch; border-bottom: 1px solid var(--border-color); }
         
         .team-row input, .team-row select { 
