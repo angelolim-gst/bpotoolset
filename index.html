@@ -222,9 +222,9 @@
             overflow-y: auto; overflow-x: hidden;
         }
 
-        .workspace-content::-webkit-scrollbar, textarea#main-content::-webkit-scrollbar { width: 10px; }
-        .workspace-content::-webkit-scrollbar-track, textarea#main-content::-webkit-scrollbar-track { background: transparent; }
-        .workspace-content::-webkit-scrollbar-thumb, textarea#main-content::-webkit-scrollbar-thumb {
+        .workspace-content::-webkit-scrollbar, textarea#main-content::-webkit-scrollbar, .csv-textarea::-webkit-scrollbar { width: 10px; }
+        .workspace-content::-webkit-scrollbar-track, textarea#main-content::-webkit-scrollbar-track, .csv-textarea::-webkit-scrollbar-track { background: transparent; }
+        .workspace-content::-webkit-scrollbar-thumb, textarea#main-content::-webkit-scrollbar-thumb, .csv-textarea::-webkit-scrollbar-thumb {
             background-color: var(--border-color); border-radius: 10px; border: 3px solid var(--widget-bg-color);
         }
 
@@ -269,12 +269,12 @@
 
         /* My Team (Excel Grid Layout) */
         #team-view { display: flex; flex-direction: column; padding: 1rem; }
-        .team-header-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
-        .team-header-row span { padding: 4px; }
+        .team-header-row { display: grid; grid-template-columns: 60px 65px 1fr 65px 80px 40px 25px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
+        .team-header-row span { padding: 4px; overflow: hidden; text-overflow: ellipsis; }
         
         #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px; overflow-y: auto; overflow-x: hidden; }
         
-        .team-row { display: grid; grid-template-columns: 65px 1fr 65px 85px 25px; align-items: stretch; border-bottom: 1px solid var(--border-color); }
+        .team-row { display: grid; grid-template-columns: 60px 65px 1fr 65px 80px 40px 25px; align-items: stretch; border-bottom: 1px solid var(--border-color); }
         
         .team-row input, .team-row select { 
             padding: 6px; border: none; border-right: 1px solid var(--border-color); border-radius: 0; 
@@ -289,6 +289,13 @@
         .team-row input:focus, .team-row select:focus { outline: 2px solid var(--focus-color); outline-offset: -2px; z-index: 10; position: relative; }
         
         .cell-selected { background-color: var(--focus-bg) !important; outline: 1px solid var(--focus-color); outline-offset: -1px; z-index: 5; position: relative; }
+
+        .boost-btn {
+            background: transparent; border: 1.5px solid var(--border-color); color: var(--focus-color);
+            cursor: pointer; border-radius: 4px; font-weight: bold; padding: 0; width: 24px; height: 24px; margin: auto;
+            display: flex; justify-content: center; align-items: center; transition: all 0.2s;
+        }
+        .boost-btn:hover { background: var(--focus-bg); border-color: var(--focus-color); }
 
         #add-team-btn { padding: 10px; font-size: 0.9rem; cursor: pointer; border: 1.5px dashed var(--border-color); border-radius: 8px; background-color: transparent; color: var(--secondary-text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
         #add-team-btn:hover:not(:disabled) { border-color: var(--focus-color); color: var(--focus-color); background-color: var(--focus-bg); }
@@ -553,7 +560,7 @@
             <!-- Team View -->
             <div id="team-view" class="workspace-content hidden-view">
                 <div class="team-header-row">
-                    <span>EID</span><span>Name</span><span>Day</span><span>Time</span><span></span>
+                    <span>EID</span><span>SFDC</span><span>Name</span><span>Day</span><span>Time</span><span>Boost</span><span></span>
                 </div>
                 <div id="team-list-container"></div>
                 <button id="add-team-btn">+ Add Team Member (0/20)</button>
@@ -666,6 +673,21 @@
         </div>
     </main>
 
+    <!-- Boost Modal -->
+    <div id="boost-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 5px;">Boost Notes</h2>
+            <div class="todo-nav" style="margin-bottom: 15px;">
+                <button id="boost-prev-week">&lt;</button>
+                <span id="boost-week-label"></span>
+                <button id="boost-next-week">&gt;</button>
+            </div>
+            <textarea id="boost-textarea" class="csv-textarea" style="height: 250px; font-family: 'Inter', sans-serif; font-size: 0.9rem;" placeholder="Enter coaching notes..."></textarea>
+        </div>
+    </div>
+
+    <!-- Alarm Modals -->
     <div id="alarm-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-button">&times;</button>
@@ -683,6 +705,7 @@
         </div>
     </div>
 
+    <!-- CSV Modal -->
     <div id="csv-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-button">&times;</button>
@@ -700,11 +723,13 @@
         </div>
     </div>
 
+    <!-- Visual Alarm Fullscreen -->
     <div id="visual-alarm">
         <div id="alarm-text">Time for your break!</div>
         <div class="alarm-actions"><button id="snooze-button" class="alarm-button">Snooze (1 min)</button><button id="dismiss-button" class="alarm-button">Dismiss</button></div>
     </div>
     
+    <!-- Warning Modals -->
     <div id="resize-warning-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content resize-warning-content">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.071 4.929a1 1 0 0 1 0 1.414l-1.414 1.414a1 1 0 1 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0zM4.929 19.071a1 1 0 0 1 1.414 0l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-1.414-1.414zM2 12l2.121-2.121a1 1 0 1 1 1.414 1.414L3.414 13H11v-2H3.414l2.121-2.121a1 1 0 1 1-1.414-1.414L2 10V3a1 1 0 0 1 1-1h7l-2.121 2.121a1 1 0 1 1-1.414-1.414L10 2H3a1 1 0 0 0-1 1v9zm20 0v9a1 1 0 0 1-1 1h-7l2.121-2.121a1 1 0 1 1 1.414 1.414L14 22h7a1 1 0 0 0 1-1v-9l-2.121 2.121a1 1 0 1 1-1.414-1.414L20.586 11H13v2h7.586l-2.121 2.121a1 1 0 1 1 1.414 1.414L22 14z"></path></svg>
@@ -723,6 +748,7 @@
         </div>
     </div>
 
+    <!-- About Modal -->
     <div id="about-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-button">&times;</button>
@@ -817,7 +843,6 @@
         const resizePopoutButton = document.getElementById('resize-popout-button');
         const minWidthWarningModal = document.getElementById('min-width-warning-modal');
         const minWidthCloseButton = document.getElementById('min-width-close-button');
-        const mainWrapper = document.getElementById('main-content-wrapper');
 
         // DOM Variables - Alarms
         const setAlarmsButton = document.getElementById('set-alarms-button');
@@ -829,13 +854,12 @@
         const snoozeButton = document.getElementById('snooze-button');
         const dismissButton = document.getElementById('dismiss-button');
         
-        // DOM Variables - Calendar
+        // DOM Variables - Calendar & Cards
         const monthYearEl = document.getElementById('month-year');
         const daysEl = document.querySelector('.calendar-days');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
         
-        // DOM Variables - Cards
         const cardViewerArea = document.querySelector('.card-viewer-area');
         const cardsWrapper = document.getElementById('cards-wrapper');
         const toggleCardsBtn = document.getElementById('toggle-cards-btn');
@@ -905,6 +929,7 @@
         let selectedTodoDateStr = '';
 
         let teamData = []; 
+        let boostNotes = {};
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
@@ -960,7 +985,7 @@
             };
         }
 
-        // LOCALFORAGE DATABASE (Replaces LocalStorage)
+        // LOCALFORAGE DATABASE
         async function saveData() {
             if (!isAppReady) return;
             try {
@@ -980,6 +1005,7 @@
                     alarms: serializableAlarms,
                     todos: todos,
                     team: teamData,
+                    boostNotes: boostNotes,
                     theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
                     activeTimezone: activeTimezone,
                     use24HourFormat: use24HourFormat,
@@ -1010,7 +1036,6 @@
             try {
                 let savedData = providedData;
                 
-                // AUTO-MIGRATOR
                 if (!savedData) {
                     const legacyData = localStorage.getItem('gusto_local_save');
                     if (legacyData) {
@@ -1048,6 +1073,7 @@
                     }
                     if (parsed.todos) todos = parsed.todos;
                     if (parsed.team) teamData = parsed.team;
+                    if (parsed.boostNotes) boostNotes = parsed.boostNotes; else boostNotes = {};
                     
                     if (parsed.alarms) {
                         const mapping = {
@@ -1229,7 +1255,62 @@
             renderTodoWeek();
         });
 
-        // MY TEAM LOGIC
+        // MY TEAM & BOOST MODAL LOGIC
+        const boostModal = document.getElementById('boost-modal');
+        const closeBoostModalBtn = boostModal.querySelector('.modal-close-button');
+        const boostPrevWeekBtn = document.getElementById('boost-prev-week');
+        const boostNextWeekBtn = document.getElementById('boost-next-week');
+        const boostWeekLabel = document.getElementById('boost-week-label');
+        const boostTextarea = document.getElementById('boost-textarea');
+        const boostModalTitle = document.getElementById('boost-modal-title');
+
+        let currentBoostMember = null;
+        let currentBoostWeekStart = null;
+
+        closeBoostModalBtn.addEventListener('click', () => boostModal.classList.remove('show'));
+
+        function openBoostModal(member) {
+            currentBoostMember = member;
+            boostModalTitle.textContent = `Boost: ${member.name || 'Teammate'}`;
+            currentBoostWeekStart = getStartOfWeek(getShiftDateObj());
+            renderBoostModal();
+            boostModal.classList.add('show');
+        }
+
+        function renderBoostModal() {
+            const start = getStartOfWeek(currentBoostWeekStart);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+            
+            const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+            boostWeekLabel.textContent = `${formatter.format(start)} - ${formatter.format(end)}`;
+
+            const weekKey = getLocalYMD(start);
+            if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+            
+            boostTextarea.value = boostNotes[currentBoostMember.id][weekKey] || '';
+        }
+
+        boostTextarea.addEventListener('input', () => {
+            const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
+            if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+            boostNotes[currentBoostMember.id][weekKey] = boostTextarea.value;
+            
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveData, 1000);
+        });
+
+        boostPrevWeekBtn.addEventListener('click', () => {
+            currentBoostWeekStart.setDate(currentBoostWeekStart.getDate() - 7);
+            renderBoostModal();
+        });
+
+        boostNextWeekBtn.addEventListener('click', () => {
+            currentBoostWeekStart.setDate(currentBoostWeekStart.getDate() + 7);
+            renderBoostModal();
+        });
+
+        // Grid Excel Logic
         let isDraggingCells = false;
         let cellDragStart = null;
         let lastFocusedCell = null;
@@ -1286,11 +1367,19 @@
                 const cols = row.split('\t');
                 
                 if (!teamData[currentIndex]) {
-                    teamData.push({ id: Date.now() + currentIndex, eid: '', name: '', day: 'Monday', time: '12:00' });
+                    teamData.push({ id: Date.now() + currentIndex, eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' });
                 }
                 
                 if (startField === 'eid') {
                     if (cols.length > 0) teamData[currentIndex].eid = cols[0].trim();
+                    if (cols.length > 1) teamData[currentIndex].sfdc = cols[1].trim();
+                    if (cols.length > 2) teamData[currentIndex].name = cols[2].trim();
+                    if (cols.length > 3) {
+                        const validDay = DAYS_OF_WEEK.find(d => d.toLowerCase().startsWith(cols[3].trim().toLowerCase()));
+                        if (validDay) teamData[currentIndex].day = validDay;
+                    }
+                } else if (startField === 'sfdc') {
+                    if (cols.length > 0) teamData[currentIndex].sfdc = cols[0].trim();
                     if (cols.length > 1) teamData[currentIndex].name = cols[1].trim();
                     if (cols.length > 2) {
                         const validDay = DAYS_OF_WEEK.find(d => d.toLowerCase().startsWith(cols[2].trim().toLowerCase()));
@@ -1298,6 +1387,10 @@
                     }
                 } else if (startField === 'name') {
                     if (cols.length > 0) teamData[currentIndex].name = cols[0].trim();
+                    if (cols.length > 1) {
+                        const validDay = DAYS_OF_WEEK.find(d => d.toLowerCase().startsWith(cols[1].trim().toLowerCase()));
+                        if (validDay) teamData[currentIndex].day = validDay;
+                    }
                 }
                 currentIndex++;
             });
@@ -1319,11 +1412,16 @@
                 eidInput.type = 'text'; eidInput.placeholder = 'EID'; eidInput.value = member.eid;
                 eidInput.className = 'selectable-cell';
                 eidInput.dataset.row = index; eidInput.dataset.col = 0;
+
+                const sfdcInput = document.createElement('input');
+                sfdcInput.type = 'text'; sfdcInput.placeholder = 'SFDC'; sfdcInput.value = member.sfdc || '';
+                sfdcInput.className = 'selectable-cell';
+                sfdcInput.dataset.row = index; sfdcInput.dataset.col = 1;
                 
                 const nameInput = document.createElement('input');
                 nameInput.type = 'text'; nameInput.placeholder = 'Name'; nameInput.value = member.name;
                 nameInput.className = 'selectable-cell';
-                nameInput.dataset.row = index; nameInput.dataset.col = 1;
+                nameInput.dataset.row = index; nameInput.dataset.col = 2;
                 
                 const daySelect = document.createElement('select');
                 DAYS_OF_WEEK.forEach(day => {
@@ -1335,12 +1433,22 @@
                 
                 const timeInput = document.createElement('input');
                 timeInput.type = 'time'; timeInput.value = member.time;
+
+                const boostBtnWrapper = document.createElement('div');
+                boostBtnWrapper.style.display = 'flex';
+                const boostBtn = document.createElement('button');
+                boostBtn.className = 'boost-btn';
+                boostBtn.innerHTML = '+';
+                boostBtn.title = 'Open Boost Notes';
+                boostBtn.addEventListener('click', () => openBoostModal(member));
+                boostBtnWrapper.appendChild(boostBtn);
                 
                 const delBtn = document.createElement('button');
                 delBtn.className = 'team-delete'; delBtn.innerHTML = '&times;';
 
                 const saveChange = () => {
                     member.eid = eidInput.value;
+                    member.sfdc = sfdcInput.value;
                     member.name = nameInput.value;
                     member.day = daySelect.value;
                     member.time = timeInput.value;
@@ -1349,14 +1457,16 @@
                 };
 
                 eidInput.addEventListener('input', saveChange);
+                sfdcInput.addEventListener('input', saveChange);
                 nameInput.addEventListener('input', saveChange);
                 daySelect.addEventListener('change', saveChange);
                 timeInput.addEventListener('input', saveChange);
                 
                 eidInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'eid'));
+                sfdcInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'sfdc'));
                 nameInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'name'));
                 
-                [eidInput, nameInput].forEach(input => {
+                [eidInput, sfdcInput, nameInput].forEach(input => {
                     input.addEventListener('mousedown', (e) => {
                         const r = parseInt(input.dataset.row), c = parseInt(input.dataset.col);
                         if (e.shiftKey && lastFocusedCell) {
@@ -1389,9 +1499,11 @@
                 });
 
                 row.appendChild(eidInput);
+                row.appendChild(sfdcInput);
                 row.appendChild(nameInput);
                 row.appendChild(daySelect);
                 row.appendChild(timeInput);
+                row.appendChild(boostBtnWrapper);
                 row.appendChild(delBtn);
                 
                 teamListContainer.appendChild(row);
@@ -1400,7 +1512,7 @@
 
         addTeamBtn.addEventListener('click', () => {
             if(teamData.length >= 20) return;
-            teamData.push({ id: Date.now(), eid: '', name: '', day: 'Monday', time: '12:00' });
+            teamData.push({ id: Date.now(), eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' });
             renderTeamList();
             saveData();
         });
@@ -1724,7 +1836,7 @@
             if (isWarningWindow && nextAlarm.label !== currentWarningAlarm) {
                 if (warningInterval) clearInterval(warningInterval);
                 currentWarningAlarm = nextAlarm.label;
-                warningDisplaySpan.textContent = currentWarningAlarm;
+                warningDisplaySpan.textContent = currentWarningAlarm.split(':')[0];
                 const warningLoop = () => { timeElement.classList.add('warning-active'); setTimeout(() => timeElement.classList.remove('warning-active'), 5000); };
                 warningLoop();
                 warningInterval = setInterval(warningLoop, 15000);
