@@ -1560,39 +1560,23 @@
         });
 
         // CLOCK AND TIME
-        // CLOCK AND TIME
         async function syncTime() {
             try {
-                // Tier 1: Try timeapi.io (Highly stable, no CORS redirect issues)
-                const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC', { cache: 'no-store' });
-                if (!response.ok) throw new Error('Primary API unavailable');
-                
+                const response = await fetch('https://worldtimeapi-proxy.angelo-lim.workers.dev/corsproxy/');
                 const data = await response.json();
-                
-                // TimeAPI returns dateTime without a timezone marker (e.g., "2026-07-29T02:29:03.0000000")
-                // Appending 'Z' forces JavaScript to parse it strictly as UTC
-                const serverTime = new Date(data.dateTime + 'Z');
-                localOffset = serverTime.getTime() - Date.now();
-                
-            } catch (error) { 
-                console.warn('Primary time API failed. Engaging bulletproof fallback.', error);
-                try {
-                    // Tier 2: Ping your own host and read the HTTP Date header.
-                    // This works 100% of the time as long as the tool is hosted online.
-                    const fallbackResponse = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
-                    const dateHeader = fallbackResponse.headers.get('Date');
-                    
-                    if (dateHeader) {
-                        const serverTime = new Date(dateHeader);
-                        localOffset = serverTime.getTime() - Date.now();
-                    } else {
-                        localOffset = 0; // Graceful degradation to local computer clock
-                    }
-                } catch (fallbackError) {
-                    console.error('All time sync methods failed. Relying on local system time.');
-                    localOffset = 0;
-                }
-            }
+                const serverTime = new Date(data.utc_datetime);
+                localOffset = serverTime.getTime() - new Date().getTime();
+            } catch (error) { console.error('Time sync failed.', error); localOffset = 0; }
+        }
+
+        function getShiftDateMSTInfo(now) {
+            const mstDateParts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' }).formatToParts(now);
+            return {
+                year: parseInt(mstDateParts.find(p => p.type === 'year').value, 10),
+                month: parseInt(mstDateParts.find(p => p.type === 'month').value, 10),
+                day: parseInt(mstDateParts.find(p => p.type === 'day').value, 10),
+                weekday: mstDateParts.find(p => p.type === 'weekday').value
+            };
         }
 
         function updateClock() {
