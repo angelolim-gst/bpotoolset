@@ -1216,7 +1216,7 @@
             e.target.value = '';
         });
 
-        // TO-DO LOGIC
+        // TO-DO LOGIC & EVENT DELEGATION
         function getStartOfWeek(date) {
             const d = new Date(date);
             d.setHours(0,0,0,0);
@@ -1282,29 +1282,40 @@
             list.forEach(task => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${task.done ? 'done' : ''}`;
+                li.dataset.id = task.id; // added for delegation
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
                     <span class="todo-text">${task.text}</span>
                     <button class="todo-delete">&times;</button>
                 `;
-                
-                // Smart DOM updating to prevent full wipe/render
-                li.querySelector('.todo-checkbox').addEventListener('change', (e) => {
-                    task.done = e.target.checked;
-                    if (task.done) li.classList.add('done'); else li.classList.remove('done');
-                    saveTodos();
-                });
-                
-                li.querySelector('.todo-delete').addEventListener('click', () => {
-                    todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== task.id);
-                    li.remove();
-                    if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
-                    saveTodos();
-                });
-                
                 todoList.appendChild(li);
             });
         }
+
+        // To-Do Event Delegation
+        todoList.addEventListener('change', (e) => {
+            if (e.target.classList.contains('todo-checkbox')) {
+                const li = e.target.closest('li');
+                const id = parseInt(li.dataset.id);
+                const task = todos[selectedTodoDateStr].find(t => t.id === id);
+                if (task) {
+                    task.done = e.target.checked;
+                    if (task.done) li.classList.add('done'); else li.classList.remove('done');
+                    saveTodos();
+                }
+            }
+        });
+
+        todoList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('todo-delete')) {
+                const li = e.target.closest('li');
+                const id = parseInt(li.dataset.id);
+                todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
+                li.remove();
+                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
+                saveTodos();
+            }
+        });
 
         todoAddBtn.addEventListener('click', () => {
             const text = todoInput.value.trim();
@@ -1440,9 +1451,38 @@
             });
         }
 
+        // Drag-to-Select Event Delegation on the Container
+        teamListContainer.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('selectable-cell')) {
+                const r = parseInt(e.target.dataset.row);
+                const c = parseInt(e.target.dataset.col);
+                if (e.shiftKey && lastFocusedCell) {
+                    e.preventDefault(); 
+                    selectCellRange(lastFocusedCell.row, lastFocusedCell.col, r, c);
+                    document.activeElement.blur(); 
+                } else {
+                    isDraggingCells = true;
+                    cellDragStart = { row: r, col: c };
+                    clearCellSelection();
+                    lastFocusedCell = { row: r, col: c };
+                }
+            } else if (document.querySelectorAll('.cell-selected').length > 0) {
+                clearCellSelection();
+            }
+        });
+
+        teamListContainer.addEventListener('mouseover', (e) => {
+            if (isDraggingCells && cellDragStart && e.target.classList.contains('selectable-cell')) {
+                const r = parseInt(e.target.dataset.row);
+                const c = parseInt(e.target.dataset.col);
+                selectCellRange(cellDragStart.row, cellDragStart.col, r, c);
+                document.activeElement.blur();
+            }
+        });
+
         document.addEventListener('mouseup', () => { isDraggingCells = false; });
-        document.addEventListener('mousedown', (e) => {
-            if (!e.target.classList.contains('selectable-cell') && document.querySelectorAll('.cell-selected').length > 0) clearCellSelection();
+        teamListContainer.addEventListener('keydown', (e) => {
+            if (e.target.classList.contains('selectable-cell')) clearCellSelection(); 
         });
 
         document.addEventListener('copy', (e) => {
@@ -1463,6 +1503,54 @@
             }
         });
 
+        // Team Edit Event Delegation (Inputs & Selects)
+        teamListContainer.addEventListener('input', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                const rowDiv = e.target.closest('.team-row');
+                if (!rowDiv) return;
+                const id = parseInt(rowDiv.dataset.id);
+                const member = teamData.find(m => m.id === id);
+                if (member) {
+                    const field = e.target.dataset.field;
+                    member[field] = e.target.value;
+                    
+                    if (field === 'day' || field === 'time' || field === 'name') {
+                        updateTeamAlarms();
+                    }
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(saveTeam, 1000);
+                }
+            }
+        });
+
+        // Team Button Event Delegation (Boost & Delete)
+        teamListContainer.addEventListener('click', (e) => {
+            const delBtn = e.target.closest('.team-delete');
+            const boostBtn = e.target.closest('.boost-btn');
+            const rowDiv = e.target.closest('.team-row');
+            if (!rowDiv) return;
+            const id = parseInt(rowDiv.dataset.id);
+            const member = teamData.find(m => m.id === id);
+
+            if (delBtn) {
+                teamData = teamData.filter(m => m.id !== id);
+                rowDiv.remove();
+                
+                // re-adjust dataset rows for remaining inputs to fix drag-to-select math
+                document.querySelectorAll('.team-row').forEach((r, idx) => {
+                    r.querySelectorAll('.selectable-cell').forEach(cell => cell.dataset.row = idx);
+                });
+                
+                updateTeamAlarms();
+                saveTeam();
+                addTeamBtn.textContent = `+ Add Team Member (${teamData.length}/20)`;
+                addTeamBtn.disabled = teamData.length >= 20;
+            } else if (boostBtn && member) {
+                openBoostModal(member);
+            }
+        });
+
+
         function handleExcelPaste(e, startingIndex, startField) {
             const pasteData = (e.clipboardData || window.clipboardData).getData('text');
             if (!pasteData.includes('\t') && !pasteData.includes('\n')) return;
@@ -1470,6 +1558,7 @@
             e.preventDefault();
             const rows = pasteData.split(/\r\n|\n|\r/).filter(row => row.trim() !== '');
             let currentIndex = startingIndex;
+            let needsFullRender = false;
             
             rows.forEach((row) => {
                 if (currentIndex >= 20) return;
@@ -1477,6 +1566,7 @@
                 
                 if (!teamData[currentIndex]) {
                     teamData.push({ id: Date.now() + currentIndex, eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' });
+                    needsFullRender = true;
                 }
                 
                 if (startField === 'eid') {
@@ -1503,7 +1593,24 @@
                 }
                 currentIndex++;
             });
-            renderTeamList();
+            
+            // Only rebuild the whole list if we appended new rows from empty
+            if (needsFullRender) {
+                renderTeamList();
+            } else {
+                // Otherwise targeted value update
+                const allRows = document.querySelectorAll('.team-row');
+                teamData.forEach((member, i) => {
+                    const r = allRows[i];
+                    if (r) {
+                        r.querySelector('[data-field="eid"]').value = member.eid;
+                        r.querySelector('[data-field="sfdc"]').value = member.sfdc || '';
+                        r.querySelector('[data-field="name"]').value = member.name || '';
+                        r.querySelector('[data-field="day"]').value = member.day;
+                    }
+                });
+            }
+            
             updateTeamAlarms();
             saveTeam();
         }
@@ -1516,113 +1623,64 @@
             teamData.forEach((member, index) => {
                 const row = document.createElement('div');
                 row.className = 'team-row';
+                row.dataset.id = member.id;
                 
-                const eidInput = document.createElement('input');
-                eidInput.type = 'text'; eidInput.placeholder = 'EID'; eidInput.value = member.eid;
-                eidInput.className = 'selectable-cell';
-                eidInput.dataset.row = index; eidInput.dataset.col = 0;
-
-                const sfdcInput = document.createElement('input');
-                sfdcInput.type = 'text'; sfdcInput.placeholder = 'SFDC'; sfdcInput.value = member.sfdc || '';
-                sfdcInput.className = 'selectable-cell';
-                sfdcInput.dataset.row = index; sfdcInput.dataset.col = 1;
+                // Building HTML strings for innerHTML is faster than appending many nodes
+                const dayOptions = DAYS_OF_WEEK.map(d => `<option value="${d}" ${member.day === d ? 'selected' : ''}>${d.substring(0,3)}</option>`).join('');
                 
-                const nameInput = document.createElement('input');
-                nameInput.type = 'text'; nameInput.placeholder = 'Name'; nameInput.value = member.name || '';
-                nameInput.className = 'selectable-cell';
-                nameInput.dataset.row = index; nameInput.dataset.col = 2;
+                row.innerHTML = `
+                    <input type="text" class="selectable-cell" data-field="eid" data-row="${index}" data-col="0" placeholder="EID" value="${member.eid}">
+                    <input type="text" class="selectable-cell" data-field="sfdc" data-row="${index}" data-col="1" placeholder="SFDC" value="${member.sfdc || ''}">
+                    <input type="text" class="selectable-cell" data-field="name" data-row="${index}" data-col="2" placeholder="Name" value="${member.name || ''}">
+                    <select data-field="day">${dayOptions}</select>
+                    <input type="time" data-field="time" value="${member.time}">
+                    <div style="display:flex;"><button class="boost-btn" title="Open Boost Notes">+</button></div>
+                    <button class="team-delete">&times;</button>
+                `;
                 
-                const daySelect = document.createElement('select');
-                DAYS_OF_WEEK.forEach(day => {
-                    const opt = document.createElement('option');
-                    opt.value = day; opt.textContent = day.substring(0,3);
-                    if(member.day === day) opt.selected = true;
-                    daySelect.appendChild(opt);
-                });
-                
-                const timeInput = document.createElement('input');
-                timeInput.type = 'time'; timeInput.value = member.time;
-
-                const boostBtnWrapper = document.createElement('div');
-                boostBtnWrapper.style.display = 'flex';
-                const boostBtn = document.createElement('button');
-                boostBtn.className = 'boost-btn';
-                boostBtn.innerHTML = '+';
-                boostBtn.title = 'Open Boost Notes';
-                boostBtn.addEventListener('click', () => openBoostModal(member));
-                boostBtnWrapper.appendChild(boostBtn);
-                
-                const delBtn = document.createElement('button');
-                delBtn.className = 'team-delete'; delBtn.innerHTML = '&times;';
-
-                const saveChange = () => {
-                    member.eid = eidInput.value;
-                    member.sfdc = sfdcInput.value;
-                    member.name = nameInput.value;
-                    member.day = daySelect.value;
-                    member.time = timeInput.value;
-                    updateTeamAlarms();
-                    saveTeam();
-                };
-
-                eidInput.addEventListener('input', saveChange);
-                sfdcInput.addEventListener('input', saveChange);
-                nameInput.addEventListener('input', saveChange);
-                daySelect.addEventListener('change', saveChange);
-                timeInput.addEventListener('input', saveChange);
+                // Attach paste listeners (cannot be delegated easily due to clipboard reading mechanics)
+                const eidInput = row.querySelector('[data-field="eid"]');
+                const sfdcInput = row.querySelector('[data-field="sfdc"]');
+                const nameInput = row.querySelector('[data-field="name"]');
                 
                 eidInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'eid'));
                 sfdcInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'sfdc'));
                 nameInput.addEventListener('paste', (e) => handleExcelPaste(e, index, 'name'));
-                
-                [eidInput, sfdcInput, nameInput].forEach(input => {
-                    input.addEventListener('mousedown', (e) => {
-                        const r = parseInt(input.dataset.row), c = parseInt(input.dataset.col);
-                        if (e.shiftKey && lastFocusedCell) {
-                            e.preventDefault(); 
-                            selectCellRange(lastFocusedCell.row, lastFocusedCell.col, r, c);
-                            document.activeElement.blur(); 
-                        } else {
-                            isDraggingCells = true;
-                            cellDragStart = { row: r, col: c };
-                            clearCellSelection();
-                            lastFocusedCell = { row: r, col: c };
-                        }
-                    });
 
-                    input.addEventListener('mouseenter', () => {
-                        if (isDraggingCells && cellDragStart) {
-                            selectCellRange(cellDragStart.row, cellDragStart.col, parseInt(input.dataset.row), parseInt(input.dataset.col));
-                            document.activeElement.blur(); 
-                        }
-                    });
-
-                    input.addEventListener('keydown', () => clearCellSelection()); 
-                });
-
-                delBtn.addEventListener('click', () => {
-                    teamData = teamData.filter(m => m.id !== member.id);
-                    renderTeamList();
-                    updateTeamAlarms();
-                    saveTeam();
-                });
-
-                row.appendChild(eidInput);
-                row.appendChild(sfdcInput);
-                row.appendChild(nameInput);
-                row.appendChild(daySelect);
-                row.appendChild(timeInput);
-                row.appendChild(boostBtnWrapper);
-                row.appendChild(delBtn);
-                
                 teamListContainer.appendChild(row);
             });
         }
 
         addTeamBtn.addEventListener('click', () => {
             if(teamData.length >= 20) return;
-            teamData.push({ id: Date.now(), eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' });
-            renderTeamList();
+            const newMember = { id: Date.now(), eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' };
+            teamData.push(newMember);
+            
+            // Targeted Append
+            const index = teamData.length - 1;
+            const row = document.createElement('div');
+            row.className = 'team-row';
+            row.dataset.id = newMember.id;
+            
+            const dayOptions = DAYS_OF_WEEK.map(d => `<option value="${d}" ${newMember.day === d ? 'selected' : ''}>${d.substring(0,3)}</option>`).join('');
+            row.innerHTML = `
+                <input type="text" class="selectable-cell" data-field="eid" data-row="${index}" data-col="0" placeholder="EID" value="${newMember.eid}">
+                <input type="text" class="selectable-cell" data-field="sfdc" data-row="${index}" data-col="1" placeholder="SFDC" value="${newMember.sfdc || ''}">
+                <input type="text" class="selectable-cell" data-field="name" data-row="${index}" data-col="2" placeholder="Name" value="${newMember.name || ''}">
+                <select data-field="day">${dayOptions}</select>
+                <input type="time" data-field="time" value="${newMember.time}">
+                <div style="display:flex;"><button class="boost-btn" title="Open Boost Notes">+</button></div>
+                <button class="team-delete">&times;</button>
+            `;
+            
+            row.querySelector('[data-field="eid"]').addEventListener('paste', (e) => handleExcelPaste(e, index, 'eid'));
+            row.querySelector('[data-field="sfdc"]').addEventListener('paste', (e) => handleExcelPaste(e, index, 'sfdc'));
+            row.querySelector('[data-field="name"]').addEventListener('paste', (e) => handleExcelPaste(e, index, 'name'));
+
+            teamListContainer.appendChild(row);
+            
+            addTeamBtn.textContent = `+ Add Team Member (${teamData.length}/20)`;
+            addTeamBtn.disabled = teamData.length >= 20;
             saveTeam();
         });
 
@@ -1684,6 +1742,45 @@
             };
         }
 
+        function passiveStatusUpdate(now) {
+            // Only update on the top of the minute to save CPU
+            if (now.getSeconds() !== 0) return; 
+
+            // Update Alarms UI passively
+            document.querySelectorAll('.alarm-display-item').forEach(item => {
+                const label = item.dataset.label;
+                const alarm = alarms[label];
+                if (alarm) {
+                    const statusSpan = item.querySelector('.alarm-status');
+                    if (alarm.snoozed) {
+                        statusSpan.className = 'alarm-status status-missed'; statusSpan.textContent = 'Missed';
+                    } else if (alarm.dateTime && alarm.dateTime <= now) {
+                        statusSpan.className = 'alarm-status status-triggered'; statusSpan.textContent = 'Triggered';
+                    } else if (alarm.time) {
+                        statusSpan.className = 'alarm-status status-upcoming'; statusSpan.textContent = 'Upcoming';
+                    }
+                }
+            });
+
+            // Update Upcoming UI passively
+            document.querySelectorAll('.upcoming-display-item').forEach(item => {
+                const id = parseInt(item.dataset.id);
+                const alarm = teamAlarms.find(a => a.id === id);
+                if (alarm) {
+                    if (alarm.dateTime && alarm.dateTime <= now) alarm.triggered = true;
+                    
+                    const statusSpan = item.querySelector('.alarm-status');
+                    if (alarm.snoozed) {
+                        statusSpan.className = 'alarm-status status-missed'; statusSpan.textContent = 'Missed';
+                    } else if (alarm.triggered) {
+                        statusSpan.className = 'alarm-status status-triggered'; statusSpan.textContent = 'Done';
+                    } else {
+                        statusSpan.className = 'alarm-status status-upcoming'; statusSpan.textContent = 'Upcoming';
+                    }
+                }
+            });
+        }
+
         function updateClock() {
             const localNow = new Date();
             synchronizedTime = new Date(localNow.getTime() + localOffset);
@@ -1707,6 +1804,7 @@
             shiftDateElement.textContent = `Shift Date: ${synchronizedTime.toLocaleDateString('en-US', shiftDateOptions)}`;
             
             checkAlarms(synchronizedTime);
+            passiveStatusUpdate(synchronizedTime);
             if(showHoldTimer) checkTimers();
             
             if (!topBar.classList.contains('snoozed')) updateTopBarTitle(synchronizedTime);
@@ -1819,6 +1917,7 @@
 
                     const dt = new Date(`${alarmDatePHTString}T${member.time}:00.000+08:00`);
                     teamAlarms.push({
+                        id: member.id, // mapped id for reactivity
                         label: `Coaching: ${member.name}`,
                         time: member.time,
                         dateTime: dt,
@@ -1874,7 +1973,7 @@
             if(teamAlarm) teamAlarm.snoozed = true;
 
             updateAlarmsView();
-            updateUpcomingView(); // dynamically update Coaching view statuses
+            updateUpcomingView(); 
             
             const now = new Date(synchronizedTime);
             now.setMinutes(now.getMinutes() + 1);
@@ -1895,7 +1994,7 @@
                 clockWidget.classList.remove('snoozed-indicator');
                 topBar.classList.remove('snoozed');
                 updateAlarmsView();
-                updateUpcomingView(); // dynamically update Coaching view statuses
+                updateUpcomingView();
                 updateTopBarTitle(synchronizedTime);
             }
             currentlyTriggeredAlarmLabel = null;
@@ -1922,7 +2021,7 @@
                     if(ta) ta.triggered = true;
                 });
                 updateAlarmsView();
-                updateUpcomingView(); // dynamically update Coaching view statuses
+                updateUpcomingView();
                 return;
             }
             
@@ -1998,7 +2097,10 @@
                 listElement.innerHTML = '';
                 labels.forEach(label => {
                     const alarm = alarms[label];
-                    const listItem = document.createElement('li'); listItem.className = 'alarm-display-item';
+                    const listItem = document.createElement('li'); 
+                    listItem.className = 'alarm-display-item';
+                    listItem.dataset.label = label; // added for passive updates
+                    
                     const timeHTML = `<span class="alarm-display-time">${convertTo12Hour(alarm ? alarm.time : null)}</span>`;
                     let statusHTML = '';
                     if (alarm && alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
@@ -2020,7 +2122,10 @@
             }
             const sortedAlarms = [...teamAlarms].sort((a,b) => a.time.localeCompare(b.time));
             sortedAlarms.forEach(alarm => {
-                const li = document.createElement('li'); li.className = 'upcoming-display-item';
+                const li = document.createElement('li'); 
+                li.className = 'upcoming-display-item';
+                li.dataset.id = alarm.id; // added for passive updates
+                
                 let statusHTML = '';
                 if (alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
                 else if (alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Done</span>`;
