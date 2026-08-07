@@ -538,7 +538,7 @@
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
                 <svg class="switch-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.807A9.002 9.002 0 0 1 10.049 2.5a9.948 9.948 0 0 0-5.12 3.935A9.996 9.996 0 0 0 12 22a9.94 9.94 0 0 0 7.07-2.93A9.996 9.996 0 0 0 12 11.807z"></path></svg>
-                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 0 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
+                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
             </label>
         </div>
     </div>
@@ -713,8 +713,17 @@
                 <button id="boost-next-week">&gt;</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px; height: 350px;">
-                <textarea id="boost-textarea-raw" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem;" placeholder="Enter raw coaching notes here..."></textarea>
-                <textarea id="boost-textarea-formatted" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; border-color: var(--focus-color);" placeholder="Formatted AI output will appear here..."></textarea>
+                <div style="display: flex; flex-direction: column; flex: 1; gap: 5px;">
+                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color);">Raw Notes</span>
+                    <textarea id="boost-textarea-raw" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 8px;" placeholder="Enter raw coaching notes here..."></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; flex: 1; gap: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--focus-color);">AI Formatted</span>
+                        <button id="clear-formatted-btn" style="background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline;">Clear</button>
+                    </div>
+                    <textarea id="boost-textarea-formatted" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; border-color: var(--focus-color); background-color: var(--bg-color);" placeholder="Formatted AI output will appear here..." readonly></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -1464,6 +1473,7 @@
         const boostTextareaFormatted = document.getElementById('boost-textarea-formatted');
         const boostModalTitle = document.getElementById('boost-modal-title');
         const boostAiFormatBtn = document.getElementById('boost-ai-format-btn');
+        const clearFormattedBtn = document.getElementById('clear-formatted-btn');
 
         let currentBoostMember = null;
         let currentBoostWeekStart = null;
@@ -1516,7 +1526,17 @@
         };
 
         boostTextareaRaw.addEventListener('input', handleBoostInput);
-        boostTextareaFormatted.addEventListener('input', handleBoostInput);
+
+        clearFormattedBtn.addEventListener('click', () => {
+            boostTextareaFormatted.value = '';
+            const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
+            if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+            boostNotes[currentBoostMember.id][weekKey] = {
+                raw: boostTextareaRaw.value,
+                formatted: ''
+            };
+            saveBoostNotes();
+        });
 
         boostPrevWeekBtn.addEventListener('click', () => {
             currentBoostWeekStart.setDate(currentBoostWeekStart.getDate() - 7);
@@ -1543,7 +1563,6 @@
             boostAiFormatBtn.textContent = 'Formatting...';
             boostAiFormatBtn.disabled = true;
             boostTextareaRaw.disabled = true;
-            boostTextareaFormatted.disabled = true;
 
             try {
                 // Determine the correct endpoint (usually models/... but we ensure the API expects it)
@@ -1564,7 +1583,7 @@
                 }
 
                 if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-                    const formattedText = data.candidates[0].content.parts[0].text;
+                    const formattedText = data.candidates[0].content.parts[0].text.trim();
                     boostTextareaFormatted.value = formattedText;
                     
                     const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
@@ -1585,7 +1604,6 @@
                 boostAiFormatBtn.textContent = '✨ Auto-Format';
                 boostAiFormatBtn.disabled = false;
                 boostTextareaRaw.disabled = false;
-                boostTextareaFormatted.disabled = false;
             }
         });
 
