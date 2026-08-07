@@ -1460,7 +1460,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: `You are a professional BPO coaching assistant. Take these raw notes and structure them into a formal coaching log. Use this exact structure in plain text (no asterisks or markdown):\n\nCOACHING TOPIC:\n\nROOT CAUSE:\n\nACTION ITEMS:\n\nAGENT COMMITMENT:\n\nBe concise, professional, and do not add conversational filler text.\n\nRaw Notes:\n${rawNotes}` }]
+                            parts: [{ text: `You are a professional BPO coaching assistant. Take these raw notes and structure them into a formal coaching log. You may format it with Markdown or other way to make the text and highlighting more legible. Be concise, professional, and make sure to be neutral to avoid things from conflicting to the teammate side, but also be conversational.\n\nRaw Notes:\n${rawNotes}` }]
                         }]
                     })
                 });
