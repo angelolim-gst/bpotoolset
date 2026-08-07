@@ -268,15 +268,30 @@
         .todo-delete:hover { color: var(--alarm-color); }
 
         /* My Team (Excel Grid Layout) */
-        #team-view { display: flex; flex-direction: column; padding: 1rem; overflow-x: auto; }
+        #team-view { 
+            display: flex; flex-direction: column; padding: 1rem; overflow-x: auto; 
+            /* Configurable column widths */
+            --col-eid: 65px;
+            --col-sfdc: 70px;
+            --col-name: 1fr;
+            --col-day: 80px;
+            --col-time: 85px;
+            --col-boost: 45px;
+            --col-del: 30px;
+        }
         .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 520px; height: 100%; }
         
-        .team-header-row { display: grid; grid-template-columns: 65px 70px 1fr 80px 85px 45px 30px; font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
-        .team-header-row span { padding: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 2px; padding: 0; }
+        .team-header-row span { padding: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; }
         
+        /* Column Resizer */
+        .col-resizer { position: absolute; top: 0; right: 0; width: 4px; height: 100%; cursor: col-resize; z-index: 10; opacity: 0; transition: opacity 0.2s; background-color: var(--focus-color); }
+        .team-header-row span:hover .col-resizer { opacity: 0.5; }
+        .col-resizer:hover, .col-resizer:active { opacity: 1 !important; }
+
         #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px; overflow-y: auto; overflow-x: hidden; }
         
-        .team-row { display: grid; grid-template-columns: 65px 70px 1fr 80px 85px 45px 30px; align-items: stretch; border-bottom: 1px solid var(--border-color); }
+        .team-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); align-items: stretch; border-bottom: 1px solid var(--border-color); }
         
         .team-row input, .team-row select { 
             padding: 6px; border: none; border-right: 1px solid var(--border-color); border-radius: 0; 
@@ -562,8 +577,14 @@
             <!-- Team View -->
             <div id="team-view" class="workspace-content hidden-view">
                 <div class="team-grid-wrapper">
-                    <div class="team-header-row">
-                        <span>EID</span><span>SFDC</span><span>Name</span><span>Day</span><span>Time</span><span>Boost</span><span></span>
+                    <div class="team-header-row" id="team-header-row">
+                        <span>EID<div class="col-resizer" data-col="eid"></div></span>
+                        <span>SFDC<div class="col-resizer" data-col="sfdc"></div></span>
+                        <span>Name<div class="col-resizer" data-col="name"></div></span>
+                        <span>Day<div class="col-resizer" data-col="day"></div></span>
+                        <span>Time<div class="col-resizer" data-col="time"></div></span>
+                        <span>Boost</span>
+                        <span></span>
                     </div>
                     <div id="team-list-container"></div>
                     <button id="add-team-btn">+ Add Team Member (0/20)</button>
@@ -829,6 +850,7 @@
         const teamView = document.getElementById('team-view');
         const teamListContainer = document.getElementById('team-list-container');
         const addTeamBtn = document.getElementById('add-team-btn');
+        const teamViewContainer = document.getElementById('team-view');
         
         // DOM Variables - Settings & Layout Modals
         const toggleWidthButton = document.getElementById('toggle-width-button');
@@ -927,6 +949,7 @@
         let calendarDate = new Date();
         let warningInterval = null;
         let currentWarningAlarm = null;
+        let currentMSTDateStr = null;
 
         let todos = {}; 
         let currentTodoWeekStart = null;
@@ -934,6 +957,8 @@
 
         let teamData = []; 
         let boostNotes = {};
+        let colWidths = { eid: '65px', sfdc: '70px', name: '1fr', day: '80px', time: '85px' };
+        
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
@@ -989,115 +1014,151 @@
             };
         }
 
-        // LOCALFORAGE DATABASE
-        async function saveData() {
+        // SPLIT DB SAVING LOGIC
+        function showSaveStatus() {
             if (!isAppReady) return;
-            try {
-                isDisplayingSaveStatus = true;
-                topBarTitleSpan.textContent = 'Saving...';
-                topBarTitleContainer.classList.remove('text-success', 'marquee');
-
-                const serializableAlarms = {};
-                for (const key in alarms) {
-                    if (alarms[key] && alarms[key].time) {
-                        serializableAlarms[key] = { time: alarms[key].time };
-                    }
-                }
-
-                const dataToSave = {
-                    notes: textarea.value,
-                    alarms: serializableAlarms,
-                    todos: todos,
-                    team: teamData,
-                    boostNotes: boostNotes,
-                    theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
-                    activeTimezone: activeTimezone,
-                    use24HourFormat: use24HourFormat,
-                    isWideMode: document.body.classList.contains('wide-mode'),
-                    isScrollEnabled: document.body.classList.contains('scroll-enabled'),
-                    showHoldTimer: showHoldTimer
-                };
-
-                await localforage.setItem('gusto_data', dataToSave);
-
-                clearTimeout(saveDisplayTimeout);
-                setTimeout(() => {
-                    topBarTitleSpan.textContent = 'Saved to DB';
-                    topBarTitleContainer.classList.add('text-success');
-                    saveDisplayTimeout = setTimeout(() => {
-                        topBarTitleContainer.classList.remove('text-success');
-                        isDisplayingSaveStatus = false;
-                        updateTopBarTitle(synchronizedTime);
-                    }, 3000);
-                }, 400);
-            } catch (error) {
-                console.warn('Database save failed:', error);
-                isDisplayingSaveStatus = false;
-            }
+            isDisplayingSaveStatus = true;
+            topBarTitleSpan.textContent = 'Saving...';
+            topBarTitleContainer.classList.remove('text-success', 'marquee');
+            clearTimeout(saveDisplayTimeout);
+            
+            setTimeout(() => {
+                topBarTitleSpan.textContent = 'Saved to DB';
+                topBarTitleContainer.classList.add('text-success');
+                saveDisplayTimeout = setTimeout(() => {
+                    topBarTitleContainer.classList.remove('text-success');
+                    isDisplayingSaveStatus = false;
+                    updateTopBarTitle(synchronizedTime);
+                }, 3000);
+            }, 400);
         }
 
-        async function loadData(providedData = null) {
+        async function saveNotes() { 
+            await localforage.setItem('gusto_notes', textarea.value); showSaveStatus(); 
+        }
+        async function saveTodos() { 
+            await localforage.setItem('gusto_todos', todos); showSaveStatus(); 
+        }
+        async function saveTeam() { 
+            await localforage.setItem('gusto_team', teamData); showSaveStatus(); 
+        }
+        async function saveAlarms() {
+            const serializableAlarms = {};
+            for (const key in alarms) { if (alarms[key] && alarms[key].time) serializableAlarms[key] = { time: alarms[key].time }; }
+            await localforage.setItem('gusto_alarms', serializableAlarms); showSaveStatus();
+        }
+        async function saveBoostNotes() { 
+            await localforage.setItem('gusto_boostNotes', boostNotes); showSaveStatus(); 
+        }
+        async function saveSettings() {
+            await localforage.setItem('gusto_settings', {
+                theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
+                activeTimezone: activeTimezone,
+                use24HourFormat: use24HourFormat,
+                isWideMode: document.body.classList.contains('wide-mode'),
+                isScrollEnabled: document.body.classList.contains('scroll-enabled'),
+                showHoldTimer: showHoldTimer,
+                colWidths: colWidths
+            });
+            showSaveStatus();
+        }
+
+        async function loadData(providedData = null, isImport = false) {
             try {
-                let savedData = providedData;
-                
-                if (!savedData) {
-                    const legacyData = localStorage.getItem('gusto_local_save');
-                    if (legacyData) {
-                        savedData = JSON.parse(legacyData);
-                        await localforage.setItem('gusto_data', savedData);
-                        localStorage.removeItem('gusto_local_save'); 
-                        console.log('Successfully migrated data to IndexedDB!');
-                    } else {
-                        savedData = await localforage.getItem('gusto_data');
+                if (!isImport) {
+                    // Legacy Fallback & Migration
+                    const legacyLocal = localStorage.getItem('gusto_local_save');
+                    if (legacyLocal) {
+                        await localforage.setItem('gusto_data', JSON.parse(legacyLocal));
+                        localStorage.removeItem('gusto_local_save');
+                    }
+                    
+                    const bulkData = await localforage.getItem('gusto_data');
+                    if (bulkData) {
+                        // Migrate bulk blob to separate keys
+                        if (bulkData.notes !== undefined) await localforage.setItem('gusto_notes', bulkData.notes);
+                        if (bulkData.todos !== undefined) await localforage.setItem('gusto_todos', bulkData.todos);
+                        if (bulkData.team !== undefined) await localforage.setItem('gusto_team', bulkData.team);
+                        if (bulkData.alarms !== undefined) await localforage.setItem('gusto_alarms', bulkData.alarms);
+                        if (bulkData.boostNotes !== undefined) await localforage.setItem('gusto_boostNotes', bulkData.boostNotes);
+                        
+                        await localforage.setItem('gusto_settings', {
+                            theme: bulkData.theme, activeTimezone: bulkData.activeTimezone, 
+                            use24HourFormat: bulkData.use24HourFormat, isWideMode: bulkData.isWideMode, 
+                            isScrollEnabled: bulkData.isScrollEnabled, showHoldTimer: bulkData.showHoldTimer
+                        });
+                        
+                        await localforage.removeItem('gusto_data');
                     }
                 }
+
+                // Load from split keys or imported object
+                const loadKey = async (key, importObj) => { return isImport ? importObj[key.replace('gusto_', '')] : await localforage.getItem(key); }
+
+                const pNotes = await loadKey('gusto_notes', providedData);
+                const pTodos = await loadKey('gusto_todos', providedData);
+                const pTeam = await loadKey('gusto_team', providedData);
+                const pAlarms = await loadKey('gusto_alarms', providedData);
+                const pBoost = await loadKey('gusto_boostNotes', providedData);
+                const pSettings = await loadKey('gusto_settings', providedData);
                 
-                if (savedData) {
-                    const parsed = typeof savedData === 'string' ? JSON.parse(savedData) : savedData;
-                    
-                    if (parsed.notes !== undefined) textarea.value = parsed.notes;
-                    if (parsed.theme) setTheme(parsed.theme);
-                    if (parsed.activeTimezone) activeTimezone = parsed.activeTimezone;
-                    if (parsed.use24HourFormat !== undefined) {
-                        use24HourFormat = parsed.use24HourFormat;
+                if (pNotes !== null && pNotes !== undefined) textarea.value = pNotes;
+                if (pTodos) todos = pTodos;
+                if (pTeam) teamData = pTeam;
+                if (pBoost) boostNotes = pBoost; else boostNotes = {};
+                
+                if (pSettings) {
+                    if (pSettings.theme) setTheme(pSettings.theme);
+                    if (pSettings.activeTimezone) activeTimezone = pSettings.activeTimezone;
+                    if (pSettings.use24HourFormat !== undefined) {
+                        use24HourFormat = pSettings.use24HourFormat;
                         formatToggle.checked = use24HourFormat;
                     }
-                    if (parsed.isWideMode) {
+                    if (pSettings.isWideMode) {
                         document.body.classList.add('wide-mode');
                         toggleWidthText.textContent = 'Disable Wide Mode';
                     }
-                    if (parsed.isScrollEnabled) {
+                    if (pSettings.isScrollEnabled) {
                         document.body.classList.add('scroll-enabled');
                         toggleScrollText.textContent = 'Disable Full Page Scroll';
                     }
-                    if (parsed.showHoldTimer !== undefined) {
-                        showHoldTimer = parsed.showHoldTimer;
+                    if (pSettings.showHoldTimer !== undefined) {
+                        showHoldTimer = pSettings.showHoldTimer;
                         holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
                         toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
                     }
-                    if (parsed.todos) todos = parsed.todos;
-                    if (parsed.team) teamData = parsed.team;
-                    if (parsed.boostNotes) boostNotes = parsed.boostNotes; else boostNotes = {};
-                    
-                    if (parsed.alarms) {
-                        const mapping = {
-                            'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
-                            'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
-                            'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
-                            'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
-                            'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
-                            'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
-                            'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
-                        };
-                        for (const [label, alarm] of Object.entries(parsed.alarms)) {
-                            if (alarm && alarm.time && mapping[label]) {
-                                const { time, ampm } = convertTo12HourParts(alarm.time);
-                                document.getElementById(mapping[label].timeId).value = time;
-                                document.getElementById(mapping[label].ampmId).value = ampm;
-                            }
+                    if (pSettings.colWidths) {
+                        colWidths = pSettings.colWidths;
+                        for (const [key, val] of Object.entries(colWidths)) {
+                            teamViewContainer.style.setProperty(`--col-${key}`, val);
                         }
-                        processAndSetAlarms(parsed.alarms);
                     }
+                }
+
+                if (pAlarms) {
+                    const mapping = {
+                        'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
+                        'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
+                        'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
+                        'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
+                        'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
+                        'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
+                        'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
+                    };
+                    for (const [label, alarm] of Object.entries(pAlarms)) {
+                        if (alarm && alarm.time && mapping[label]) {
+                            const { time, ampm } = convertTo12HourParts(alarm.time);
+                            document.getElementById(mapping[label].timeId).value = time;
+                            document.getElementById(mapping[label].ampmId).value = ampm;
+                        }
+                    }
+                    processAndSetAlarms(pAlarms);
+                }
+                
+                // If it's an import, force save everything to new keys
+                if(isImport) {
+                    await saveNotes(); await saveTodos(); await saveTeam();
+                    await saveAlarms(); await saveBoostNotes(); await saveSettings();
                 }
                 
                 renderTodoWeek();
@@ -1111,7 +1172,15 @@
 
         // IMPORT / EXPORT
         exportSettingsBtn.addEventListener('click', async () => {
-            const rawData = await localforage.getItem('gusto_data') || {};
+            const rawData = {
+                notes: await localforage.getItem('gusto_notes'),
+                todos: await localforage.getItem('gusto_todos'),
+                team: await localforage.getItem('gusto_team'),
+                alarms: await localforage.getItem('gusto_alarms'),
+                boostNotes: await localforage.getItem('gusto_boostNotes'),
+                settings: await localforage.getItem('gusto_settings')
+            };
+            
             const blob = new Blob([JSON.stringify(rawData)], { type: 'application/json' });
             
             const url = URL.createObjectURL(blob);
@@ -1136,8 +1205,7 @@
             reader.onload = async (event) => {
                 try {
                     const importedData = JSON.parse(event.target.result);
-                    await loadData(importedData);
-                    await saveData();
+                    await loadData(importedData, true);
                     alert('Data imported successfully!');
                 } catch (err) {
                     alert('Failed to parse the imported file. Ensure it is a valid .gst file.');
@@ -1220,16 +1288,18 @@
                     <button class="todo-delete">&times;</button>
                 `;
                 
+                // Smart DOM updating to prevent full wipe/render
                 li.querySelector('.todo-checkbox').addEventListener('change', (e) => {
                     task.done = e.target.checked;
-                    renderTodoList();
-                    saveData();
+                    if (task.done) li.classList.add('done'); else li.classList.remove('done');
+                    saveTodos();
                 });
                 
                 li.querySelector('.todo-delete').addEventListener('click', () => {
                     todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== task.id);
-                    renderTodoList();
-                    saveData();
+                    li.remove();
+                    if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
+                    saveTodos();
                 });
                 
                 todoList.appendChild(li);
@@ -1243,7 +1313,7 @@
             todos[selectedTodoDateStr].push({ id: Date.now(), text, done: false });
             todoInput.value = '';
             renderTodoList();
-            saveData();
+            saveTodos();
         });
 
         todoInput.addEventListener('keydown', (e) => {
@@ -1301,7 +1371,7 @@
             boostNotes[currentBoostMember.id][weekKey] = boostTextarea.value;
             
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveData, 1000);
+            saveTimeout = setTimeout(saveBoostNotes, 1000);
         });
 
         boostPrevWeekBtn.addEventListener('click', () => {
@@ -1314,10 +1384,45 @@
             renderBoostModal();
         });
 
-        // Grid Excel Logic
+        // Grid Excel Logic & Resizers
         let isDraggingCells = false;
         let cellDragStart = null;
         let lastFocusedCell = null;
+
+        function initColResizers() {
+            const colKeys = ['eid', 'sfdc', 'name', 'day', 'time'];
+            const resizers = document.querySelectorAll('.col-resizer');
+            
+            resizers.forEach((resizer, index) => {
+                let startX, startWidth;
+                resizer.addEventListener('mousedown', (e) => {
+                    startX = e.pageX;
+                    const cell = resizer.parentElement;
+                    startWidth = cell.getBoundingClientRect().width;
+                    document.documentElement.style.cursor = 'col-resize';
+                    
+                    const onMouseMove = (e) => {
+                        const newWidth = Math.max(30, startWidth + (e.pageX - startX));
+                        const key = colKeys[index];
+                        colWidths[key] = `${newWidth}px`;
+                        teamViewContainer.style.setProperty(`--col-${key}`, `${newWidth}px`);
+                    };
+                    
+                    const onMouseUp = () => {
+                        document.documentElement.style.cursor = '';
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.removeEventListener('mouseup', onMouseUp);
+                        saveSettings();
+                    };
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+        }
+        initColResizers();
 
         function getSelectableCells() { return document.querySelectorAll('.selectable-cell'); }
         function clearCellSelection() { document.querySelectorAll('.cell-selected').forEach(c => c.classList.remove('cell-selected')); }
@@ -1400,7 +1505,7 @@
             });
             renderTeamList();
             updateTeamAlarms();
-            saveData();
+            saveTeam();
         }
 
         function renderTeamList() {
@@ -1457,7 +1562,7 @@
                     member.day = daySelect.value;
                     member.time = timeInput.value;
                     updateTeamAlarms();
-                    saveData();
+                    saveTeam();
                 };
 
                 eidInput.addEventListener('input', saveChange);
@@ -1499,7 +1604,7 @@
                     teamData = teamData.filter(m => m.id !== member.id);
                     renderTeamList();
                     updateTeamAlarms();
-                    saveData();
+                    saveTeam();
                 });
 
                 row.appendChild(eidInput);
@@ -1518,7 +1623,7 @@
             if(teamData.length >= 20) return;
             teamData.push({ id: Date.now(), eid: '', sfdc: '', name: '', day: 'Monday', time: '12:00' });
             renderTeamList();
-            saveData();
+            saveTeam();
         });
 
         // MENU CONTROLS
@@ -1550,13 +1655,13 @@
             themeToggle.checked = theme === 'dark';
             themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
         }
-        themeToggle.addEventListener('change', (e) => { setTheme(e.target.checked ? 'dark' : 'light'); saveData(); });
+        themeToggle.addEventListener('change', (e) => { setTheme(e.target.checked ? 'dark' : 'light'); saveSettings(); });
 
         toggleHoldTimerButton.addEventListener('click', () => {
             showHoldTimer = !showHoldTimer;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
             toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
-            saveData();
+            saveSettings();
         });
 
         // CLOCK AND TIME
@@ -1583,6 +1688,17 @@
             const localNow = new Date();
             synchronizedTime = new Date(localNow.getTime() + localOffset);
             
+            // Check for Shift Day Rollover to automatically update Upcoming View
+            const mstInfo = getShiftDateMSTInfo(synchronizedTime);
+            const shiftDateMST = `${mstInfo.year}-${String(mstInfo.month).padStart(2, '0')}-${String(mstInfo.day).padStart(2, '0')}`;
+            if (currentMSTDateStr !== shiftDateMST) {
+                currentMSTDateStr = shiftDateMST;
+                if (isAppReady) {
+                    updateTeamAlarms();
+                    updateAlarmsView();
+                }
+            }
+
             const timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: activeTimezone, hour12: !use24HourFormat };
             dateElement.textContent = synchronizedTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: activeTimezone });
             clockDisplaySpan.textContent = synchronizedTime.toLocaleTimeString('en-US', timeOptions);
@@ -1598,8 +1714,8 @@
             generateCalendar(synchronizedTime); 
         }
 
-        tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); saveData(); }));
-        formatToggle.addEventListener('change', (e) => { use24HourFormat = e.target.checked; updateClock(); saveData(); });
+        tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); saveSettings(); }));
+        formatToggle.addEventListener('change', (e) => { use24HourFormat = e.target.checked; updateClock(); saveSettings(); });
         
         // TABS
         tabNotepad.addEventListener('click', () => {
@@ -1624,8 +1740,8 @@
         increaseFontBtn.addEventListener('click', () => { currentFontSize++; updateFontSize(); });
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
         
-        resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveData(); });
-        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 1000); });
+        resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveNotes(); });
+        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveNotes, 1000); });
 
         // ALARMS
         setAlarmsButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); alarmModal.classList.add('show'); });
@@ -1738,7 +1854,7 @@
                 'Team Meeting': { time: convertTo24Hour(document.getElementById('meeting-time').value, document.getElementById('meeting-ampm').value) }
             };
             processAndSetAlarms(tempAlarms);
-            saveData();
+            saveAlarms();
             alarmModal.classList.remove('show');
         });
 
@@ -1758,6 +1874,7 @@
             if(teamAlarm) teamAlarm.snoozed = true;
 
             updateAlarmsView();
+            updateUpcomingView(); // dynamically update Coaching view statuses
             
             const now = new Date(synchronizedTime);
             now.setMinutes(now.getMinutes() + 1);
@@ -1778,6 +1895,7 @@
                 clockWidget.classList.remove('snoozed-indicator');
                 topBar.classList.remove('snoozed');
                 updateAlarmsView();
+                updateUpcomingView(); // dynamically update Coaching view statuses
                 updateTopBarTitle(synchronizedTime);
             }
             currentlyTriggeredAlarmLabel = null;
@@ -1804,6 +1922,7 @@
                     if(ta) ta.triggered = true;
                 });
                 updateAlarmsView();
+                updateUpcomingView(); // dynamically update Coaching view statuses
                 return;
             }
             
@@ -2113,14 +2232,14 @@
         function handleWidthToggle() {
             document.body.classList.toggle('wide-mode');
             toggleWidthText.textContent = document.body.classList.contains('wide-mode') ? 'Disable Wide Mode' : 'Enable Wide Mode';
-            saveData();
+            saveSettings();
         }
         toggleWidthButton.addEventListener('click', handleWidthToggle);
         
         function handleScrollToggle() {
             document.body.classList.toggle('scroll-enabled');
             toggleScrollText.textContent = document.body.classList.contains('scroll-enabled') ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
-            saveData();
+            saveSettings();
         }
         toggleScrollButton.addEventListener('click', handleScrollToggle);
 
