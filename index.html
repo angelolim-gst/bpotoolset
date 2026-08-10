@@ -477,6 +477,7 @@
         .formatted-display-box p { margin-top: 0; margin-bottom: 8px; line-height: 1.5; }
         .formatted-display-box p:last-child { margin-bottom: 0; }
         .formatted-display-box strong { font-weight: 600; color: var(--text-color); }
+        .formatted-display-box ul { padding-left: 20px; margin-top: 4px; margin-bottom: 8px; }
 
         #about-modal h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
         #about-modal ul { padding-left: 20px; margin: 0; font-size: 0.9rem; line-height: 1.6; }
@@ -521,6 +522,13 @@
                     <li class="dropdown-header">Utilities</li>
                     <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
                     <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
+                    <li>
+                        <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                        <button id="analyze-wfm-btn" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
+                            <span>Analyze WFM Schedule</span>
+                        </button>
+                    </li>
                     <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
                     <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
                     <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
@@ -727,7 +735,6 @@
                         <span style="font-size: 0.75rem; font-weight: 600; color: var(--focus-color);">AI Formatted</span>
                         <button id="clear-formatted-btn" style="background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 0.75rem; padding: 0; text-decoration: underline;">Clear</button>
                     </div>
-                    <!-- Replacing textarea with a display div to render Markdown styles -->
                     <div id="boost-formatted-display" class="formatted-display-box" contenteditable="false">
                         <span style="color: var(--secondary-text-color);">Formatted AI output will appear here...</span>
                     </div>
@@ -757,6 +764,20 @@
             </div>
 
             <button id="save-api-key-btn" class="modal-button" style="margin-top: 5px;">Save Configuration</button>
+        </div>
+    </div>
+    
+    <!-- WFM Analysis Modal -->
+    <div id="wfm-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px; width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+            <button class="modal-close-button">&times;</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 class="modal-title" style="margin-bottom: 0;">WFM Schedule Analysis</h2>
+                <button id="copy-wfm-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 8px; font-family: 'Inter', sans-serif;">Copy Report</button>
+            </div>
+            <div id="wfm-analysis-output" class="formatted-display-box" style="flex-grow: 1; min-height: 300px; overflow-y: auto;">
+                <span style="color: var(--secondary-text-color);">Upload a WFM schedule (.xlsx) from the Tools menu to generate an AI analysis...</span>
+            </div>
         </div>
     </div>
 
@@ -835,13 +856,14 @@
                 <li><strong>Visual Alarms:</strong> Set full-screen alerts for breaks and activities.</li>
                 <li><strong>Calculator:</strong> With normal, formula, and time-summing modes.</li>
                 <li><strong>Calendar View:</strong> A quick-glance monthly calendar with US & PH holidays.</li>
+                <li><strong>WFM Analyzer:</strong> Upload Excel schedules for automated PHT conversion and optimal coaching slot analysis via Gemini AI.</li>
             </ul>
 
             <h4>Technology & Credits:</h4>
             <ul>
                 <li>Built with <strong>HTML5</strong>, <strong>CSS3</strong>, and <strong>JavaScript (ES6)</strong>.</li>
                 <li>Fonts 'Inter' and 'JetBrains Mono' served by <strong>Google Fonts</strong>.</li>
-                <li>Formula parsing by <strong>math.js</strong>.</li>
+                <li>Formula parsing by <strong>math.js</strong>, Excel parsing by <strong>SheetJS</strong>, and Markdown rendering by <strong>marked.js</strong>.</li>
                 <li>Storage managed by <strong>localForage</strong> (IndexedDB).</li>
             </ul>
             
@@ -852,7 +874,8 @@
     <!-- SCRIPT SECTION -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- ADDED MARKED.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // DOM Variables - Top Bar
         const topBar = document.querySelector('.top-bar');
@@ -912,6 +935,14 @@
         const importSettingsBtn = document.getElementById('import-settings-btn');
         const importSettingsInput = document.getElementById('import-settings-input');
         
+        // DOM Variables - WFM Analyzer
+        const wfmUploadInput = document.getElementById('wfm-upload-input');
+        const analyzeWfmBtn = document.getElementById('analyze-wfm-btn');
+        const wfmModal = document.getElementById('wfm-modal');
+        const wfmAnalysisOutput = document.getElementById('wfm-analysis-output');
+        const closeWfmModalBtn = wfmModal.querySelector('.modal-close-button');
+        const copyWfmBtn = document.getElementById('copy-wfm-btn');
+
         // DOM Variables - API Key Modal
         const setApiKeyBtn = document.getElementById('set-api-key-btn');
         const apiKeyModal = document.getElementById('api-key-modal');
@@ -1287,6 +1318,104 @@
             e.target.value = '';
         });
 
+        // WFM Analyzer Script
+        closeWfmModalBtn.addEventListener('click', () => wfmModal.classList.remove('show'));
+        copyWfmBtn.addEventListener('click', () => {
+            const content = wfmAnalysisOutput.innerText;
+            if(content) {
+                navigator.clipboard.writeText(content).then(() => {
+                    copyWfmBtn.textContent = 'Copied!';
+                    setTimeout(() => copyWfmBtn.textContent = 'Copy Report', 2000);
+                });
+            }
+        });
+
+        analyzeWfmBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.remove('show');
+            if (!geminiApiKey || !geminiModel) {
+                alert("Please verify your API key and select a model in the 'Tools > Set Gemini API Key' menu first.");
+                setApiKeyBtn.click();
+                return;
+            }
+            wfmUploadInput.click();
+        });
+
+        wfmUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                try {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const csvData = XLSX.utils.sheet_to_csv(worksheet);
+
+                    wfmModal.classList.add('show');
+                    wfmAnalysisOutput.innerHTML = '<span style="color: var(--focus-color);">Analyzing schedule and generating recommendations... Please wait.</span>';
+
+                    analyzeWfmData(csvData);
+                } catch(err) {
+                    alert("Error parsing file. Please ensure it is a valid Excel file.");
+                    console.error(err);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            e.target.value = ''; 
+        });
+
+        async function analyzeWfmData(csvData) {
+            try {
+                const endpoint = geminiModel.includes('/') ? geminiModel : `models/${geminiModel}`;
+                const prompt = `You are an expert Workforce Management (WFM) and Team Lead scheduling assistant.
+I am providing you with a raw WFM schedule exported from Nice WFM. 
+
+IMPORTANT RULES:
+1. The times in the report are currently in MST (Mountain Standard Time).
+2. Convert all times to PHT (Philippine Time). (MST is UTC-7, PHT is UTC+8. So PHT = MST + 15 hours). Note that if the result crosses midnight, update the day appropriately.
+3. Find the best 1:1 Coaching session schedules for the agents (typically 30 mins).
+   - Avoid scheduling during their breaks or lunches.
+   - Schedule them during productive time (e.g., 'Chat/Email', 'Open Time', etc.).
+   - Aim to schedule at least 4 coaching sessions within the day across the team. Provide exact PHT times.
+4. Suggest the best common Team Meeting schedule (typically 30 mins to 1 hour) that fits most or all teammates.
+   - You may suggest minor movements to breaks and lunches if it helps accommodate the team meeting.
+5. Provide a clear, well-structured output in Markdown.
+   - Use bold headers, bullet points, and clear tables if necessary.
+   - Summarize the final schedule recommendations clearly.
+   - DO NOT include conversational filler like "Here is the output" or "Here are the recommendations." Just output the markdown report.
+
+Here is the raw schedule data:
+${csvData.substring(0, 15000)}`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const resData = await response.json();
+                
+                if (resData.error) throw new Error(resData.error.message || 'API Error');
+
+                if (resData.candidates && resData.candidates[0].content && resData.candidates[0].content.parts) {
+                    const formattedMarkdown = resData.candidates[0].content.parts[0].text.trim();
+                    wfmAnalysisOutput.innerHTML = marked.parse(formattedMarkdown);
+                } else {
+                    throw new Error('Unexpected response format from Google AI.');
+                }
+
+            } catch (error) {
+                console.error(error);
+                wfmAnalysisOutput.innerHTML = `<span style="color: var(--alarm-color);">Failed to analyze schedule: ${error.message}</span>`;
+            }
+        }
+
+
         // API Key Verify and Setup Logic
         setApiKeyBtn.addEventListener('click', (e) => {
             e.stopPropagation(); dropdownMenu.classList.remove('show');
@@ -1411,7 +1540,7 @@
             list.forEach(task => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${task.done ? 'done' : ''}`;
-                li.dataset.id = task.id; // added for delegation
+                li.dataset.id = task.id; 
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
                     <span class="todo-text">${task.text}</span>
@@ -1440,7 +1569,7 @@
                 const id = parseInt(li.dataset.id);
                 todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
                 li.remove();
-                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
+                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); 
                 saveTodos();
             }
         });
@@ -1524,7 +1653,6 @@
         const handleBoostInput = () => {
             const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
             if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
-            // Preserve the existing formatted data while typing raw notes
             boostNotes[currentBoostMember.id][weekKey].raw = boostTextareaRaw.value;
             
             clearTimeout(saveTimeout);
