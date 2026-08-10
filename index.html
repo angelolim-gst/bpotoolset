@@ -1416,7 +1416,7 @@ IMPORTANT RULES:
    - Find the best routine day and time for a 30-minute coaching session for EACH teammate.
    - You MUST schedule exactly 4 coaching sessions per day across the team (distributing the teammates evenly from Monday to Friday).
    - Avoid scheduling during their breaks or lunches. Target productive times (e.g., 'Chat/Email', 'Phone', 'Open Time').
-   - Strictly factor in the Team Lead's schedule if provided. DO NOT exceed the team leader's shift schedule. By default it should be PH Time unless specified.
+   - Factor in the Team Lead's schedule if provided.
 6. Team Meeting:
    - Find ONE optimal 30-minute slot for a routine weekly Team Meeting that accommodates ALL team members simultaneously.
    - It must be scheduled during productive time. Avoid overlapping with breaks/lunches as much as possible, but if absolutely necessary, you may suggest minor adjustments to their break/lunch schedules to make it fit.
@@ -1692,7 +1692,11 @@ ${csvData.substring(0, 200000)}`;
         const handleBoostInput = () => {
             const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
             if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
-            // Preserve the existing formatted data while typing raw notes
+            
+            if (!boostNotes[currentBoostMember.id][weekKey]) {
+                boostNotes[currentBoostMember.id][weekKey] = { raw: '', formatted: '' };
+            }
+            
             boostNotes[currentBoostMember.id][weekKey].raw = boostTextareaRaw.value;
             
             clearTimeout(saveTimeout);
@@ -1705,6 +1709,9 @@ ${csvData.substring(0, 200000)}`;
             boostFormattedDisplay.innerHTML = '<span style="color: var(--secondary-text-color);">Formatted AI output will appear here...</span>';
             const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
             if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+            if (!boostNotes[currentBoostMember.id][weekKey]) {
+                boostNotes[currentBoostMember.id][weekKey] = { raw: boostTextareaRaw.value, formatted: '' };
+            }
             boostNotes[currentBoostMember.id][weekKey].formatted = '';
             saveBoostNotes();
         });
@@ -1731,13 +1738,14 @@ ${csvData.substring(0, 200000)}`;
                 return;
             }
             
+            const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
+            
             boostAiFormatBtn.textContent = 'Formatting...';
             boostAiFormatBtn.disabled = true;
             boostTextareaRaw.disabled = true;
             boostFormattedDisplay.innerHTML = '<span style="color: var(--secondary-text-color);">Formatting...</span>';
 
             try {
-                // Determine the correct endpoint (usually models/... but we ensure the API expects it)
                 const endpoint = geminiModel.includes('/') ? geminiModel : `models/${geminiModel}`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
                     method: 'POST',
@@ -1756,8 +1764,10 @@ ${csvData.substring(0, 200000)}`;
                     const formattedMarkdown = data.candidates[0].content.parts[0].text.trim();
                     boostFormattedDisplay.innerHTML = marked.parse(formattedMarkdown);
                     
-                    const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
                     if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+                    if (!boostNotes[currentBoostMember.id][weekKey]) {
+                        boostNotes[currentBoostMember.id][weekKey] = { raw: '', formatted: '' };
+                    }
                     boostNotes[currentBoostMember.id][weekKey] = {
                         raw: boostTextareaRaw.value,
                         formatted: formattedMarkdown
