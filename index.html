@@ -2383,9 +2383,24 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             }
         }
         
-        function updateNetworkStatus() {
+        async function checkTrueNetwork() {
+            if (!navigator.onLine) return false; // OS says we are completely disconnected
+            try {
+                // Ping Cloudflare with a timestamp to bust local browser cache
+                await fetch('https://1.1.1.1/cdn-cgi/trace?' + Date.now(), { mode: 'no-cors', cache: 'no-store' });
+                return true; // Ping succeeded, we have actual internet routing!
+            } catch (e) {
+                return false; // Ping failed, router is on but internet is dead
+            }
+        }
+        
+        async function updateNetworkStatus() {
             if (!statusNetwork) return;
-            if (!navigator.onLine) {
+            
+            // Check true connection instead of relying solely on the OS
+            const isOnline = await checkTrueNetwork();
+            
+            if (!isOnline) {
                 statusNetwork.innerHTML = '<span class="status-offline">🔴</span> System Offline';
                 statusNetwork.style.color = 'var(--alarm-color)';
             } else {
@@ -2393,6 +2408,12 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 statusNetwork.innerHTML = '🌐 System Online';
             }
         }
+        
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        
+        // Actively check the network every 10 seconds just in case it drops silently
+        setInterval(updateNetworkStatus, 10000);
         
         window.addEventListener('online', updateNetworkStatus);
         window.addEventListener('offline', updateNetworkStatus);
