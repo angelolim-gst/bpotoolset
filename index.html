@@ -567,6 +567,16 @@
             .alarm-actions { flex-direction: column; width: 80%; align-items: center; }
             .alarm-button { width: 100%; text-align: center; }
         }
+        /* --- PERFORMANCE OPTIMIZATIONS --- */
+        .workspace-content, .widget, #cards-wrapper {
+            /* Isolates layout, style, and paint to prevent full-page repaints */
+            contain: content; 
+        }
+        
+        #clock {
+            /* Strict containment because the clock's physical dimensions never change */
+            contain: strict; 
+        }
     </style>
 </head>
 <body>
@@ -965,10 +975,10 @@
     </div>
 
     <!-- SCRIPT SECTION -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
     <script>
         // DOM Variables - Top Bar
         const topBar = document.querySelector('.top-bar');
@@ -1221,6 +1231,14 @@
         }
 
         // SPLIT DB SAVING LOGIC
+        // Helper function to safely defer database writes until the browser is idle
+        function idleSave(saveFunction) {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => saveFunction());
+            } else {
+                setTimeout(saveFunction, 1);
+            }
+        }
         function showSaveStatus() {
             if (!isAppReady) return;
             isDisplayingSaveStatus = true;
@@ -1805,7 +1823,7 @@ ${csvData.substring(0, 200000)}`;
             boostNotes[currentBoostMember.id][weekKey].raw = boostTextareaRaw.value;
             
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveBoostNotes, 1000);
+            saveTimeout = setTimeout(() => idleSave(saveBoostNotes), 1000);
         };
 
         boostTextareaRaw.addEventListener('input', handleBoostInput);
@@ -2101,7 +2119,7 @@ ${csvData.substring(0, 200000)}`;
                         updateTeamAlarms();
                     }
                     clearTimeout(saveTimeout);
-                    saveTimeout = setTimeout(saveTeam, 1000);
+                    saveTimeout = setTimeout(() => idleSave(saveTeam), 1000);
                 }
             }
         });
@@ -2510,8 +2528,8 @@ ${csvData.substring(0, 200000)}`;
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
         
         resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveNotes(); });
-        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveNotes, 1000); });
-
+        textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(() => idleSave(saveNotes), 1000); });
+        
         // ALARMS
         setAlarmsButton.addEventListener('click', (e) => { 
             e.stopPropagation(); 
