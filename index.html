@@ -146,6 +146,11 @@
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
 
+        /* Hardware acceleration for complex UI movements */
+        .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm {
+            will-change: transform, opacity;
+        }
+
         .dropdown { position: relative; }
         .dropdown-button {
             background-color: var(--widget-bg-color); border: 1.5px solid var(--border-color); color: var(--secondary-text-color);
@@ -215,6 +220,16 @@
             color: var(--text-color);
             font-weight: 600;
         }
+        
+        /* Status Bar Dynamic Styles */
+        @keyframes blink-red {
+            0% { opacity: 1; color: var(--alarm-color); }
+            50% { opacity: 0.3; color: var(--alarm-color); }
+            100% { opacity: 1; color: var(--alarm-color); }
+        }
+        .status-offline { animation: blink-red 1.5s infinite; }
+        .battery-critical { color: var(--alarm-color) !important; font-weight: 700; }
+        .battery-warning { color: var(--warning-color-orange) !important; font-weight: 700; }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .widget {
@@ -552,27 +567,6 @@
             .alarm-actions { flex-direction: column; width: 80%; align-items: center; }
             .alarm-button { width: 100%; text-align: center; }
         }
-        
-        /* Status Bar dynamic styles */
-        @keyframes blink-red {
-            0% { opacity: 1; color: var(--alarm-color); }
-            50% { opacity: 0.3; color: var(--alarm-color); }
-            100% { opacity: 1; color: var(--alarm-color); }
-        }
-        
-        .status-offline { 
-            animation: blink-red 1.5s infinite; 
-        }
-        
-        .battery-critical { 
-            color: var(--alarm-color) !important; 
-            font-weight: 700;
-        }
-        
-        .battery-warning { 
-            color: var(--warning-color-orange) !important; 
-            font-weight: 700;
-        }
     </style>
 </head>
 <body>
@@ -600,6 +594,7 @@
                     <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
                     <li class="dropdown-divider"></li>
                     <li class="dropdown-header">Page Controls</li>
+                    <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Show Status Bar Clock</span></button></li>
                     <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
                     <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
                     <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
@@ -964,6 +959,7 @@
             <div class="status-item" id="status-network" title="Network Connection">🌐 Checking...</div>
         </div>
         <div class="status-bar-right">
+            <div class="status-item" id="status-clock" title="PHT Time" style="display: none;">🕒 --:--</div>
             <div class="status-item" id="status-battery" title="Battery Level">🔋 Checking...</div>
         </div>
     </div>
@@ -1120,6 +1116,13 @@
         const csvOutput = document.getElementById('csv-output');
         const generateCsvButton = document.getElementById('generate-csv-button');
 
+        // NEW DOM Variables - Status Bar
+        const toggleStatusBarClockButton = document.getElementById('toggle-statusbar-clock-button');
+        const toggleStatusBarClockText = document.getElementById('toggle-statusbar-clock-text');
+        const statusClock = document.getElementById('status-clock');
+        const statusNetwork = document.getElementById('status-network');
+        const statusBattery = document.getElementById('status-battery');
+
         // APP STATE
         let activeTimezone = 'Asia/Manila';
         let use24HourFormat = false;
@@ -1127,6 +1130,7 @@
         let localOffset = 0;
         let currentFontSize = 12;
         let showHoldTimer = false;
+        let showStatusBarClock = false;
         let isAppReady = false; 
         
         let saveTimeout;
@@ -1134,7 +1138,7 @@
         let isDisplayingSaveStatus = false;
         
         let alarms = {};
-        let customAlarmsData = []; // State for Custom Alarms
+        let customAlarmsData = []; 
         let activeTimers = []; 
         let teamAlarms = [];
         
@@ -1271,6 +1275,7 @@
                 isWideMode: document.body.classList.contains('wide-mode'),
                 isScrollEnabled: document.body.classList.contains('scroll-enabled'),
                 showHoldTimer: showHoldTimer,
+                showStatusBarClock: showStatusBarClock,
                 colWidths: colWidths
             });
             showSaveStatus();
@@ -1343,6 +1348,11 @@
                         showHoldTimer = pSettings.showHoldTimer;
                         holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
                         toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
+                    }
+                    if (pSettings.showStatusBarClock !== undefined) {
+                        showStatusBarClock = pSettings.showStatusBarClock;
+                        statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
+                        toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
                     }
                     if (pSettings.colWidths) {
                         colWidths = pSettings.colWidths;
@@ -2123,7 +2133,6 @@ ${csvData.substring(0, 200000)}`;
             }
         });
 
-
         function handleExcelPaste(e, startingIndex, startField) {
             const pasteData = (e.clipboardData || window.clipboardData).getData('text');
             if (!pasteData.includes('\t') && !pasteData.includes('\n')) return;
@@ -2290,31 +2299,35 @@ ${csvData.substring(0, 200000)}`;
             toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
             saveSettings();
         });
+        
+        toggleStatusBarClockButton.addEventListener('click', () => {
+            showStatusBarClock = !showStatusBarClock;
+            statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
+            toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
+            if (showStatusBarClock) updateClock(); 
+            saveSettings();
+        });
 
         // --- SYSTEM STATUS BAR LOGIC ---
-        const statusNetwork = document.getElementById('status-network');
-        const statusBattery = document.getElementById('status-battery');
-        
         function initBattery() {
             if ('getBattery' in navigator) {
                 navigator.getBattery().then(battery => {
+                    let lastBatteryText = '';
                     function updateBattery() {
                         if (!statusBattery) return;
                         const level = Math.round(battery.level * 100);
                         const isCharging = battery.charging;
                         const stateText = isCharging ? 'Charging' : 'Discharging';
+                        const newText = `🔋 ${level}% (${stateText})`;
                         
-                        statusBattery.textContent = `🔋 ${level}% (${stateText})`;
-                        
-                        // Reset classes
-                        statusBattery.classList.remove('battery-critical', 'battery-warning');
-                        
-                        // Change hue based on battery level if not charging
-                        if (!isCharging) {
-                            if (level <= 20) {
-                                statusBattery.classList.add('battery-critical');
-                            } else if (level <= 40) {
-                                statusBattery.classList.add('battery-warning');
+                        if (lastBatteryText !== newText) {
+                            statusBattery.textContent = newText;
+                            lastBatteryText = newText;
+                            
+                            statusBattery.classList.remove('battery-critical', 'battery-warning');
+                            if (!isCharging) {
+                                if (level <= 20) statusBattery.classList.add('battery-critical');
+                                else if (level <= 40) statusBattery.classList.add('battery-warning');
                             }
                         }
                     }
@@ -2360,8 +2373,6 @@ ${csvData.substring(0, 200000)}`;
             }
         }
         
-        // The browser automatically releases the wake lock if the tab is minimized or backgrounded.
-        // This re-acquires the lock automatically when the user brings the tab back into view.
         document.addEventListener('visibilitychange', async () => {
             if (wakeLock !== null && document.visibilityState === 'visible') {
                 await requestWakeLock();
@@ -2439,11 +2450,21 @@ ${csvData.substring(0, 200000)}`;
             }
 
             const timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: activeTimezone, hour12: !use24HourFormat };
-            dateElement.textContent = synchronizedTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: activeTimezone });
-            clockDisplaySpan.textContent = synchronizedTime.toLocaleTimeString('en-US', timeOptions);
             
-            const shiftDateOptions = { month: 'long', day: 'numeric', timeZone: 'America/Denver' };
-            shiftDateElement.textContent = `Shift Date: ${synchronizedTime.toLocaleDateString('en-US', shiftDateOptions)}`;
+            const newDateText = synchronizedTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: activeTimezone });
+            if (dateElement.textContent !== newDateText) dateElement.textContent = newDateText;
+
+            const newTimeText = synchronizedTime.toLocaleTimeString('en-US', timeOptions);
+            if (clockDisplaySpan.textContent !== newTimeText) clockDisplaySpan.textContent = newTimeText;
+            
+            const newShiftDateText = `Shift Date: ${synchronizedTime.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'America/Denver' })}`;
+            if (shiftDateElement.textContent !== newShiftDateText) shiftDateElement.textContent = newShiftDateText;
+            
+            if (showStatusBarClock) {
+                const phtOptions = { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hour12: !use24HourFormat };
+                const newStatusTimeText = `🕒 ${synchronizedTime.toLocaleTimeString('en-US', phtOptions)}`;
+                if (statusClock.textContent !== newStatusTimeText) statusClock.textContent = newStatusTimeText;
+            }
             
             checkAlarms(synchronizedTime);
             passiveStatusUpdate(synchronizedTime);
@@ -2452,6 +2473,14 @@ ${csvData.substring(0, 200000)}`;
             if (!topBar.classList.contains('snoozed')) updateTopBarTitle(synchronizedTime);
             tzButtons.forEach(button => button.classList.toggle('active', button.dataset.tz === activeTimezone));
             generateCalendar(synchronizedTime); 
+        }
+
+        function scheduleNextTick() {
+            const msToNextSecond = 1000 - (new Date().getTime() % 1000);
+            setTimeout(() => {
+                updateClock();
+                scheduleNextTick();
+            }, msToNextSecond);
         }
 
         tzButtons.forEach(button => button.addEventListener('click', () => { activeTimezone = button.dataset.tz; updateClock(); saveSettings(); }));
@@ -3092,7 +3121,7 @@ ${csvData.substring(0, 200000)}`;
             // Request Wake Lock on load
             requestWakeLock();
             
-            setInterval(updateClock, 1000);
+            scheduleNextTick();
             setInterval(syncTime, 300000);
         }
 
