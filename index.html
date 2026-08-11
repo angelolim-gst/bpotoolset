@@ -578,10 +578,6 @@
         /* Isolates layout, style, and paint to prevent full-page repaints, 
            but allows the elements to size normally based on their content */
         contain: content;
-        
-        #clock {
-            /* Strict containment because the clock's physical dimensions never change */
-            contain: strict; 
         }
     </style>
 </head>
