@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gusto Toolset</title>
+    <title>Gusto Toolset</title>
+    <!-- Inline PWA Manifest -->
+    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%0A%20%20%22name%22%3A%20%22Gusto%20Toolset%22%2C%0A%20%20%22short_name%22%3A%20%22Toolset%22%2C%0A%20%20%22start_url%22%3A%20%22.%22%2C%0A%20%20%22display%22%3A%20%22standalone%22%2C%0A%20%20%22background_color%22%3A%20%22%23121212%22%2C%0A%20%20%22theme_color%22%3A%20%22%23007aff%22%2C%0A%20%20%22icons%22%3A%20%5B%7B%0A%20%20%20%20%22src%22%3A%20%22data%3Aimage%2Fsvg%2Bxml%3Butf8%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%23007aff%27%3E%3Cpath%20d%3D%27M12%202C6.486%202%202%206.486%202%2012s4.486%2010%2010%2010%2010-4.486%2010-10S17.514%202%2012%202zm0%2018c-4.411%200-8-3.589-8-8s3.589-8%208-8%208%203.589%208%208-3.589%208-8%208z%27%2F%3E%3Cpath%20d%3D%27M13%207h-2v5.414l3.293%203.293%201.414-1.414L13%2011.586V7z%27%2F%3E%3C%2Fsvg%3E%22%2C%0A%20%20%20%20%22sizes%22%3A%20%22any%22%2C%0A%20%20%20%20%22type%22%3A%20%22image%2Fsvg%2Bxml%22%0A%20%20%7D%5D%0A%7D">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap');
@@ -3211,6 +3214,19 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             } catch (error) {
                 console.error("Bootloader failed:", error);
             }
+        }
+
+        // --- SERVICE WORKER REGISTRATION (For Offline PWA) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
         }
 
         // Kick off the bootloader instead of calling initialize() directly
