@@ -977,10 +977,7 @@
     </div>
 
     <!-- SCRIPT SECTION -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+
     <script>
         // DOM Variables - Top Bar
         const topBar = document.querySelector('.top-bar');
@@ -3145,7 +3142,58 @@ ${csvData.substring(0, 200000)}`;
             setInterval(syncTime, 300000);
         }
 
-        initialize();
+        // --- OFFLINE SCRIPT BOOTLOADER ---
+        const externalScripts = [
+            "https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js",
+            "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+        ];
+
+        async function bootloadScripts() {
+            const fetchScript = async (url) => {
+                let scriptText = localStorage.getItem(url);
+                
+                // If online, fetch fresh code to ensure it's up to date
+                if (navigator.onLine) {
+                    try {
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            scriptText = await response.text();
+                            // Update the local cache with the new code
+                            try { localStorage.setItem(url, scriptText); } catch(e) { console.warn('Cache quota exceeded'); }
+                        }
+                    } catch (e) {
+                        console.log(`Network fetch failed, falling back to cache for ${url}`);
+                    }
+                }
+                return scriptText;
+            };
+
+            try {
+                // 1. Fetch all scripts in parallel for maximum speed
+                const scriptContents = await Promise.all(externalScripts.map(fetchScript));
+                
+                // 2. Inject them into the DOM sequentially so they execute in the correct order
+                scriptContents.forEach((text, index) => {
+                    if (text) {
+                        const scriptEl = document.createElement('script');
+                        scriptEl.textContent = text;
+                        document.body.appendChild(scriptEl);
+                    } else {
+                        console.error('Failed to load script (Offline and not cached):', externalScripts[index]);
+                    }
+                });
+
+                // 3. Once all scripts are injected and compiled, start the app!
+                initialize();
+            } catch (error) {
+                console.error("Bootloader failed:", error);
+            }
+        }
+
+        // Kick off the bootloader instead of calling initialize() directly
+        bootloadScripts();
     </script>
 </body>
 </html>
