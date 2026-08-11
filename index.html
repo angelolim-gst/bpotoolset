@@ -114,6 +114,7 @@
             flex-grow: 1;
             padding: 20px;
             padding-top: 80px; 
+            padding-bottom: 50px; /* Accommodates the bottom status bar */
             width: 100%;
             max-width: 440px;
             box-sizing: border-box;
@@ -175,6 +176,45 @@
         .theme-switch input:checked + .slider, .format-switch input:checked + .slider { background-color: var(--focus-color); }
         .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(20px); }
         #theme-label { font-size: 0.8rem; font-weight: 500; color: var(--secondary-text-color); transition: color 0.4s ease; }
+
+        /* Status Bar CSS */
+        .bottom-status-bar {
+            width: 100%;
+            height: 30px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            background-color: var(--widget-bg-color);
+            border-top: 1.5px solid var(--border-color);
+            z-index: 1000;
+            box-sizing: border-box;
+            font-size: 0.72rem;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--secondary-text-color);
+            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+            user-select: none;
+        }
+        .status-bar-left, .status-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .status-item span {
+            color: var(--text-color);
+            font-weight: 600;
+        }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .widget {
@@ -556,7 +596,7 @@
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
                 <svg class="switch-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.807A9.002 9.002 0 0 1 10.049 2.5a9.948 9.948 0 0 0-5.12 3.935A9.996 9.996 0 0 0 12 22a9.94 9.94 0 0 0 7.07-2.93A9.996 9.996 0 0 0 12 11.807z"></path></svg>
-                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 0 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
+                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
             </label>
         </div>
     </div>
@@ -894,6 +934,19 @@
             </ul>
             
             <p class="credit">Created by Angelo Lim</p>
+        </div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="bottom-status-bar">
+        <div class="status-bar-left">
+            <div class="status-item" id="status-network" title="Network Connection">🌐 Checking...</div>
+            <div class="status-item" id="status-viewport" title="Viewport Size">📐 0x0</div>
+        </div>
+        <div class="status-bar-right">
+            <div class="status-item" id="status-cpu" title="Hardware Concurrency"></div>
+            <div class="status-item" id="status-memory" title="Memory Allocation"></div>
+            <div class="status-item" id="status-battery" title="Battery Level">🔋 Checking...</div>
         </div>
     </div>
 
@@ -1601,7 +1654,7 @@ ${csvData.substring(0, 200000)}`;
             list.forEach(task => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${task.done ? 'done' : ''}`;
-                li.dataset.id = task.id; 
+                li.dataset.id = task.id; // added for delegation
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
                     <span class="todo-text">${task.text}</span>
@@ -1611,6 +1664,7 @@ ${csvData.substring(0, 200000)}`;
             });
         }
 
+        // To-Do Event Delegation
         todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('todo-checkbox')) {
                 const li = e.target.closest('li');
@@ -1630,7 +1684,7 @@ ${csvData.substring(0, 200000)}`;
                 const id = parseInt(li.dataset.id);
                 todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
                 li.remove();
-                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); 
+                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
                 saveTodos();
             }
         });
@@ -1696,6 +1750,7 @@ ${csvData.substring(0, 200000)}`;
             
             let noteData = boostNotes[currentBoostMember.id][weekKey];
             
+            // Legacy Migration: If the old note is just a plain string, convert to object
             if (typeof noteData === 'string') {
                 noteData = { raw: noteData, formatted: '' };
                 boostNotes[currentBoostMember.id][weekKey] = noteData;
@@ -1714,9 +1769,11 @@ ${csvData.substring(0, 200000)}`;
         const handleBoostInput = () => {
             const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
             if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
+            
             if (!boostNotes[currentBoostMember.id][weekKey]) {
                 boostNotes[currentBoostMember.id][weekKey] = { raw: '', formatted: '' };
             }
+            
             boostNotes[currentBoostMember.id][weekKey].raw = boostTextareaRaw.value;
             
             clearTimeout(saveTimeout);
@@ -2034,6 +2091,7 @@ ${csvData.substring(0, 200000)}`;
                 teamData = teamData.filter(m => m.id !== id);
                 rowDiv.remove();
                 
+                // re-adjust dataset rows for remaining inputs to fix drag-to-select math
                 document.querySelectorAll('.team-row').forEach((r, idx) => {
                     r.querySelectorAll('.selectable-cell').forEach(cell => cell.dataset.row = idx);
                 });
@@ -2213,6 +2271,80 @@ ${csvData.substring(0, 200000)}`;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
             toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
             saveSettings();
+        });
+
+        // --- SYSTEM STATUS BAR LOGIC ---
+        const statusNetwork = document.getElementById('status-network');
+        const statusViewport = document.getElementById('status-viewport');
+        const statusCpu = document.getElementById('status-cpu');
+        const statusMemory = document.getElementById('status-memory');
+        const statusBattery = document.getElementById('status-battery');
+
+        function initBattery() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    function updateBattery() {
+                        const level = Math.round(battery.level * 100);
+                        const charging = battery.charging ? '⚡' : '';
+                        if (statusBattery) statusBattery.textContent = `🔋 ${charging}${level}%`;
+                    }
+                    updateBattery();
+                    battery.addEventListener('levelchange', updateBattery);
+                    battery.addEventListener('chargingchange', updateBattery);
+                }).catch(() => {
+                    if (statusBattery) statusBattery.textContent = '🔋 N/A';
+                });
+            } else {
+                if (statusBattery) statusBattery.textContent = '🔋 N/A';
+            }
+        }
+
+        function updateNetworkStatus() {
+            if (!statusNetwork) return;
+            if (!navigator.onLine) {
+                statusNetwork.textContent = '🌐 Offline';
+                statusNetwork.style.color = 'var(--alarm-color)';
+                return;
+            }
+            statusNetwork.style.color = '';
+            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (conn) {
+                const type = (conn.effectiveType || '').toUpperCase();
+                const downlink = conn.downlink ? `${conn.downlink} Mbps` : '';
+                statusNetwork.textContent = `🌐 ${type || 'Online'}${downlink ? ' (' + downlink + ')' : ''}`;
+            } else {
+                statusNetwork.textContent = '🌐 Online';
+            }
+        }
+
+        function updateSystemMetrics() {
+            if (statusViewport) statusViewport.textContent = `📐 ${window.innerWidth}x${window.innerHeight}`;
+            
+            if (statusCpu) {
+                if (navigator.hardwareConcurrency) {
+                    statusCpu.textContent = `⚙️ ${navigator.hardwareConcurrency} Cores`;
+                } else {
+                    statusCpu.style.display = 'none';
+                }
+            }
+
+            if (statusMemory) {
+                if (performance && performance.memory && performance.memory.usedJSHeapSize) {
+                    const usedMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+                    statusMemory.textContent = `💾 ${usedMB}MB`;
+                } else if (navigator.deviceMemory) {
+                    statusMemory.textContent = `💾 ~${navigator.deviceMemory}GB RAM`;
+                } else {
+                    statusMemory.style.display = 'none';
+                }
+            }
+        }
+
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        if (navigator.connection) navigator.connection.addEventListener('change', updateNetworkStatus);
+        window.addEventListener('resize', () => {
+            if (statusViewport) statusViewport.textContent = `📐 ${window.innerWidth}x${window.innerHeight}`;
         });
 
         // CLOCK AND TIME
@@ -2931,8 +3063,17 @@ ${csvData.substring(0, 200000)}`;
 
             updateTeamAlarms();
             updateAlarmsView();
+            
+            // Initial render of custom alarms form
+            renderCustomAlarmFormRows();
+            
+            initBattery();
+            updateNetworkStatus();
+            updateSystemMetrics();
+            
             setInterval(updateClock, 1000);
             setInterval(syncTime, 300000);
+            setInterval(updateSystemMetrics, 5000);
         }
 
         initialize();
