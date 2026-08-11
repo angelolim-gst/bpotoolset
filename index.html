@@ -1533,7 +1533,8 @@
                 const tlSchedule = tlScheduleInput.value.trim();
                 const tlContext = tlSchedule ? `\nTeam Lead Schedule (Consider this when booking 1:1s and Team Meetings):\n${tlSchedule}\n` : "";
 
-                const endpoint = geminiModel.includes('/') ? geminiModel : `models/${geminiModel}`;
+                const upgradedModel = geminiModel.replace(/-lite/gi, '');
+                const endpoint = upgradedModel.includes('/') ? upgradedModel : `models/${upgradedModel}`;
                 const prompt = `You are an expert Workforce Management (WFM) and Team Lead scheduling assistant.
 I am providing you with a raw WFM schedule exported from Nice WFM. 
 
@@ -1606,7 +1607,13 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 const data = await res.json();
                 if (data.error) throw new Error(data.error.message);
                 
-                const models = data.models.filter(m => m.supportedGenerationMethods.includes('generateContent'));
+                // Only allow models that support generation AND have "flash-lite" in their name
+                const models = data.models.filter(m => {
+                    const isGenerative = m.supportedGenerationMethods.includes('generateContent');
+                    const isLite = m.name.toLowerCase().includes('flash-lite');
+                    return isGenerative && isLite;
+                });
+
                 modelSelect.innerHTML = '';
                 models.forEach(m => {
                     const opt = document.createElement('option');
@@ -1616,14 +1623,20 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 });
                 
                 modelSelectGroup.style.display = 'block';
-                apiKeyStatus.style.color = 'var(--success-color)';
-                apiKeyStatus.textContent = 'Valid key! Select a model and click Save.';
                 
-                if (geminiModel && Array.from(modelSelect.options).some(o => o.value === geminiModel)) {
-                    modelSelect.value = geminiModel;
+                if (models.length > 0) {
+                    apiKeyStatus.style.color = 'var(--success-color)';
+                    apiKeyStatus.textContent = 'Valid key! Select a Flash Lite model and click Save.';
+                    
+                    if (geminiModel && Array.from(modelSelect.options).some(o => o.value === geminiModel)) {
+                        modelSelect.value = geminiModel;
+                    } else {
+                        // Default to the first available Flash Lite model
+                        modelSelect.value = modelSelect.options[0].value;
+                    }
                 } else {
-                    const flashFallback = Array.from(modelSelect.options).find(o => o.value.includes('gemini-1.5-flash'));
-                    if(flashFallback) modelSelect.value = flashFallback.value;
+                    apiKeyStatus.style.color = 'var(--warning-color-orange)';
+                    apiKeyStatus.textContent = 'Key valid, but no Flash Lite models found for this account.';
                 }
                 
             } catch (err) {
