@@ -373,10 +373,10 @@
         .hidden { max-height: 0 !important; opacity: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-width: 0 !important; margin-top: 0 !important; }
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
-        #alarms-view-container { max-height: 400px; padding: 0.75rem 1rem; }
+        #alarms-view-container { max-height: 400px; padding: 0.75rem 1rem; overflow-y: auto; }
         #alarms-view-container h4 { margin: 0.5rem 0 0.5rem; font-weight: 600; font-size: 0.9rem; }
         #alarms-view-container h4:first-child { margin-top: 0; }
-        #break-alarms-list, #activity-alarms-list { list-style: none; padding: 0; margin: 0; }
+        #break-alarms-list, #activity-alarms-list, #custom-alarms-list { list-style: none; padding: 0; margin: 0; }
         .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.1rem; font-size: 0.85rem; border-bottom: 1px solid var(--line-color); }
         .alarm-display-item:last-child { border-bottom: none; }
         .alarm-details-container { display: flex; align-items: center; gap: 8px; }
@@ -556,7 +556,7 @@
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
                 <svg class="switch-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.807A9.002 9.002 0 0 1 10.049 2.5a9.948 9.948 0 0 0-5.12 3.935A9.996 9.996 0 0 0 12 22a9.94 9.94 0 0 0 7.07-2.93A9.996 9.996 0 0 0 12 11.807z"></path></svg>
-                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
+                <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 0 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
             </label>
         </div>
     </div>
@@ -654,6 +654,7 @@
                 <div id="alarms-view-container" class="widget hidden">
                     <h4>Break Schedules</h4><ul id="break-alarms-list"></ul>
                     <h4>Activity Schedules</h4><ul id="activity-alarms-list"></ul>
+                    <h4 id="custom-alarms-header" style="display:none; margin-top: 0.5rem;">Custom Alarms</h4><ul id="custom-alarms-list"></ul>
                 </div>
                 <div id="upcoming-view-container" class="widget hidden">
                     <ul id="upcoming-list"></ul>
@@ -803,7 +804,7 @@
 
     <!-- Alarm Modals -->
     <div id="alarm-modal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 360px;">
             <button class="modal-close-button">&times;</button>
             <h2 class="modal-title">Set Visual Alarms</h2>
             <p class="alarm-form-note">Enter times in 12-hour format (e.g., 01:30). Alarms operate on PHT.</p>
@@ -815,6 +816,11 @@
             <div class="form-group"><label for="email-time">Email</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="email-time" placeholder="HH:MM" maxlength="5"><select id="email-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="coaching-time">Coaching</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="coaching-time" placeholder="HH:MM" maxlength="5"><select id="coaching-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="meeting-time">Team Meeting</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="meeting-time" placeholder="HH:MM" maxlength="5"><select id="meeting-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
+            <hr/>
+            <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem;">Custom Alarms</h4>
+            <div id="custom-alarms-form-container"></div>
+            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 32px; color: var(--focus-color); border-color: var(--focus-color); background: transparent;">+ Add Custom Alarm</button>
+
             <button id="save-alarms-button" class="modal-button">Set Alarms</button>
         </div>
     </div>
@@ -873,7 +879,7 @@
             <ul>
                 <li><strong>Dynamic Clock:</strong> Real-time clock sync with multiple timezones.</li>
                 <li><strong>To-Do & Team Management:</strong> Integrated task list and automated coaching alarms.</li>
-                <li><strong>Visual Alarms:</strong> Set full-screen alerts for breaks and activities.</li>
+                <li><strong>Visual Alarms:</strong> Set full-screen alerts for breaks, activities, and custom events.</li>
                 <li><strong>Calculator:</strong> With normal, formula, and time-summing modes.</li>
                 <li><strong>Calendar View:</strong> A quick-glance monthly calendar with US & PH holidays.</li>
                 <li><strong>WFM Analyzer:</strong> Upload Excel schedules for automated PHT conversion and optimal coaching slot analysis via Gemini AI.</li>
@@ -989,6 +995,8 @@
         const alarmModal = document.getElementById('alarm-modal');
         const closeAlarmModalButton = alarmModal.querySelector('.modal-close-button');
         const saveAlarmsButton = document.getElementById('save-alarms-button');
+        const addCustomAlarmBtn = document.getElementById('add-custom-alarm-btn');
+        const customAlarmsFormContainer = document.getElementById('custom-alarms-form-container');
         const visualAlarm = document.getElementById('visual-alarm');
         const alarmText = document.getElementById('alarm-text');
         const snoozeButton = document.getElementById('snooze-button');
@@ -1055,6 +1063,7 @@
         let isDisplayingSaveStatus = false;
         
         let alarms = {};
+        let customAlarmsData = []; // State for Custom Alarms
         let activeTimers = []; 
         let teamAlarms = [];
         
@@ -1166,8 +1175,14 @@
         }
         async function saveAlarms() {
             const serializableAlarms = {};
-            for (const key in alarms) { if (alarms[key] && alarms[key].time) serializableAlarms[key] = { time: alarms[key].time }; }
-            await localforage.setItem('gusto_alarms', serializableAlarms); showSaveStatus();
+            for (const key in alarms) { 
+                if (alarms[key] && alarms[key].time && !alarms[key].isCustom) {
+                    serializableAlarms[key] = { time: alarms[key].time }; 
+                }
+            }
+            await localforage.setItem('gusto_alarms', serializableAlarms); 
+            await localforage.setItem('gusto_custom_alarms', customAlarmsData); 
+            showSaveStatus();
         }
         async function saveBoostNotes() { 
             await localforage.setItem('gusto_boostNotes', boostNotes); showSaveStatus(); 
@@ -1224,6 +1239,7 @@
                 const pTodos = await loadKey('gusto_todos', providedData);
                 const pTeam = await loadKey('gusto_team', providedData);
                 const pAlarms = await loadKey('gusto_alarms', providedData);
+                const pCustomAlarms = await loadKey('gusto_custom_alarms', providedData);
                 const pBoost = await loadKey('gusto_boostNotes', providedData);
                 const pSettings = await loadKey('gusto_settings', providedData);
                 const pApiKey = await loadKey('gusto_geminiKey', providedData);
@@ -1235,6 +1251,7 @@
                 if (pBoost) boostNotes = pBoost; else boostNotes = {};
                 if (pApiKey) geminiApiKey = pApiKey;
                 if (pApiModel) geminiModel = pApiModel;
+                if (pCustomAlarms) customAlarmsData = pCustomAlarms; else customAlarmsData = [];
                 
                 if (pSettings) {
                     if (pSettings.theme) setTheme(pSettings.theme);
@@ -1264,25 +1281,31 @@
                     }
                 }
 
-                if (pAlarms) {
-                    const mapping = {
-                        'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
-                        'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
-                        'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
-                        'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
-                        'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
-                        'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
-                        'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
-                    };
-                    for (const [label, alarm] of Object.entries(pAlarms)) {
-                        if (alarm && alarm.time && mapping[label]) {
-                            const { time, ampm } = convertTo12HourParts(alarm.time);
-                            document.getElementById(mapping[label].timeId).value = time;
-                            document.getElementById(mapping[label].ampmId).value = ampm;
-                        }
+                const loadedAlarms = pAlarms || {};
+                const mapping = {
+                    'First Break': { timeId: 'first-break-time', ampmId: 'first-break-ampm' },
+                    'Lunch': { timeId: 'lunch-break-time', ampmId: 'lunch-break-ampm' },
+                    'Last Break': { timeId: 'last-break-time', ampmId: 'last-break-ampm' },
+                    'Training': { timeId: 'training-time', ampmId: 'training-ampm' },
+                    'Email': { timeId: 'email-time', ampmId: 'email-ampm' },
+                    'Coaching': { timeId: 'coaching-time', ampmId: 'coaching-ampm' },
+                    'Team Meeting': { timeId: 'meeting-time', ampmId: 'meeting-ampm' }
+                };
+                for (const [label, alarm] of Object.entries(loadedAlarms)) {
+                    if (alarm && alarm.time && mapping[label]) {
+                        const { time, ampm } = convertTo12HourParts(alarm.time);
+                        document.getElementById(mapping[label].timeId).value = time;
+                        document.getElementById(mapping[label].ampmId).value = ampm;
                     }
-                    processAndSetAlarms(pAlarms);
                 }
+
+                customAlarmsData.forEach(ca => {
+                    if (ca.label && ca.time24) {
+                        loadedAlarms[ca.label] = { time: ca.time24, isCustom: true };
+                    }
+                });
+
+                processAndSetAlarms(loadedAlarms);
                 
                 if(isImport) {
                     await saveNotes(); await saveTodos(); await saveTeam();
@@ -1305,6 +1328,7 @@
                 todos: await localforage.getItem('gusto_todos'),
                 team: await localforage.getItem('gusto_team'),
                 alarms: await localforage.getItem('gusto_alarms'),
+                customAlarms: await localforage.getItem('gusto_custom_alarms'),
                 boostNotes: await localforage.getItem('gusto_boostNotes'),
                 settings: await localforage.getItem('gusto_settings'),
                 geminiKey: await localforage.getItem('gusto_geminiKey'),
@@ -1577,7 +1601,7 @@ ${csvData.substring(0, 200000)}`;
             list.forEach(task => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${task.done ? 'done' : ''}`;
-                li.dataset.id = task.id; // added for delegation
+                li.dataset.id = task.id; 
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
                     <span class="todo-text">${task.text}</span>
@@ -1587,7 +1611,6 @@ ${csvData.substring(0, 200000)}`;
             });
         }
 
-        // To-Do Event Delegation
         todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('todo-checkbox')) {
                 const li = e.target.closest('li');
@@ -1607,7 +1630,7 @@ ${csvData.substring(0, 200000)}`;
                 const id = parseInt(li.dataset.id);
                 todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
                 li.remove();
-                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
+                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); 
                 saveTodos();
             }
         });
@@ -1673,7 +1696,6 @@ ${csvData.substring(0, 200000)}`;
             
             let noteData = boostNotes[currentBoostMember.id][weekKey];
             
-            // Legacy Migration: If the old note is just a plain string, convert to object
             if (typeof noteData === 'string') {
                 noteData = { raw: noteData, formatted: '' };
                 boostNotes[currentBoostMember.id][weekKey] = noteData;
@@ -1692,11 +1714,9 @@ ${csvData.substring(0, 200000)}`;
         const handleBoostInput = () => {
             const weekKey = getLocalYMD(getStartOfWeek(currentBoostWeekStart));
             if (!boostNotes[currentBoostMember.id]) boostNotes[currentBoostMember.id] = {};
-            
             if (!boostNotes[currentBoostMember.id][weekKey]) {
                 boostNotes[currentBoostMember.id][weekKey] = { raw: '', formatted: '' };
             }
-            
             boostNotes[currentBoostMember.id][weekKey].raw = boostTextareaRaw.value;
             
             clearTimeout(saveTimeout);
@@ -1786,6 +1806,46 @@ ${csvData.substring(0, 200000)}`;
                 boostAiFormatBtn.disabled = false;
                 boostTextareaRaw.disabled = false;
             }
+        });
+
+        // Custom Alarms Modal Handlers
+        function renderCustomAlarmFormRows() {
+            customAlarmsFormContainer.innerHTML = '';
+            customAlarmsData.forEach((ca, idx) => {
+                const row = document.createElement('div');
+                row.className = 'form-group custom-alarm-row';
+                row.dataset.idx = idx;
+                row.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                        <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); width: 80%; box-sizing: border-box;" value="${ca.label || ''}">
+                        <button type="button" class="remove-custom-alarm-btn" style="background:none; border:none; color:var(--secondary-text-color); font-size:1.2rem; cursor:pointer; line-height:1;">&times;</button>
+                    </div>
+                    <div class="alarm-input-group">
+                        <input type="text" class="alarm-time-input custom-alarm-time-input" placeholder="HH:MM" maxlength="5" value="${ca.time12 || ''}">
+                        <select class="custom-alarm-ampm">
+                            <option value="AM" ${ca.ampm === 'AM' ? 'selected' : ''}>AM</option>
+                            <option value="PM" ${ca.ampm === 'PM' ? 'selected' : ''}>PM</option>
+                        </select>
+                    </div>
+                `;
+                const timeInput = row.querySelector('.custom-alarm-time-input');
+                timeInput.addEventListener('blur', () => validateAndFormatTime(timeInput));
+                customAlarmsFormContainer.appendChild(row);
+            });
+        }
+
+        customAlarmsFormContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-custom-alarm-btn')) {
+                const row = e.target.closest('.custom-alarm-row');
+                const idx = parseInt(row.dataset.idx);
+                customAlarmsData.splice(idx, 1);
+                renderCustomAlarmFormRows();
+            }
+        });
+
+        addCustomAlarmBtn.addEventListener('click', () => {
+            customAlarmsData.push({ id: Date.now() + Math.random(), label: '', time12: '', ampm: 'AM', time24: '' });
+            renderCustomAlarmFormRows();
         });
 
         // Grid Sorting Logic
@@ -2271,7 +2331,12 @@ ${csvData.substring(0, 200000)}`;
         textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveNotes, 1000); });
 
         // ALARMS
-        setAlarmsButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); alarmModal.classList.add('show'); });
+        setAlarmsButton.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            dropdownMenu.classList.remove('show'); 
+            renderCustomAlarmFormRows();
+            alarmModal.classList.add('show'); 
+        });
         closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
         
         function validateAndFormatTime(input) {
@@ -2368,10 +2433,58 @@ ${csvData.substring(0, 200000)}`;
         }
 
         saveAlarmsButton.addEventListener('click', () => {
-            const inputs = [...document.querySelectorAll('.alarm-time-input')];
-            if (!inputs.every(validateAndFormatTime)) {
-                alert('Please correct invalid time formats.'); return;
+            const standardInputs = [...document.querySelectorAll('.alarm-time-input:not(.custom-alarm-time-input)')];
+            if (!standardInputs.every(validateAndFormatTime)) {
+                alert('Please correct invalid standard time formats.'); return;
             }
+
+            const customRows = document.querySelectorAll('.custom-alarm-row');
+            let newCustomAlarms = [];
+            let customValid = true;
+
+            customRows.forEach(row => {
+                const labelInput = row.querySelector('.custom-alarm-label-input');
+                const timeInput = row.querySelector('.custom-alarm-time-input');
+                const ampmSelect = row.querySelector('.custom-alarm-ampm');
+
+                const labelVal = labelInput.value.trim();
+                const timeVal = timeInput.value.trim();
+
+                if (labelVal || timeVal) {
+                    if (!labelVal) {
+                        labelInput.style.borderColor = 'var(--alarm-color)';
+                        customValid = false;
+                    } else {
+                        labelInput.style.borderColor = '';
+                    }
+
+                    if (!validateAndFormatTime(timeInput) || !timeInput.value) {
+                        timeInput.style.borderColor = 'var(--alarm-color)';
+                        customValid = false;
+                    } else {
+                        timeInput.style.borderColor = '';
+                    }
+
+                    if (labelVal && timeInput.value) {
+                        const time24 = convertTo24Hour(timeInput.value, ampmSelect.value);
+                        newCustomAlarms.push({
+                            id: Date.now() + Math.random(),
+                            label: labelVal,
+                            time12: timeInput.value,
+                            ampm: ampmSelect.value,
+                            time24: time24
+                        });
+                    }
+                }
+            });
+
+            if (!customValid) {
+                alert('Please correct invalid custom alarm inputs.');
+                return;
+            }
+
+            customAlarmsData = newCustomAlarms;
+
             const tempAlarms = {
                 'First Break': { time: convertTo24Hour(document.getElementById('first-break-time').value, document.getElementById('first-break-ampm').value) },
                 'Lunch': { time: convertTo24Hour(document.getElementById('lunch-break-time').value, document.getElementById('lunch-break-ampm').value) },
@@ -2381,6 +2494,11 @@ ${csvData.substring(0, 200000)}`;
                 'Coaching': { time: convertTo24Hour(document.getElementById('coaching-time').value, document.getElementById('coaching-ampm').value) },
                 'Team Meeting': { time: convertTo24Hour(document.getElementById('meeting-time').value, document.getElementById('meeting-ampm').value) }
             };
+
+            customAlarmsData.forEach(ca => {
+                tempAlarms[ca.label] = { time: ca.time24, isCustom: true };
+            });
+
             processAndSetAlarms(tempAlarms);
             saveAlarms();
             alarmModal.classList.remove('show');
@@ -2541,6 +2659,17 @@ ${csvData.substring(0, 200000)}`;
             };
             populateList(breakAlarmsList, ['First Break', 'Lunch', 'Last Break']);
             populateList(activityAlarmsList, ['Training', 'Email', 'Coaching', 'Team Meeting']);
+            
+            const customLabels = Object.keys(alarms).filter(k => alarms[k] && alarms[k].isCustom);
+            const customAlarmsList = document.getElementById('custom-alarms-list');
+            const customHeader = document.getElementById('custom-alarms-header');
+            if (customLabels.length > 0) {
+                if (customHeader) customHeader.style.display = 'block';
+                if (customAlarmsList) populateList(customAlarmsList, customLabels);
+            } else {
+                if (customHeader) customHeader.style.display = 'none';
+                if (customAlarmsList) customAlarmsList.innerHTML = '';
+            }
         }
         
         function updateUpcomingView() {
