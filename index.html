@@ -62,6 +62,7 @@
         }
 
         body.dark-mode {
+            color-scheme: dark; /* Add this line! */
             --bg-color: var(--dark-bg);
             --line-color: var(--dark-line);
             --widget-bg-color: var(--dark-widget-bg);
@@ -75,6 +76,11 @@
             --warning-bg-red-current: var(--dark-warning-bg-red);
             --us-holiday-bg-current: var(--dark-us-holiday-bg);
             --ph-holiday-bg-current: var(--dark-ph-holiday-bg);
+        }
+        
+        /* Add this right below body.dark-mode as a foolproof fallback for Chrome/Edge */
+        body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
         }
         
         html, body { height: 100%; }
@@ -331,7 +337,7 @@
             --col-sfdc: 70px;
             --col-name: 1fr;
             --col-day: 80px;
-            --col-time: 85px;
+            --col-time: 110px; /* Increased from 85px to fit the AM/PM indicator */
             --col-boost: 45px;
             --col-del: 30px;
         }
@@ -568,10 +574,10 @@
             .alarm-button { width: 100%; text-align: center; }
         }
         /* --- PERFORMANCE OPTIMIZATIONS --- */
-        .workspace-content, .widget, #cards-wrapper {
-            /* Isolates layout, style, and paint to prevent full-page repaints */
-            contain: content; 
-        }
+        .workspace-content, .widget, #cards-wrapper, #clock {
+        /* Isolates layout, style, and paint to prevent full-page repaints, 
+           but allows the elements to size normally based on their content */
+        contain: content;
         
         #clock {
             /* Strict containment because the clock's physical dimensions never change */
@@ -1173,7 +1179,7 @@
         let teamSortAsc = true;
         const dayOrder = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7 };
         
-        let colWidths = { eid: '65px', sfdc: '70px', name: '1fr', day: '80px', time: '85px' };
+        let colWidths = { eid: '65px', sfdc: '70px', name: '1fr', day: '80px', time: '110px' };
         
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
