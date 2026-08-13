@@ -1,46 +1,57 @@
-const CACHE_NAME = 'gusto-offline-v3';
+const CACHE_NAME = 'gusto-offline-v4';
+const FONT_CACHE = 'gusto-fonts-v1';
 
-// 1. Install phase: Cache the HTML and the Google Font CSS files
 self.addEventListener('install', (event) => {
-    self.skipWaiting(); // Force the SW to activate immediately!
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll([
-            './', 
-            './index.html',
-            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
-            'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&display=swap'
-        ]))
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(['./', './index.html']))
     );
 });
 
-// 2. Activate phase: Take control of the page instantly
 self.addEventListener('activate', (event) => {
     event.waitUntil(clients.claim());
 });
 
-// 3. Fetch phase: Intercept everything else
 self.addEventListener('fetch', (event) => {
-    // DO NOT cache your custom network ping!
-    if (event.request.url.includes('cloudflare.com')) return;
+    const url = new URL(event.request.url);
 
+    // DO NOT cache your custom network ping!
+    if (url.hostname.includes('cloudflare.com')) return;
+
+    // Specialized Font Caching Strategy (Cache First)
+    if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+        event.respondWith(
+            caches.open(FONT_CACHE).then(async (cache) => {
+                const cachedResponse = await cache.match(event.request);
+                if (cachedResponse) return cachedResponse;
+
+                try {
+                    const networkResponse = await fetch(event.request);
+                    if (networkResponse.ok) {
+                        cache.put(event.request, networkResponse.clone());
+                    }
+                    return networkResponse;
+                } catch (error) {
+                    console.error('Font fetch failed:', error);
+                }
+            })
+        );
+        return;
+    }
+
+    // Standard App Caching Strategy
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse; // Serve from cache
-            }
-
-            // Fetch from internet and cache dynamically (catches the .woff2 font files)
+            if (cachedResponse) return cachedResponse;
             return fetch(event.request).then((networkResponse) => {
-                if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+                if (networkResponse && networkResponse.status === 200) {
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(event.request, responseToCache);
                     });
                 }
                 return networkResponse;
-            }).catch(() => {
-                // Ignore offline errors
-            });
+            }).catch(() => {});
         })
     );
 });
