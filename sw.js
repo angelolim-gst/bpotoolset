@@ -39,7 +39,6 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Standard App Caching Strategy
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) return cachedResponse;
