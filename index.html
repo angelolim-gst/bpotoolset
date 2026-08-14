@@ -64,7 +64,7 @@
         }
 
         body.dark-mode {
-            color-scheme: dark; /* Add this line! */
+            color-scheme: dark;
             --bg-color: var(--dark-bg);
             --line-color: var(--dark-line);
             --widget-bg-color: var(--dark-widget-bg);
@@ -80,7 +80,6 @@
             --ph-holiday-bg-current: var(--dark-ph-holiday-bg);
         }
         
-        /* Add this right below body.dark-mode as a foolproof fallback for Chrome/Edge */
         body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
         }
@@ -122,7 +121,7 @@
             flex-grow: 1;
             padding: 20px;
             padding-top: 80px; 
-            padding-bottom: 50px; /* Accommodates the bottom status bar */
+            padding-bottom: 50px; 
             width: 100%;
             max-width: 440px;
             box-sizing: border-box;
@@ -154,7 +153,6 @@
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
 
-        /* Hardware acceleration for complex UI movements */
         .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm {
             will-change: transform, opacity;
         }
@@ -204,7 +202,7 @@
             padding: 0 15px;
             background-color: var(--widget-bg-color);
             border-top: 1.5px solid var(--border-color);
-            z-index: 4000; /* Always on top above all modals (2000) and visual alarm (3000) */
+            z-index: 4000; 
             box-sizing: border-box;
             font-size: 0.75rem;
             font-weight: 500;
@@ -223,7 +221,7 @@
         .status-bar-right {
             display: flex;
             align-items: center;
-            gap: 6px; /* Reduced gap between Wifi and Battery */
+            gap: 6px; 
         }
         
         .status-item {
@@ -246,7 +244,7 @@
             color: var(--text-color);
         }
 
-        /* Text expansion logic (Online/Offline, Charging/Discharging) */
+        /* Text expansion logic */
         .status-item .status-text {
             max-width: 0;
             opacity: 0;
@@ -372,7 +370,7 @@
             --col-sfdc: 70px;
             --col-name: 1fr;
             --col-day: 80px;
-            --col-time: 110px; /* Increased from 85px to fit the AM/PM indicator */
+            --col-time: 110px; 
             --col-boost: 45px;
             --col-del: 30px;
         }
@@ -465,7 +463,7 @@
         .card-viewer-area.cards-collapsed #cards-wrapper { max-height: 0; opacity: 0; overflow: hidden; transform: scaleY(0); }
         .card-viewer-area.cards-collapsed #toggle-cards-btn svg { transform: rotate(180deg); }
 
-        #calendar-container, #alarms-view-container, #calculator-container, #upcoming-view-container { overflow: hidden; transition: max-height 0.6s ease-in-out, opacity 0.4s ease-in-out, padding 0.6s ease-in-out, border-width 0.6s ease-in-out; }
+        #calendar-container, #alarms-view-container, #calculator-container { overflow: hidden; transition: max-height 0.6s ease-in-out, opacity 0.4s ease-in-out, padding 0.6s ease-in-out, border-width 0.6s ease-in-out; }
         .hidden { max-height: 0 !important; opacity: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-width: 0 !important; margin-top: 0 !important; }
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
@@ -482,15 +480,6 @@
         .status-upcoming { color: var(--warning-color-orange); background-color: var(--warning-bg-orange-current); }
         .status-missed { color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
         #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0; display: none; }
-
-        /* Upcoming (Coaching) */
-        #upcoming-view-container { max-height: 400px; padding: 0.75rem 1rem; }
-        #upcoming-list { list-style: none; padding: 0; margin: 0; }
-        .upcoming-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.1rem; font-size: 0.9rem; border-bottom: 1px solid var(--line-color); }
-        .upcoming-display-item:last-child { border-bottom: none; }
-        .upcoming-name { font-weight: 500; flex-grow: 1; }
-        .upcoming-time { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.95rem; color: var(--focus-color); margin: 0 10px; }
-        #no-upcoming-message { text-align: center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0;}
 
         /* Calendar */
         #calendar-container { max-height: 500px; }
@@ -751,7 +740,7 @@
             <div class="card-switcher">
                 <div class="pill-container">
                     <button class="switcher-button active" id="show-calendar-btn">Calendar</button>
-                    <button class="switcher-button" id="show-alarms-btn">Alarms</button>
+                    <button class="switcher-button" id="show-alarms-btn">Upcoming</button>
                     <button class="switcher-button" id="show-calc-btn">Calculator</button>
                 </div>
                 <button id="toggle-cards-btn" title="Toggle Cards View">
@@ -1585,10 +1574,10 @@
                 // --- 1. CSV SANITIZER OPTIMIZATION ---
                 // Strip trailing commas from rows, and remove completely empty rows
                 const sanitizedCsv = csvData
-                    .split(/\r?\n/) // Split into individual lines
-                    .map(row => row.replace(/,+$/, '').trim()) // Remove endless trailing commas
-                    .filter(row => row.replace(/,/g, '').trim().length > 0) // Drop rows that contain nothing but commas
-                    .join('\n'); // Stitch it back together
+                    .split(/\r?\n/) 
+                    .map(row => row.replace(/,+$/, '').trim()) 
+                    .filter(row => row.replace(/,/g, '').trim().length > 0) 
+                    .join('\n'); 
                 
                 const tlSchedule = tlScheduleInput.value.trim();
                 const tlContext = tlSchedule ? `\nTeam Lead Schedule (Consider this when booking 1:1s and Team Meetings):\n${tlSchedule}\n` : "";
@@ -1616,7 +1605,7 @@ IMPORTANT RULES:
    - DO NOT include conversational filler like "Here is the output" or "Here are the recommendations." Just output the markdown report directly.
 ${tlContext}
 Here is the clean schedule data:
-${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is now highly dense
+${sanitizedCsv.substring(0, 100000)}`;
 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
                     method: 'POST',
@@ -1667,7 +1656,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 const data = await res.json();
                 if (data.error) throw new Error(data.error.message);
                 
-                // Only allow models that support generation AND have "flash-lite" in their name
                 const models = data.models.filter(m => {
                     const isGenerative = m.supportedGenerationMethods.includes('generateContent');
                     const isLite = m.name.toLowerCase().includes('flash-lite');
@@ -1691,7 +1679,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                     if (geminiModel && Array.from(modelSelect.options).some(o => o.value === geminiModel)) {
                         modelSelect.value = geminiModel;
                     } else {
-                        // Default to the first available Flash Lite model
                         modelSelect.value = modelSelect.options[0].value;
                     }
                 } else {
@@ -1780,7 +1767,7 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             list.forEach(task => {
                 const li = document.createElement('li');
                 li.className = `todo-item ${task.done ? 'done' : ''}`;
-                li.dataset.id = task.id; // added for delegation
+                li.dataset.id = task.id; 
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
                     <span class="todo-text">${task.text}</span>
@@ -1810,7 +1797,7 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 const id = parseInt(li.dataset.id);
                 todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
                 li.remove();
-                if(todos[selectedTodoDateStr].length === 0) renderTodoList(); // Show empty state message
+                if(todos[selectedTodoDateStr].length === 0) renderTodoList();
                 saveTodos();
             }
         });
@@ -1876,7 +1863,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             
             let noteData = boostNotes[currentBoostMember.id][weekKey];
             
-            // Legacy Migration: If the old note is just a plain string, convert to object
             if (typeof noteData === 'string') {
                 noteData = { raw: noteData, formatted: '' };
                 boostNotes[currentBoostMember.id][weekKey] = noteData;
@@ -1929,7 +1915,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             renderBoostModal();
         });
 
-        // Gemini AI Auto-Format
         boostAiFormatBtn.addEventListener('click', async () => {
             if (!geminiApiKey || !geminiModel) {
                 alert("Please verify your API key and select a model in the 'Tools > Set Gemini API Key' menu first.");
@@ -1991,7 +1976,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             }
         });
 
-        // Custom Alarms Modal Handlers
         function renderCustomAlarmFormRows() {
             customAlarmsFormContainer.innerHTML = '';
             customAlarmsData.forEach((ca, idx) => {
@@ -2031,7 +2015,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             renderCustomAlarmFormRows();
         });
 
-        // Grid Sorting Logic
         function updateSortIcons() {
             document.querySelectorAll('.sortable-header .sort-icon').forEach(icon => icon.textContent = '');
             if (teamSortCol) {
@@ -2076,7 +2059,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             });
         });
 
-        // Grid Excel Logic & Resizers
         let isDraggingCells = false;
         let cellDragStart = null;
         let lastFocusedCell = null;
@@ -2132,7 +2114,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             });
         }
 
-        // Drag-to-Select Event Delegation on the Container
         teamListContainer.addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('selectable-cell')) {
                 const r = parseInt(e.target.dataset.row);
@@ -2184,7 +2165,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             }
         });
 
-        // Team Edit Event Delegation (Inputs & Selects)
         teamListContainer.addEventListener('input', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
                 const rowDiv = e.target.closest('.team-row');
@@ -2204,7 +2184,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             }
         });
 
-        // Team Button Event Delegation (Boost & Delete)
         teamListContainer.addEventListener('click', (e) => {
             const delBtn = e.target.closest('.team-delete');
             const boostBtn = e.target.closest('.boost-btn');
@@ -2217,7 +2196,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 teamData = teamData.filter(m => m.id !== id);
                 rowDiv.remove();
                 
-                // re-adjust dataset rows for remaining inputs to fix drag-to-select math
                 document.querySelectorAll('.team-row').forEach((r, idx) => {
                     r.querySelectorAll('.selectable-cell').forEach(cell => cell.dataset.row = idx);
                 });
@@ -2417,12 +2395,10 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                         const isCharging = battery.charging;
                         const stateText = isCharging ? 'Charging' : 'Discharging';
                         
-                        // Width increased to 22 and preserveAspectRatio="none" added to stretch it
                         const batteryIcon = isCharging 
                             ? `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zm-2.67 13.5V14h1.5l-4.5-7v3.5H8.5l4.5 7z"/></svg>`
                             : `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>`;
                         
-                        // Using .status-bold-text for the battery number
                         const newText = `${batteryIcon}<span class="status-bold-text">${level}%</span><span class="status-text"> (${stateText})</span>`;
                         
                         if (lastBatteryText !== newText) {
@@ -2448,13 +2424,12 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
         }
         
         async function checkTrueNetwork() {
-            if (!navigator.onLine) return false; // OS says we are completely disconnected
+            if (!navigator.onLine) return false; 
             try {
-                // Ping Cloudflare with a timestamp to bust local browser cache
                 await fetch('https://cloudflare.com/cdn-cgi/trace?' + Date.now(), { mode: 'no-cors', cache: 'no-store' });
-                return true; // Ping succeeded, we have actual internet routing!
+                return true; 
             } catch (e) {
-                return false; // Ping failed, router is on but internet is dead
+                return false; 
             }
         }
         
@@ -2472,11 +2447,7 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
         window.addEventListener('online', updateNetworkStatus);
         window.addEventListener('offline', updateNetworkStatus);
         
-        // Actively check the network every 10 seconds just in case it drops silently
         setInterval(updateNetworkStatus, 5000);
-        
-        window.addEventListener('online', updateNetworkStatus);
-        window.addEventListener('offline', updateNetworkStatus);
         
         // --- WAKE LOCK LOGIC ---
         let wakeLock = null;
@@ -2959,7 +2930,7 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
                 
                 labels.forEach(label => {
                     const alarm = alarms[label];
-                    if (!alarm || !alarm.time) return; // Skip if no time is set
+                    if (!alarm || !alarm.time) return; 
                     
                     hasValidAlarm = true;
                     const listItem = document.createElement('li'); 
@@ -3036,11 +3007,6 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
         
         showCalendarBtn.addEventListener('click', () => switchCardView(showCalendarBtn, calendarContainer));
         showAlarmsBtn.addEventListener('click', () => switchCardView(showAlarmsBtn, alarmsViewContainer));
-        showCalcBtn.addEventListener('click', () => switchCardView(showCalcBtn, calculatorContainer));
-        toggleCardsBtn.addEventListener('click', () => cardViewerArea.classList.toggle('cards-collapsed'));
-        showCalendarBtn.addEventListener('click', () => switchCardView(showCalendarBtn, calendarContainer));
-        showAlarmsBtn.addEventListener('click', () => switchCardView(showAlarmsBtn, alarmsViewContainer));
-        showUpcomingBtn.addEventListener('click', () => switchCardView(showUpcomingBtn, upcomingViewContainer));
         showCalcBtn.addEventListener('click', () => switchCardView(showCalcBtn, calculatorContainer));
         toggleCardsBtn.addEventListener('click', () => cardViewerArea.classList.toggle('cards-collapsed'));
 
@@ -3176,10 +3142,47 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             timeResult.textContent = `Total: ${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m (${(totalMinutes / 60).toFixed(2)} hours)`;
         });
 
+        // GLOBAL CALCULATOR KEYBOARD SUPPORT
+        document.addEventListener('keydown', (e) => {
+            const isCalcVisible = !calculatorContainer.classList.contains('hidden') && !cardViewerArea.classList.contains('cards-collapsed');
+            if (!isCalcVisible) return;
+
+            const activeTag = document.activeElement.tagName;
+            const isEditingText = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT';
+            
+            if (isEditingText && document.activeElement.id !== 'calc-display' && document.activeElement.id !== 'formula-input') {
+                return; 
+            }
+
+            if (!document.getElementById('normal-calc-view').classList.contains('is-hidden')) {
+                const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '*', '/', '(', ')'];
+                
+                if (validKeys.includes(e.key)) {
+                    e.preventDefault(); 
+                    appendToDisplay(e.key);
+                } else if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault();
+                    calculate();
+                } else if (e.key === 'Escape' || e.key === 'Delete') {
+                    e.preventDefault();
+                    clearDisplay();
+                } else if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    calcDisplay.value = calcDisplay.value.slice(0, -1);
+                }
+            } 
+            else if (!document.getElementById('formula-calc-view').classList.contains('is-hidden')) {
+                if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault();
+                    calculateFromFormula();
+                }
+            }
+        });
+
         // HOLD TIMER
         startHoldTimerBtn.addEventListener('click', () => {
             if (activeTimers.some(t => t.name === 'Hold Timer')) return;
-            activeTimers.push({ id: synchronizedTime.getTime(), name: 'Hold Timer', endTime: synchronizedTime.getTime() + ((Math.random() * (3 - 2) + 2) * 60 * 1000) });
+            activeTimers.push({ id: synchronizedTime.getTime(), name: 'Hold Timer', endTime: synchronizedTime.getTime() + (120 * 1000) });
             checkTimers(); 
         });
 
@@ -3194,12 +3197,20 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             const holdTimer = activeTimers.find(t => t.name === 'Hold Timer');
             if (holdTimer) {
                 startHoldTimerBtn.disabled = true; 
-                startHoldTimerBtn.style.backgroundColor = '#6c757d'; 
                 startHoldTimerBtn.style.cursor = 'not-allowed';
+                
                 const remaining = Math.max(0, Math.ceil((holdTimer.endTime - now) / 1000));
                 const m = Math.floor(remaining / 60);
                 const s = remaining % 60;
                 startHoldTimerBtn.textContent = `Hold Timer: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                
+                if (remaining <= 15) {
+                    startHoldTimerBtn.style.backgroundColor = 'var(--alarm-color)'; 
+                } else if (remaining <= 30) {
+                    startHoldTimerBtn.style.backgroundColor = 'var(--warning-color-orange)'; 
+                } else {
+                    startHoldTimerBtn.style.backgroundColor = '#6c757d'; 
+                }
             } else {
                 startHoldTimerBtn.disabled = false; 
                 startHoldTimerBtn.textContent = 'Start Hold Timer'; 
