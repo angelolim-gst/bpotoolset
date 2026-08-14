@@ -11,99 +11,119 @@
     <link rel="manifest" href="data:application/json;charset=utf-8,%7B%0A%20%20%22name%22%3A%20%22Gusto%20Toolset%22%2C%0A%20%20%22short_name%22%3A%20%22Toolset%22%2C%0A%20%20%22start_url%22%3A%20%22.%22%2C%0A%20%20%22display%22%3A%20%22standalone%22%2C%0A%20%20%22background_color%22%3A%20%22%23121212%22%2C%0A%20%20%22theme_color%22%3A%20%22%23007aff%22%2C%0A%20%20%22icons%22%3A%20%5B%7B%0A%20%20%20%20%22src%22%3A%20%22data%3Aimage%2Fsvg%2Bxml%3Butf8%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27%23007aff%27%3E%3Cpath%20d%3D%27M12%202C6.486%202%202%206.486%202%2012s4.486%2010%2010%2010%2010-4.486%2010-10S17.514%202%2012%202zm0%2018c-4.411%200-8-3.589-8-8s3.589-8%208-8%208%203.589%208%208-3.589%208-8%208z%27%2F%3E%3Cpath%20d%3D%27M13%207h-2v5.414l3.293%203.293%201.414-1.414L13%2011.586V7z%27%2F%3E%3C%2Fsvg%3E%22%2C%0A%20%20%20%20%22sizes%22%3A%20%22any%22%2C%0A%20%20%20%20%22type%22%3A%20%22image%2Fsvg%2Bxml%22%0A%20%20%7D%5D%0A%7D">
     <style>
         :root {
-            /* Material 3 Light Mode Colors */
-            --light-bg: #f5f6fa; 
-            --light-line: #e1e2e8;
-            --light-widget-bg: #fdfcff; 
-            --light-text: #1a1c1e; 
-            --light-secondary-text: #43474e; 
-            --light-border: #c3c7cf; 
-            --light-shadow: rgba(0, 0, 0, 0.06);
-            --light-shadow-hover: rgba(0, 0, 0, 0.1);
-
-            /* Material 3 Dark Mode Colors */
-            --dark-bg: #111318; 
-            --dark-line: #2e3036;
-            --dark-widget-bg: #1e2024; 
-            --dark-text: #e2e2e6; 
-            --dark-secondary-text: #c4c7c5; 
-            --dark-border: #43474e; 
-            --dark-shadow: rgba(0, 0, 0, 0.2);
-            --dark-shadow-hover: rgba(0, 0, 0, 0.3);
+            /* Material 3 Light Mode Palette */
+            --md-sys-color-primary: #0061a4;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-container: #d1e4ff;
+            --md-sys-color-on-primary-container: #001d36;
             
-            /* Material 3 Tonal Accents */
-            --focus-color-light: #0061a4; 
-            --focus-bg-color-light: #d1e4ff; 
-            --focus-color-dark: #9ecafe; 
-            --focus-bg-color-dark: #00497d; 
+            --md-sys-color-secondary: #535f70;
+            --md-sys-color-on-secondary: #ffffff;
+            --md-sys-color-secondary-container: #d7e3f7;
+            --md-sys-color-on-secondary-container: #101c2b;
+            
+            --md-sys-color-error: #ba1a1a;
+            --md-sys-color-on-error: #ffffff;
+            --md-sys-color-error-container: #ffdad6;
+            --md-sys-color-on-error-container: #410002;
+            
+            --md-sys-color-background: #fdfcff;
+            --md-sys-color-on-background: #1a1c1e;
+            --md-sys-color-surface: #fdfcff;
+            --md-sys-color-on-surface: #1a1c1e;
+            --md-sys-color-surface-variant: #dfe2eb;
+            --md-sys-color-on-surface-variant: #43474e;
+            
+            --md-sys-color-outline: #73777f;
+            --md-sys-color-outline-variant: #c3c7cf;
+            
+            --md-sys-color-surface-container-lowest: #ffffff;
+            --md-sys-color-surface-container-low: #f7f6f9;
+            --md-sys-color-surface-container: #f1f0f4;
+            --md-sys-color-surface-container-high: #ebeaef;
+            --md-sys-color-surface-container-highest: #e2e2e6;
 
-            --alarm-color-light: #ba1a1a;
-            --alarm-bg-color-light: #ffdad6;
-            --alarm-color-dark: #ffb4ab;
-            --alarm-bg-color-dark: #93000a;
+            /* M3 Soft Shadows */
+            --shadow-elevation-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --shadow-elevation-2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+            --shadow-elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
 
-            --us-holiday-bg: var(--focus-bg-color-light);
-            --ph-holiday-bg: #ffdcbe;
-            --dark-us-holiday-bg: var(--focus-bg-color-dark);
-            --dark-ph-holiday-bg: #4d2700;
+            /* Mapping to Logic Variables */
+            --bg-color: var(--md-sys-color-background);
+            --widget-bg-color: var(--md-sys-color-surface-container-lowest);
+            --line-color: var(--md-sys-color-surface-container-highest);
+            --text-color: var(--md-sys-color-on-surface);
+            --secondary-text-color: var(--md-sys-color-on-surface-variant);
+            --border-color: var(--md-sys-color-outline-variant);
+            
+            --focus-color: var(--md-sys-color-primary);
+            --focus-bg: var(--md-sys-color-primary-container);
+            
+            --alarm-color: var(--md-sys-color-error);
+            --warning-color-orange: #d55c00;
+            --warning-color-red: var(--md-sys-color-error);
+            
+            --warning-bg-orange-current: #ffeed9;
+            --warning-bg-red-current: var(--md-sys-color-error-container);
+            --us-holiday-bg-current: var(--md-sys-color-secondary-container);
+            --ph-holiday-bg-current: #ffeed9;
             --success-color: #146c2e;
-        }
-        
-        body {
-            --bg-color: var(--light-bg);
-            --line-color: var(--light-line);
-            --widget-bg-color: var(--light-widget-bg);
-            --text-color: var(--light-text);
-            --secondary-text-color: var(--light-secondary-text);
-            --border-color: var(--light-border);
-            --shadow-color: var(--light-shadow);
-            --shadow-hover-color: var(--light-shadow-hover);
-            
-            --focus-color: var(--focus-color-light);
-            --focus-bg: var(--focus-bg-color-light);
-            --alarm-color: var(--alarm-color-light);
-            
-            --warning-color-orange: #a04200;
-            --warning-bg-orange-current: #ffdcbe;
-            --warning-bg-red-current: var(--alarm-bg-color-light);
-            --us-holiday-bg-current: var(--us-holiday-bg);
-            --ph-holiday-bg-current: var(--ph-holiday-bg);
         }
 
         body.dark-mode {
             color-scheme: dark;
-            --bg-color: var(--dark-bg);
-            --line-color: var(--dark-line);
-            --widget-bg-color: var(--dark-widget-bg);
-            --text-color: var(--dark-text);
-            --secondary-text-color: var(--dark-secondary-text);
-            --border-color: var(--dark-border);
-            --shadow-color: var(--dark-shadow);
-            --shadow-hover-color: var(--dark-shadow-hover);
+            --md-sys-color-primary: #9ecaef;
+            --md-sys-color-on-primary: #003258;
+            --md-sys-color-primary-container: #00497d;
+            --md-sys-color-on-primary-container: #d1e4ff;
             
-            --focus-color: var(--focus-color-dark);
-            --focus-bg: var(--focus-bg-color-dark);
-            --alarm-color: var(--alarm-color-dark);
+            --md-sys-color-secondary: #bbc7db;
+            --md-sys-color-on-secondary: #253140;
+            --md-sys-color-secondary-container: #3b4858;
+            --md-sys-color-on-secondary-container: #d7e3f7;
             
-            --warning-color-orange: #ffb776;
-            --warning-bg-orange-current: var(--dark-ph-holiday-bg);
-            --warning-bg-red-current: var(--alarm-bg-color-dark);
-            --us-holiday-bg-current: var(--dark-us-holiday-bg);
-            --ph-holiday-bg-current: var(--dark-ph-holiday-bg);
-        }
+            --md-sys-color-error: #ffb4ab;
+            --md-sys-color-on-error: #690005;
+            --md-sys-color-error-container: #93000a;
+            --md-sys-color-on-error-container: #ffdad6;
+            
+            --md-sys-color-background: #1a1c1e;
+            --md-sys-color-on-background: #e2e2e6;
+            --md-sys-color-surface: #1a1c1e;
+            --md-sys-color-on-surface: #e2e2e6;
+            --md-sys-color-surface-variant: #43474e;
+            --md-sys-color-on-surface-variant: #c3c7cf;
+            
+            --md-sys-color-outline: #8d9199;
+            --md-sys-color-outline-variant: #43474e;
+            
+            --md-sys-color-surface-container-lowest: #0f0f11;
+            --md-sys-color-surface-container-low: #1a1c1e;
+            --md-sys-color-surface-container: #1e2022;
+            --md-sys-color-surface-container-high: #282a2d;
+            --md-sys-color-surface-container-highest: #333538;
 
-        /* Dark Mode Button Text Overrides for M3 legibility */
-        body.dark-mode .modal-button,
-        body.dark-mode #todo-add-btn,
-        body.dark-mode #time-calculate-btn,
-        body.dark-mode #formula-calculate-btn,
-        body.dark-mode .calc-buttons .equals {
-            color: #003258 !important;
-            font-weight: 700;
-        }
-        body.dark-mode #start-hold-timer-btn:not(:disabled) {
-            color: #410002 !important;
-            font-weight: 700;
+            --shadow-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            --shadow-elevation-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.4), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+
+            --bg-color: var(--md-sys-color-background);
+            --widget-bg-color: var(--md-sys-color-surface-container-lowest);
+            --line-color: var(--md-sys-color-surface-container-highest);
+            --text-color: var(--md-sys-color-on-surface);
+            --secondary-text-color: var(--md-sys-color-on-surface-variant);
+            --border-color: var(--md-sys-color-outline-variant);
+            
+            --focus-color: var(--md-sys-color-primary);
+            --focus-bg: var(--md-sys-color-primary-container);
+            --alarm-color: var(--md-sys-color-error);
+            --warning-color-red: var(--md-sys-color-error);
+            
+            --warning-bg-orange-current: #4d2e13;
+            --warning-bg-red-current: var(--md-sys-color-error-container);
+            --us-holiday-bg-current: var(--md-sys-color-secondary-container);
+            --ph-holiday-bg-current: #4d2e13;
+            --success-color: #79d28a;
         }
         
         body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
@@ -114,10 +134,6 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                linear-gradient(45deg, var(--line-color) 2px, transparent 2px),
-                linear-gradient(-45deg, var(--line-color) 2px, transparent 2px);
-            background-size: 100px 100px;
             color: var(--text-color);
             margin: 0;
             display: flex;
@@ -159,19 +175,21 @@
         body.wide-mode main { max-width: 650px; }
         body.wide-mode .top-bar-title { max-width: 400px; }
 
+        /* M3 Top Bar */
         .top-bar {
-            width: 100%; height: 64px; position: fixed; top: 0; left: 0; right: 0; display: flex;
-            align-items: center; justify-content: space-between; padding: 0 20px; background-color: var(--bg-color);
-            z-index: 1000; box-sizing: border-box;
+            width: 100%; height: 60px; position: fixed; top: 0; left: 0; right: 0; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 20px; 
+            background-color: var(--md-sys-color-surface-container);
+            box-shadow: var(--shadow-elevation-1); z-index: 1000; box-sizing: border-box;
             transition: background-color 0.4s ease;
         }
         .top-bar.snoozed { background-color: var(--alarm-color); }
-        .top-bar.snoozed .top-bar-title, .top-bar.snoozed .dropdown-button, .top-bar.snoozed #theme-label { color: white !important; transition: color 0.4s ease; }
-        .top-bar.snoozed .dropdown-button { border-color: rgba(255, 255, 255, 0.5); background-color: transparent; }
+        .top-bar.snoozed .top-bar-title, .top-bar.snoozed .dropdown-button, .top-bar.snoozed #theme-label { color: var(--md-sys-color-on-error); transition: color 0.4s ease; }
+        .top-bar.snoozed .dropdown-button { background-color: rgba(255, 255, 255, 0.2); border: none; }
 
         .top-bar-left, .top-bar-right { display: flex; align-items: center; gap: 15px; }
         .top-bar-title {
-            font-size: 1.3rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease, max-width 0.4s ease-in-out;
+            font-size: 1.25rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease, max-width 0.4s ease-in-out;
             max-width: 200px; overflow: hidden; white-space: nowrap;
         }
         .top-bar-title.text-success { color: var(--success-color) !important; }
@@ -185,90 +203,68 @@
 
         .dropdown { position: relative; }
         .dropdown-button {
-            background-color: var(--widget-bg-color); border: 1px solid var(--border-color); color: var(--secondary-text-color);
-            padding: 8px 16px; font-size: 0.9rem; font-weight: 500; border-radius: 100px; cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+            background-color: var(--md-sys-color-surface-container-highest); border: none; color: var(--text-color);
+            padding: 8px 16px; font-size: 0.9rem; font-weight: 600; border-radius: 999px; cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
         }
-        .dropdown-button:hover { border-color: var(--focus-color); color: var(--focus-color); background-color: var(--focus-bg); }
+        .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
         .dropdown-menu {
-            position: absolute; top: 120%; right: 0; background-color: var(--widget-bg-color); border: 1px solid var(--line-color);
-            border-radius: 16px; box-shadow: 0 8px 24px var(--shadow-color); list-style: none; padding: 8px; margin: 0; width: 220px;
-            z-index: 1001; opacity: 0; transform: translateY(-10px); visibility: hidden;
+            position: absolute; top: 120%; right: 0; background-color: var(--md-sys-color-surface-container-high); 
+            border-radius: 16px; box-shadow: var(--shadow-elevation-3); list-style: none; padding: 8px; margin: 0; width: 220px;
+            z-index: 1001; opacity: 0; transform: translateY(-10px); visibility: hidden; border: none;
             transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
         }
         .dropdown-menu.show { opacity: 1; transform: translateY(0); visibility: visible; }
         .minibutton {
             background: none; border: none; width: 100%; text-align: left; padding: 10px 12px; font-size: 0.9rem;
-            color: var(--text-color); cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px;
+            color: var(--text-color); cursor: pointer; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 500;
         }
         .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
         .minibutton svg { width: 16px; height: 16px; fill: currentcolor; }
-        .dropdown-header { padding: 8px 12px; font-size: 0.75rem; color: var(--focus-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 5px 0; }
+        .dropdown-header { padding: 8px 12px; font-size: 0.75rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 6px 0; border: none; }
 
-        .theme-switch, .format-switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
+        /* M3 Switch */
+        .theme-switch, .format-switch { position: relative; display: inline-block; width: 52px; height: 32px; flex-shrink: 0; }
         .theme-switch input, .format-switch input { display: none; }
-        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid var(--secondary-text-color); background-color: transparent; transition: .3s; border-radius: 100px; box-sizing: border-box; }
-        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: var(--secondary-text-color); transition: .3s cubic-bezier(0.2, 0, 0, 1); border-radius: 50%; }
+        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 32px; box-sizing: border-box;}
+        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; }
         .theme-switch input:checked + .slider, .format-switch input:checked + .slider { background-color: var(--focus-color); border-color: var(--focus-color); }
-        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(22px); background-color: var(--widget-bg-color); height: 18px; width: 18px; left: 2px; bottom: 2px; }
-        #theme-label { font-size: 0.85rem; font-weight: 500; color: var(--secondary-text-color); transition: color 0.4s ease; }
+        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(20px); background-color: var(--md-sys-color-on-primary); height: 24px; width: 24px; left: 2px; bottom: 2px;}
+        #theme-label { font-size: 0.85rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease; }
 
-        /* Status Bar CSS (Android Material Style) */
+        /* M3 Bottom Status Bar */
         .bottom-status-bar {
-            width: 100%;
-            height: 32px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            background-color: var(--bg-color);
-            z-index: 4000; 
-            box-sizing: border-box;
-            font-size: 0.75rem;
-            font-weight: 500;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--secondary-text-color);
-            transition: background-color 0.4s ease, color 0.4s ease;
+            width: 100%; height: 32px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 16px;
+            background-color: var(--md-sys-color-surface-container); border: none;
+            box-shadow: 0px -1px 3px rgba(0,0,0,0.05); z-index: 4000; box-sizing: border-box;
+            font-size: 0.75rem; font-weight: 500; font-family: 'JetBrains Mono', monospace;
+            color: var(--secondary-text-color); transition: background-color 0.4s ease, color 0.4s ease;
             user-select: none;
         }
         
-        .status-bar-left, .status-bar-right { display: flex; align-items: center; gap: 8px; }
-        .status-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; cursor: default; }
+        .status-bar-left { display: flex; align-items: center; gap: 14px; }
+        .status-bar-right { display: flex; align-items: center; gap: 6px; }
+        .status-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; cursor: default; }
         .status-svg-icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
-        .status-bold-text { font-weight: 600; color: var(--text-color); }
+        .status-bold-text { font-weight: 700; color: var(--text-color); }
 
-        .status-item .status-text {
-            max-width: 0;
-            opacity: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            display: inline-block;
-            transition: max-width 0.3s ease, opacity 0.2s ease, margin-left 0.2s ease;
-            vertical-align: middle;
-        }
+        .status-item .status-text { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; display: inline-block; transition: max-width 0.3s ease, opacity 0.2s ease, margin-left 0.2s ease; vertical-align: middle; }
         .status-item:hover .status-text { max-width: 120px; opacity: 1; margin-left: 2px; }
         
-        @keyframes blink-red {
-            0% { opacity: 1; fill: var(--alarm-color); }
-            50% { opacity: 0.3; fill: var(--alarm-color); }
-            100% { opacity: 1; fill: var(--alarm-color); }
-        }
+        @keyframes blink-red { 0% { opacity: 1; fill: var(--alarm-color); } 50% { opacity: 0.3; fill: var(--alarm-color); } 100% { opacity: 1; fill: var(--alarm-color); } }
         .status-offline { animation: blink-red 1.5s infinite; }
         .battery-critical { color: var(--alarm-color) !important; font-weight: 700; }
         .battery-warning { color: var(--warning-color-orange) !important; font-weight: 700; }
         
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* M3 Widget Cards */
         .widget {
-            background-color: var(--widget-bg-color); color: var(--text-color); 
-            border: 1px solid var(--line-color);
-            border-radius: 24px; box-sizing: border-box; opacity: 1;
-            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+            background-color: var(--widget-bg-color); color: var(--text-color); border: none;
+            border-radius: 24px; box-shadow: var(--shadow-elevation-1); box-sizing: border-box; opacity: 1;
+            transition: background-color 0.4s ease, color 0.4s ease; padding: 12px;
         }
         
         .textarea-container {
@@ -278,86 +274,84 @@
         }
         
         .textarea-controls {
-            display: flex; justify-content: space-between; align-items: center; gap: 5px; padding: 6px 10px;
-            background-color: var(--bg-color); border: 1px solid var(--line-color); border-bottom: none;
-            border-radius: 24px 24px 0 0; transition: background-color 0.4s ease, border-color 0.4s ease;
+            display: flex; justify-content: space-between; align-items: center; gap: 5px; padding: 6px 12px;
+            background-color: var(--md-sys-color-surface-container-low); border: none;
+            border-radius: 24px 24px 0 0; transition: background-color 0.4s ease;
         }
         .workspace-tabs { display: flex; gap: 4px; align-items: center; position: relative; }
         .workspace-tab {
             background-color: transparent; border: none; color: var(--secondary-text-color);
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
-            padding: 8px 16px; border-radius: 100px; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
         }
-        .workspace-tab:hover { color: var(--text-color); background-color: rgba(0,0,0,0.03); }
-        .workspace-tab.active { background-color: var(--focus-bg); color: var(--focus-color); }
+        .workspace-tab:hover { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
+        .workspace-tab.active { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         
         .font-controls { display: flex; gap: 6px; align-items: center; transition: visibility 0.2s; }
         .hidden-view { display: none !important; }
         
         .control-button {
-            background-color: transparent; border: 1px solid var(--border-color); color: var(--secondary-text-color);
-            font-family: 'JetBrains Mono', monospace; font-weight: 600; height: 32px; border-radius: 100px;
-            cursor: pointer; padding: 0 12px; transition: all 0.2s;
+            background-color: transparent; border: none; color: var(--focus-color);
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; height: 32px; border-radius: 999px;
+            cursor: pointer; padding: 0 12px; transition: background-color 0.2s, color 0.2s;
             white-space: nowrap; flex-shrink: 0;
         }
-        .control-button.resize { width: 32px; padding: 0; }
-        .control-button:hover { background-color: var(--focus-bg); color: var(--focus-color); border-color: var(--focus-color); }
+        .control-button.resize { width: 32px; padding: 0; display: flex; justify-content: center; align-items: center;}
+        .control-button:hover { background-color: var(--focus-bg); }
         
         .workspace-content {
             flex-grow: 1; width: 100%; box-sizing: border-box;
-            background-color: var(--widget-bg-color); color: var(--text-color); 
-            border: 1px solid var(--line-color);
-            border-top: none; border-radius: 0 0 24px 24px; 
-            transition: border-color 0.4s ease, background-color 0.4s ease, color 0.4s ease;
+            background-color: var(--widget-bg-color); color: var(--text-color); border: none;
+            border-radius: 0 0 24px 24px; box-shadow: var(--shadow-elevation-1);
+            transition: background-color 0.4s ease, color 0.4s ease;
             overflow-y: auto; overflow-x: hidden;
         }
 
         .workspace-content::-webkit-scrollbar, textarea#main-content::-webkit-scrollbar, .csv-textarea::-webkit-scrollbar, .formatted-display-box::-webkit-scrollbar { width: 10px; }
         .workspace-content::-webkit-scrollbar-track, textarea#main-content::-webkit-scrollbar-track, .csv-textarea::-webkit-scrollbar-track, .formatted-display-box::-webkit-scrollbar-track { background: transparent; }
         .workspace-content::-webkit-scrollbar-thumb, textarea#main-content::-webkit-scrollbar-thumb, .csv-textarea::-webkit-scrollbar-thumb, .formatted-display-box::-webkit-scrollbar-thumb {
-            background-color: var(--border-color); border-radius: 10px; border: 3px solid var(--widget-bg-color);
+            background-color: var(--md-sys-color-outline-variant); border-radius: 10px; border: 3px solid var(--widget-bg-color);
         }
 
         /* Notepad */
         textarea#main-content {
-            padding: 1.5rem; font-size: 12px; line-height: 1.7; resize: none; 
-            font-family: 'Inter', sans-serif;
+            padding: 1.5rem; font-size: 13px; line-height: 1.7; resize: none; 
+            font-family: 'Inter', sans-serif; outline: none;
         }
-        textarea#main-content:focus { outline: none; border-color: var(--focus-color); }
 
         /* To-Do List */
-        #todo-view { display: flex; flex-direction: column; padding: 1.25rem; }
+        #todo-view { display: flex; flex-direction: column; padding: 1.5rem; }
         .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .todo-nav button { background: none; border: 1px solid var(--border-color); border-radius: 100px; width: 32px; height: 32px; cursor: pointer; color: var(--secondary-text-color); transition: all 0.2s; display: flex; justify-content: center; align-items: center;}
-        .todo-nav button:hover { background-color: var(--focus-bg); color: var(--focus-color); border-color: var(--focus-color); }
-        #todo-week-label { font-weight: 600; font-size: 0.95rem; }
-        .todo-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 15px; text-align: center; }
-        .todo-day { padding: 8px 0; border-radius: 16px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.75rem; transition: all 0.2s cubic-bezier(0.2, 0, 0, 1); color: var(--secondary-text-color); background-color: transparent;}
-        .todo-day span { display: block; font-size: 1.1rem; font-weight: 600; color: var(--text-color); margin-top: 4px; }
-        .todo-day:hover { border-color: var(--focus-color); background-color: rgba(0,0,0,0.02); }
-        .todo-day.active { background-color: var(--focus-bg); border-color: var(--focus-bg); color: var(--focus-color); }
-        .todo-day.active span { color: var(--focus-color); }
+        .todo-nav button { background: none; border: none; border-radius: 999px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 1rem;}
+        .todo-nav button:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        #todo-week-label { font-weight: 700; font-size: 0.95rem; }
+        .todo-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 20px; text-align: center; }
+        .todo-day { padding: 8px 0; border-radius: 16px; border: none; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; color: var(--secondary-text-color); background-color: var(--md-sys-color-surface-container-high);}
+        .todo-day span { display: block; font-size: 1.1rem; font-weight: 700; color: var(--text-color); margin-top: 2px; }
+        .todo-day.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        .todo-day.active span { color: var(--md-sys-color-on-primary); }
         .todo-day.is-today { position: relative; }
-        .todo-day.is-today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background-color: var(--focus-color); border-radius: 50%; }
+        .todo-day.is-today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background-color: var(--md-sys-color-primary); border-radius: 50%; }
+        .todo-day.active.is-today::after { background-color: var(--md-sys-color-on-primary); }
         
         .todo-input-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        #todo-input { flex-grow: 1; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 100px; background-color: transparent; color: var(--text-color); font-family: 'Inter', sans-serif;}
-        #todo-input:focus { outline: none; border-color: var(--focus-color); }
-        #todo-add-btn { background-color: var(--focus-color); color: white; border: none; border-radius: 100px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; font-size: 1.4rem; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; }
+        #todo-input { flex-grow: 1; padding: 12px 16px; border: none; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); font-family: 'Inter', sans-serif; outline: none; transition: box-shadow 0.2s;}
+        #todo-input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
+        #todo-add-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); border: none; border-radius: 999px; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 1.4rem; transition: transform 0.1s; flex-shrink: 0;}
         #todo-add-btn:active { transform: scale(0.95); }
         
         #todo-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
-        .todo-item { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--line-color); }
+        .todo-item { display: flex; align-items: center; gap: 12px; padding: 12px 8px; border-bottom: 1px solid var(--line-color); }
         .todo-item:last-child { border-bottom: none; }
         .todo-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--focus-color); flex-shrink: 0;}
-        .todo-text { flex-grow: 1; font-size: 0.95rem; word-break: break-word; transition: color 0.2s; }
-        .todo-item.done .todo-text { text-decoration: line-through; color: var(--border-color); }
-        .todo-delete { background: none; border: none; color: var(--border-color); cursor: pointer; font-size: 1.4rem; line-height: 1; padding: 0 5px; flex-shrink: 0; transition: color 0.2s; }
+        .todo-text { flex-grow: 1; font-size: 0.95rem; font-weight: 500; word-break: break-word; transition: color 0.2s; }
+        .todo-item.done .todo-text { text-decoration: line-through; color: var(--secondary-text-color); }
+        .todo-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.4rem; line-height: 1; padding: 0 8px; flex-shrink: 0; transition: color 0.2s;}
         .todo-delete:hover { color: var(--alarm-color); }
 
         /* My Team (Excel Grid Layout) */
         #team-view { 
-            display: flex; flex-direction: column; padding: 1rem; overflow-x: auto; 
+            display: flex; flex-direction: column; padding: 1.5rem; overflow-x: auto; 
             --col-eid: 65px;
             --col-sfdc: 70px;
             --col-name: 1fr;
@@ -368,259 +362,245 @@
         }
         .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 520px; height: 100%; }
         
-        .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.8rem; font-weight: 600; color: var(--secondary-text-color); margin-bottom: 4px; padding: 0; }
-        .team-header-row > span { padding: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; }
+        .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.75rem; font-weight: 700; color: var(--focus-color); margin-bottom: 6px; padding: 0; text-transform: uppercase;}
+        .team-header-row > span { padding: 4px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; }
         
         .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-        .sortable-header:hover { color: var(--focus-color); }
         .sort-icon { font-size: 0.8em; margin-left: 4px; display: inline-block; width: 10px; }
 
-        .col-resizer { position: absolute; top: 0; right: 0; width: 4px; height: 100%; cursor: col-resize; z-index: 10; opacity: 0; transition: opacity 0.2s; background-color: var(--focus-color); }
+        .col-resizer { position: absolute; top: 0; right: 0; width: 4px; height: 100%; cursor: col-resize; z-index: 10; opacity: 0; transition: opacity 0.2s; background-color: var(--focus-color); border-radius: 4px;}
         .team-header-row span:hover .col-resizer { opacity: 0.5; }
         .col-resizer:hover, .col-resizer:active { opacity: 1 !important; }
 
-        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border: 1px solid var(--line-color); border-bottom: none; border-radius: 12px; overflow-y: auto; overflow-x: hidden; }
+        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 15px; border-radius: 12px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--line-color);}
         
         .team-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); align-items: stretch; border-bottom: 1px solid var(--line-color); }
+        .team-row:last-child { border-bottom: none; }
         
         .team-row input, .team-row select { 
             padding: 8px; border: none; border-right: 1px solid var(--line-color); border-radius: 0; 
-            background-color: transparent; color: var(--text-color); font-size: 0.85rem; 
+            background-color: transparent; color: var(--text-color); font-size: 0.85rem; font-weight: 500;
             width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;
         }
-        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; padding: 4px; letter-spacing: -0.5px; }
+        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; padding: 6px; letter-spacing: -0.5px; }
         
-        .team-delete { background: transparent; border: none; color: var(--border-color); cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s; }
-        .team-delete:hover { color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
+        .team-delete { background: transparent; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; padding: 0; transition: color 0.2s;}
+        .team-delete:hover { color: var(--alarm-color); }
         
-        .team-row input:focus, .team-row select:focus { outline: 2px solid var(--focus-color); outline-offset: -2px; z-index: 10; position: relative; background-color: var(--widget-bg-color); }
-        .cell-selected { background-color: var(--focus-bg) !important; outline: 1px solid var(--focus-color); outline-offset: -1px; z-index: 5; position: relative; }
+        .team-row input:focus, .team-row select:focus { outline: none; background-color: var(--md-sys-color-surface-container-highest); z-index: 10; position: relative; }
+        .cell-selected { background-color: var(--focus-bg) !important; outline: 2px solid var(--focus-color) inset; z-index: 5; position: relative; }
 
         .boost-btn {
-            background: transparent; border: 1px solid var(--border-color); color: var(--focus-color);
+            background: var(--md-sys-color-secondary-container); border: none; color: var(--md-sys-color-on-secondary-container);
             cursor: pointer; border-radius: 8px; font-weight: bold; padding: 0; width: 28px; height: 28px; margin: auto;
             display: flex; justify-content: center; align-items: center; transition: all 0.2s;
         }
-        .boost-btn:hover { background: var(--focus-bg); border-color: var(--focus-color); }
+        .boost-btn:hover { background: var(--focus-color); color: var(--md-sys-color-on-primary); }
 
-        #add-team-btn { padding: 12px; font-size: 0.95rem; cursor: pointer; border: 1px dashed var(--border-color); border-radius: 100px; background-color: transparent; color: var(--secondary-text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
-        #add-team-btn:hover:not(:disabled) { border-color: var(--focus-color); color: var(--focus-color); background-color: var(--focus-bg); }
+        #add-team-btn { padding: 12px; font-size: 0.95rem; cursor: pointer; border: 2px dashed var(--md-sys-color-outline-variant); border-radius: 16px; background-color: transparent; color: var(--text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
+        #add-team-btn:hover:not(:disabled) { border-color: var(--focus-color); background-color: var(--focus-bg); color: var(--md-sys-color-on-primary-container); }
         #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Hold Timer */
+        /* M3 Hold Timer FAB */
         #hold-timer-container { margin-bottom: 20px; display: none; }
         #start-hold-timer-btn {
-            width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border-radius: 100px; border: none;
-            background-color: var(--alarm-color); color: white; transition: background-color 0.2s, transform 0.1s;
+            width: 100%; padding: 0 24px; height: 64px; font-size: 1.15rem; font-weight: 600; cursor: pointer; border-radius: 16px; border: none;
+            background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); 
+            box-shadow: var(--shadow-elevation-1); transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px;
         }
+        #start-hold-timer-btn:hover { box-shadow: var(--shadow-elevation-2); background-color: #ffb4ab; } /* M3 Error Light */
         #start-hold-timer-btn:active { transform: scale(0.98); }
         
         #clock {
-            flex-shrink: 0; font-family: 'JetBrains Mono', monospace; padding: 1rem;
+            flex-shrink: 0; font-family: 'JetBrains Mono', monospace; padding: 1.5rem;
             text-align: center; animation: fadeInUp 0.5s ease-out 0.2s forwards; margin-bottom: 20px;
         }
-        #clock-date-display { font-size: 0.85rem; color: var(--secondary-text-color); font-family: 'Inter', sans-serif;}
-        #shift-date-display { font-size: 0.8rem; font-weight: 600; color: var(--focus-color); margin-top: 4px; font-family: 'Inter', sans-serif; }
+        #clock-date-display { font-size: 0.85rem; font-weight: 600; color: var(--secondary-text-color); font-family: 'Inter', sans-serif;}
+        #shift-date-display { font-size: 0.75rem; font-weight: 700; color: var(--focus-color); margin-top: 6px; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;}
         #time { 
-            font-size: 1.8rem; font-weight: 700; color: var(--text-color); margin: 6px 0; position: relative; height: 1.8rem; line-height: 1.8rem;
+            font-size: 2rem; font-weight: 700; color: var(--text-color); margin: 6px 0; position: relative; height: 2.2rem; line-height: 2.2rem;
         }
         #time .clock-display, #time .warning-display { position: absolute; top: 0; left: 0; right: 0; transition: opacity 0.4s ease-in-out; }
         #time .warning-display { color: var(--alarm-color); opacity: 0; }
         #time.warning-active .clock-display { opacity: 0; }
         #time.warning-active .warning-display { opacity: 1; }
 
-        #clock-time-display, .clock-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; font-family: 'Inter', sans-serif; }
-        .tz-button { cursor: pointer; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px; color: var(--secondary-text-color); transition: background-color 0.2s, color 0.2s; font-weight: 500; border: 1px solid transparent;}
-        .tz-button:hover { border-color: var(--border-color); }
-        .tz-button.active { background-color: var(--focus-bg); color: var(--focus-color); font-weight: 600; border-color: transparent;}
-        .format-toggle-label { font-size: 0.75rem; font-weight: 500; color: var(--secondary-text-color); }
+        #clock-time-display, .clock-controls { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; font-family: 'Inter', sans-serif;}
+        .tz-button { cursor: pointer; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); transition: background-color 0.2s, color 0.2s; }
+        .tz-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        .format-toggle-label { font-size: 0.8rem; font-weight: 600; color: var(--secondary-text-color); }
         
-        @keyframes glow-pulse { 0% { box-shadow: 0 0 0 0 var(--glow-color); } 70% { box-shadow: 0 0 12px 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-        #clock.glow-orange { --glow-color: rgba(253, 150, 68, 0.4); border-color: transparent; background-color: var(--warning-bg-orange-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
-        #clock.glow-red { --glow-color: rgba(186, 26, 26, 0.3); border-color: transparent; background-color: var(--warning-bg-red-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
-        #clock.snoozed-indicator { background-color: var(--warning-bg-red-current); border-color: transparent; }
+        @keyframes glow-pulse { 0% { box-shadow: var(--shadow-elevation-1), 0 0 0 0 var(--glow-color); } 70% { box-shadow: var(--shadow-elevation-1), 0 0 16px 12px transparent; } 100% { box-shadow: var(--shadow-elevation-1), 0 0 0 0 transparent; } }
+        #clock.glow-orange { --glow-color: rgba(213, 92, 0, 0.4); background-color: var(--warning-bg-orange-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
+        #clock.glow-red { --glow-color: rgba(186, 26, 26, 0.4); background-color: var(--warning-bg-red-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
+        #clock.snoozed-indicator { background-color: var(--warning-bg-red-current); }
 
         .card-viewer-area { flex-shrink: 0; }
         .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 8px; }
-        .pill-container { display: inline-flex; border-radius: 100px; padding: 4px; background-color: var(--line-color); transition: background-color 0.4s ease; }
-        .switcher-button { background: transparent; border: none; padding: 6px 20px; border-radius: 100px; color: var(--secondary-text-color); font-weight: 500; font-size: 0.85rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
-        .switcher-button.active { background-color: var(--widget-bg-color); color: var(--text-color); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        .pill-container { display: inline-flex; border-radius: 999px; padding: 4px; background-color: var(--md-sys-color-surface-container-high); }
+        .switcher-button { background: transparent; border: none; padding: 8px 20px; border-radius: 999px; color: var(--text-color); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+        .switcher-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
-        #toggle-cards-btn { background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--secondary-text-color); transition: all 0.3s ease; }
-        #toggle-cards-btn:hover { color: var(--focus-color); background-color: var(--focus-bg); border-color: transparent; }
+        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
+        #toggle-cards-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
         #toggle-cards-btn svg { width: 20px; height: 20px; fill: currentColor; transition: transform 0.4s ease; }
 
-        #cards-wrapper { transition: max-height 0.5s cubic-bezier(0.2, 0, 0, 1), opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0, 0, 1); display: grid; transform-origin: top; }
+        #cards-wrapper { transition: max-height 0.5s ease, opacity 0.4s ease, transform 0.5s ease; display: grid; transform-origin: bottom; }
         .card-viewer-area.cards-collapsed #cards-wrapper { max-height: 0; opacity: 0; overflow: hidden; transform: scaleY(0); }
         .card-viewer-area.cards-collapsed #toggle-cards-btn svg { transform: rotate(180deg); }
 
-        #calendar-container, #alarms-view-container, #calculator-container { overflow: hidden; transition: max-height 0.6s cubic-bezier(0.2, 0, 0, 1), opacity 0.4s ease, padding 0.6s ease, border-width 0.6s ease; }
+        #calendar-container, #alarms-view-container, #calculator-container { overflow: hidden; transition: max-height 0.6s ease-in-out, opacity 0.4s ease-in-out, padding 0.6s ease-in-out, border-width 0.6s ease-in-out; }
         .hidden { max-height: 0 !important; opacity: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-width: 0 !important; margin-top: 0 !important; }
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
-        #alarms-view-container { max-height: 400px; padding: 1rem 1.25rem; overflow-y: auto; }
-        #alarms-view-container h4 { margin: 1rem 0 0.5rem; font-weight: 600; font-size: 0.95rem; color: var(--focus-color); }
+        #alarms-view-container { max-height: 400px; overflow-y: auto; }
+        #alarms-view-container h4 { margin: 1rem 0 0.5rem; font-weight: 700; font-size: 0.85rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
         #alarms-view-container h4:first-child { margin-top: 0; }
         #break-alarms-list, #activity-alarms-list, #custom-alarms-list, #upcoming-list { list-style: none; padding: 0; margin: 0; }
-        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.2rem; font-size: 0.9rem; border-bottom: 1px solid var(--line-color); }
+        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0.2rem; font-size: 0.9rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
         .alarm-display-item:last-child { border-bottom: none; }
         .alarm-details-container { display: flex; align-items: center; gap: 10px; }
-        .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-        .alarm-status { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px; }
-        .status-triggered { color: var(--secondary-text-color); background-color: var(--bg-color); }
-        .status-upcoming { color: var(--warning-color-orange); background-color: var(--warning-bg-orange-current); }
-        .status-missed { color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
-        #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0; display: none; }
+        .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1rem;}
+        .alarm-status { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .status-triggered { color: var(--md-sys-color-secondary); background-color: var(--md-sys-color-surface-container-highest); }
+        .status-upcoming { color: var(--md-sys-color-on-primary-container); background-color: var(--md-sys-color-primary-container); }
+        .status-missed { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
+        #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.95rem; font-weight: 500; padding: 2rem 0; display: none; }
 
         /* Calendar */
         #calendar-container { max-height: 500px; }
-        #calendar { padding: 1rem; font-family: 'JetBrains Mono', monospace; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.75rem; font-family: 'Inter', sans-serif; }
-        .calendar-header h3 { font-weight: 600; font-size: 1rem; letter-spacing: 0.5px; margin: 0; }
-        .calendar-header button { background: transparent; border: 1px solid var(--border-color); font-size: 1.2rem; cursor: pointer; color: var(--secondary-text-color); transition: all 0.3s; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; }
-        .calendar-header button:hover { background-color: var(--focus-bg); color: var(--focus-color); border-color: transparent; }
+        #calendar { font-family: 'JetBrains Mono', monospace; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.5rem 1rem; }
+        .calendar-header h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.1rem; margin: 0; color: var(--text-color);}
+        .calendar-header button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
+        .calendar-header button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calendar-body { text-align: center; }
         .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-        .calendar-weekdays div { font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); padding-bottom: 0.5rem; font-family: 'Inter', sans-serif;}
-        .calendar-days div { padding: 0.4rem 0; font-size: 0.85rem; font-weight: 500; transition: background-color 0.2s, color 0.2s; border-radius: 100px; cursor: pointer; line-height: 1.4; }
-        .calendar-days div:hover:not(.current-day):not(.us-holiday):not(.ph-holiday) { background-color: rgba(0,0,0,0.04); }
-        .calendar-days .prev-date, .calendar-days .next-date { color: var(--secondary-text-color); opacity: 0.4; }
-        .calendar-days .current-day { background-color: var(--focus-color); color: white; font-weight: 600; }
-        .calendar-days .us-holiday { background-color: var(--us-holiday-bg-current); font-weight: 600; color: var(--focus-color); }
-        .calendar-days .ph-holiday { background-color: var(--ph-holiday-bg-current); font-weight: 600; color: var(--warning-color-orange); }
-        .calendar-days .current-day.us-holiday, .calendar-days .current-day.ph-holiday { background-color: var(--focus-color); color: white; }
-        .holiday-marker { font-size: 0.6em; vertical-align: super; margin-left: 2px; opacity: 0.9; line-height: 1; }
+        .calendar-weekdays div { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--secondary-text-color); padding-bottom: 0.6rem; text-transform: uppercase;}
+        .calendar-days div { padding: 0.4rem 0; font-size: 0.9rem; font-weight: 600; transition: background-color 0.2s, color 0.2s; border-radius: 999px; cursor: pointer; line-height: 1.4; display: flex; justify-content: center; align-items: center; height: 32px; width: 32px; margin: auto;}
+        .calendar-days div:hover:not(.current-day):not(.us-holiday):not(.ph-holiday) { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
+        .calendar-days .prev-date, .calendar-days .next-date { color: var(--secondary-text-color); opacity: 0.3; }
+        .calendar-days .current-day { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        .calendar-days .us-holiday { background-color: var(--us-holiday-bg-current); color: var(--text-color); }
+        .calendar-days .ph-holiday { background-color: var(--ph-holiday-bg-current); color: var(--text-color); }
+        .calendar-days .current-day.us-holiday, .calendar-days .current-day.ph-holiday { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        .holiday-marker { font-size: 0.5em; vertical-align: super; margin-left: 2px; opacity: 0.9; line-height: 1; font-family: 'Inter', sans-serif;}
 
         /* Calculator */
-        #calculator-container { max-height: 440px; padding: 1.25rem; overflow: hidden; }
-        .calc-view-switcher { display: flex; justify-content: center; margin-top: -6px; margin-bottom: 16px; background-color: var(--line-color); border-radius: 100px; padding: 4px; }
-        .calc-view-switcher button { width: 33.33%; padding: 6px 10px; font-size: 0.85rem; font-weight: 500; cursor: pointer; border: none; border-radius: 100px; background-color: transparent; color: var(--secondary-text-color); transition: all 0.2s cubic-bezier(0.2, 0, 0, 1); }
-        .calc-view-switcher button.active { background-color: var(--widget-bg-color); color: var(--text-color); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        #calculator-container { max-height: 440px; overflow: hidden; }
+        .calc-view-switcher { display: flex; justify-content: center; margin-top: -6px; margin-bottom: 16px; background-color: var(--md-sys-color-surface-container-high); border-radius: 999px; padding: 4px; }
+        .calc-view-switcher button { width: 33.33%; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; border-radius: 999px; background-color: transparent; color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; }
+        .calc-view-switcher button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
         .calc-views-wrapper { display: grid; }
-        .calc-view { grid-area: 1 / 1; transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .calc-view { grid-area: 1 / 1; transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; }
         .calc-view.is-hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
         
         @keyframes result-pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        #calc-display { height: 48px; font-size: 1.8em; margin-bottom: 12px; }
-        #formula-input { height: 48px; font-size: 1.5em; margin-bottom: 12px; }
         #calc-display, #formula-input {
-            width: 100%; border: 1px solid var(--border-color); text-align: right; padding: 0 16px; box-sizing: border-box; background-color: transparent; color: var(--text-color); border-radius: 16px; font-family: 'JetBrains Mono', monospace; transition: all 0.3s ease;
+            width: 100%; height: 48px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); border-radius: 16px; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; text-align: right; padding: 0 16px; margin-bottom: 12px; box-sizing: border-box; transition: box-shadow 0.2s; outline: none;
         }
-        #calc-display:focus, #formula-input:focus { outline: none; border-color: var(--focus-color); background-color: var(--focus-bg); }
+        #calc-display:focus, #formula-input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
 
-        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-bottom: 4px; }
-        .calc-buttons button { height: 48px; font-size: 1.2em; border: none; cursor: pointer; background-color: var(--line-color); color: var(--text-color); font-family: 'JetBrains Mono', monospace; border-radius: 100px; transition: background-color 0.2s, transform 0.1s; }
-        .calc-buttons button:hover { background-color: var(--border-color); }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-buttons button { height: 42px; font-size: 1.2rem; border: none; cursor: pointer; background-color: var(--md-sys-color-surface-container-high); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 999px; transition: background-color 0.2s, transform 0.1s; }
+        .calc-buttons button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calc-buttons button:active { transform: scale(0.95); }
-        .calc-buttons .operator { background-color: var(--focus-bg); color: var(--focus-color); font-weight: 600; }
-        .calc-buttons .operator:hover { background-color: var(--focus-bg-color-light); filter: brightness(0.95); }
-        .calc-buttons .equals { grid-column: span 2; background-color: var(--focus-color); color: white; }
+        .calc-buttons .operator { color: var(--focus-color); background-color: var(--md-sys-color-surface-container-low); }
+        .calc-buttons .equals { grid-column: span 2; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         
-        #formula-calculate-btn { width: 100%; padding: 12px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 100px; background-color: var(--focus-color); color: white; margin-bottom: 12px; transition: background-color 0.2s, transform 0.1s; font-weight: 600; }
+        #formula-calculate-btn { width: 100%; padding: 12px; font-size: 1.1rem; cursor: pointer; border: none; border-radius: 999px; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); margin-bottom: 12px; transition: background-color 0.2s, transform 0.1s; font-weight: 700; }
         #formula-calculate-btn:active { transform: scale(0.98); }
-        .calc-help-note { font-size: 0.8em; color: var(--secondary-text-color); text-align: center; margin: 0 0 12px 0; overflow-wrap: break-word; }
-        #formula-result { min-height: 40px; width: 100%; text-align: center; font-size: 2em; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; }
+        .calc-help-note { font-size: 0.8rem; color: var(--secondary-text-color); text-align: center; margin: 0 0 12px 0; font-weight: 500;}
+        #formula-result { min-height: 40px; width: 100%; text-align: center; font-size: 2rem; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; margin: 0;}
         
         #time-calc-view { display: flex; flex-direction: column; gap: 12px; }
-        #time-entries { display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
+        #time-entries { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
         .time-entry-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .time-entry-row input { font-family: 'JetBrains Mono', monospace; text-align: center; padding: 10px; border: 1px solid var(--border-color); background-color: transparent; border-radius: 12px; width: 65px; font-size: 1.1rem;}
-        .time-entry-row input:focus { border-color: var(--focus-color); outline: none; }
-        .time-entry-row span { font-size: 1.4rem; font-weight: 600; color: var(--secondary-text-color); }
-        .remove-row-btn { background: transparent; border: 1px solid var(--border-color); color: var(--secondary-text-color); font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0; width: 36px; height: 36px; border-radius: 50%; margin-left: 8px; display: flex; justify-content: center; align-items: center; transition: all 0.2s;}
-        .remove-row-btn:hover { color: var(--alarm-color); background-color: var(--warning-bg-red-current); border-color: transparent; }
-        #add-time-row-btn, #time-calculate-btn { padding: 12px; font-size: 0.95em; cursor: pointer; border: none; border-radius: 100px; font-weight: 600; transition: transform 0.1s;}
-        #time-calculate-btn { background-color: var(--focus-color); color: white; }
-        #time-calculate-btn:active { transform: scale(0.98); }
-        #add-time-row-btn { background-color: transparent; color: var(--focus-color); border: 1px dashed var(--border-color); }
-        #add-time-row-btn:hover { border-color: var(--focus-color); background-color: var(--focus-bg); }
-        #time-result { min-height: 36px; text-align: center; font-size: 1.5em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 8px; }
+        .time-entry-row input { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 600; text-align: center; padding: 10px; border: none; background-color: var(--md-sys-color-surface-container-highest); border-radius: 12px; width: 65px; outline: none; transition: box-shadow 0.2s;}
+        .time-entry-row input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
+        .time-entry-row span { font-size: 1.4rem; font-weight: 700; color: var(--text-color); }
+        .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.6rem; cursor: pointer; line-height: 1; padding: 0 8px; transition: color 0.2s;}
+        .remove-row-btn:hover { color: var(--alarm-color); }
+        #add-time-row-btn, #time-calculate-btn { padding: 12px; font-size: 1rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
+        #add-time-row-btn { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+        #add-time-row-btn:active, #time-calculate-btn:active { transform: scale(0.98); }
+        #time-calculate-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        #time-result { min-height: 36px; text-align: center; font-size: 1.6em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 10px;}
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; background-color: rgba(0, 0, 0, 0.5); }
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);}
         .modal-overlay.show { opacity: 1; visibility: visible; }
-        .modal-overlay.blur-backdrop { backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-        .resize-warning-content { text-align: center; }
-        .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1rem; }
-        .resize-warning-content p { margin-bottom: 1.5rem; line-height: 1.5;}
+        .modal-overlay.blur-backdrop { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background-color: rgba(0,0,0,0.4); }
+        
+        .resize-warning-content { text-align: center; padding: 2rem !important;}
+        .resize-warning-content svg { width: 56px; height: 56px; fill: var(--focus-color); margin-bottom: 1.5rem; }
+        .resize-warning-content p { margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6;}
 
-        .modal-content { background-color: var(--widget-bg-color); padding: 1.75rem; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; }
-        .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 1.5rem 0; }
+        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 24px; border-radius: 28px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
+        .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 20px 0; }
         .modal-overlay.show .modal-content { transform: scale(1); }
         
-        .modal-close-button { position: absolute; top: 12px; right: 12px; background-color: var(--bg-color); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--secondary-text-color); z-index: 10; transition: color 0.2s, background-color 0.2s; }
-        .modal-close-button:hover { color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
+        .modal-close-button { position: absolute; top: 16px; right: 16px; background-color: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; font-size: 1.25rem; font-weight: bold; line-height: 1; cursor: pointer; color: var(--text-color); z-index: 10; transition: background-color 0.2s, color 0.2s; }
+        .modal-close-button:hover { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
         
         .modal-title { 
-            margin-top: 0; 
-            color: var(--text-color); 
-            padding-right: 35px; 
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            white-space: normal;
-            line-height: 1.2;
-            font-size: 1.4rem;
+            margin-top: 0; margin-bottom: 1rem; color: var(--text-color); padding-right: 40px; 
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; white-space: normal; line-height: 1.3; font-weight: 700; font-size: 1.4rem;
         }
         
-        .alarm-form-note { font-size: 0.85rem; color: var(--secondary-text-color); margin-bottom: 1.2rem; line-height: 1.5; }
+        .alarm-form-note { font-size: 0.85rem; color: var(--secondary-text-color); margin-bottom: 1.2rem; line-height: 1.5; font-weight: 500;}
         .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; }
+        .form-group label { display: block; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; color: var(--text-color);}
+        
         .alarm-input-group { display: flex; gap: 8px; }
-        .alarm-input-group input, .alarm-input-group select { padding: 10px 12px; font-size: 1rem; border-radius: 12px; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-color); box-sizing: border-box; transition: border-color 0.2s, background-color 0.2s; width: 100%;}
-        .alarm-input-group input:focus, .alarm-input-group select:focus { outline: none; border-color: var(--focus-color); background-color: var(--focus-bg); }
+        .alarm-input-group input, .alarm-input-group select { padding: 12px 16px; font-size: 1.05rem; font-weight: 600; border-radius: 12px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); box-sizing: border-box; transition: box-shadow 0.2s; outline: none; width: 100%;}
+        .alarm-input-group input:focus, .alarm-input-group select:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
         .alarm-input-group input { width: 100%; }
         
-        .modal-button { width: 100%; padding: 12px; font-size: 1.05rem; font-weight: 600; border-radius: 100px; border: none; cursor: pointer; background-color: var(--focus-color); color: white; transition: background-color 0.2s, transform 0.1s; white-space: nowrap; flex-shrink: 0; }
+        .modal-button { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border-radius: 999px; border: none; cursor: pointer; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); transition: background-color 0.2s, transform 0.1s; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.5px;}
         .modal-button:active { transform: scale(0.98); }
         
-        .csv-textarea { width: 100%; height: 80px; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; box-sizing: border-box; resize: none; transition: border-color 0.2s, background-color 0.2s; }
-        .csv-textarea:focus { outline: none; border-color: var(--focus-color); background-color: var(--focus-bg); }
+        .csv-textarea { width: 100%; height: 80px; padding: 14px; border-radius: 16px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; box-sizing: border-box; resize: none; transition: box-shadow 0.2s; outline: none;}
+        .csv-textarea:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
 
-        .formatted-display-box { flex: 1; padding: 12px; border-radius: 16px; border: 1px solid var(--focus-color); background-color: transparent; color: var(--text-color); font-family: 'Inter', sans-serif; font-size: 0.9rem; box-sizing: border-box; overflow-y: auto; transition: background-color 0.2s; word-wrap: break-word; }
-        .formatted-display-box p { margin-top: 0; margin-bottom: 10px; line-height: 1.5; }
+        .formatted-display-box { flex: 1; padding: 16px; border-radius: 16px; border: 2px solid var(--md-sys-color-surface-container-highest); background-color: transparent; color: var(--text-color); font-family: 'Inter', sans-serif; font-size: 0.9rem; box-sizing: border-box; overflow-y: auto; word-wrap: break-word; }
+        .formatted-display-box p { margin-top: 0; margin-bottom: 10px; line-height: 1.6; }
         .formatted-display-box p:last-child { margin-bottom: 0; }
-        .formatted-display-box strong { font-weight: 600; color: var(--text-color); }
-        .formatted-display-box ul { padding-left: 20px; margin-top: 4px; margin-bottom: 10px; }
+        .formatted-display-box strong { font-weight: 700; color: var(--text-color); }
+        .formatted-display-box ul { padding-left: 20px; margin-top: 6px; margin-bottom: 10px; line-height: 1.5;}
 
-        #about-modal h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; color: var(--focus-color); }
-        #about-modal ul { padding-left: 20px; margin: 0; font-size: 0.95rem; line-height: 1.6; }
-        #about-modal .credit { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--secondary-text-color); font-weight: 500;}
+        #about-modal h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 700; color: var(--focus-color);}
+        #about-modal ul { padding-left: 20px; margin: 0; font-size: 0.95rem; line-height: 1.7; font-weight: 500;}
+        #about-modal .credit { text-align: center; margin-top: 2.5rem; font-size: 0.9rem; font-weight: 600; color: var(--secondary-text-color); }
 
-        #visual-alarm { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--alarm-color); color: white; z-index: 3000; opacity: 0; visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s, visibility 0.3s; }
+        #visual-alarm { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--md-sys-color-error); color: var(--md-sys-color-on-error); z-index: 3000; opacity: 0; visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s, visibility 0.3s; }
         #visual-alarm.show { opacity: 1; visibility: visible; }
-        #alarm-text { font-size: 3rem; font-weight: 700; text-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: pulse 1.5s infinite; text-align: center; padding: 0 1rem;}
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .alarm-actions { margin-top: 2.5rem; display: flex; gap: 1rem; }
-        .alarm-button { padding: 12px 24px; font-size: 1.1rem; font-weight: 600; border-radius: 100px; border: 2px solid white; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
-        #snooze-button { background-color: transparent; color: white; }
-        #snooze-button:hover { background-color: rgba(255,255,255,0.2); }
-        #dismiss-button { background-color: white; color: var(--alarm-color); }
-        #dismiss-button:hover { background-color: #eee; }
-        
-        body.dark-mode #visual-alarm { color: #410002; }
-        body.dark-mode #visual-alarm .alarm-button { border-color: #410002; }
-        body.dark-mode #snooze-button { color: #410002; }
-        body.dark-mode #dismiss-button { background-color: #410002; color: #ffb4ab; }
+        #alarm-text { font-size: 3.5rem; font-weight: 800; text-shadow: 0 4px 12px rgba(0,0,0,0.4); animation: pulse 1.5s infinite; text-align: center; padding: 0 1rem; letter-spacing: -1px;}
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        .alarm-actions { margin-top: 3rem; display: flex; gap: 1.5rem; }
+        .alarm-button { padding: 14px 28px; font-size: 1.1rem; font-weight: 700; border-radius: 999px; border: none; cursor: pointer; transition: background-color 0.2s, color 0.2s, transform 0.1s; letter-spacing: 0.5px;}
+        .alarm-button:active { transform: scale(0.96); }
+        #snooze-button { background-color: rgba(255,255,255,0.2); color: var(--md-sys-color-on-error); }
+        #snooze-button:hover { background-color: rgba(255,255,255,0.3); }
+        #dismiss-button { background-color: var(--md-sys-color-on-error); color: var(--md-sys-color-error); }
+        #dismiss-button:hover { background-color: #f1f0f4; }
 
-        .switch-icon { position: absolute; width: 14px; height: 14px; top: 6px; pointer-events: none; transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), fill 0.3s ease; opacity: 0; }
-        .icon-moon { left: 6px; fill: #555; }
-        .icon-sun { right: 6px; fill: #f0c420; }
         @media (max-width: 400px) {
             #theme-label { display: none; }
             .top-bar-right { gap: 8px; }
-            .theme-switch .slider:before { background-color: transparent !important; }
+            .theme-switch .slider:before { background-color: var(--md-sys-color-outline) !important; }
+            .theme-switch input:checked + .slider:before { background-color: var(--md-sys-color-on-primary) !important; }
             .theme-switch input:not(:checked) ~ .icon-moon { opacity: 1; }
             .theme-switch input:checked ~ .icon-sun { opacity: 1; }
-            #alarm-text { font-size: 2.2rem; }
-            .alarm-actions { flex-direction: column; width: 80%; align-items: center; }
+            #alarm-text { font-size: 2.5rem; }
+            .alarm-actions { flex-direction: column; width: 85%; align-items: center; gap: 1rem;}
             .alarm-button { width: 100%; text-align: center; }
         }
         /* --- PERFORMANCE OPTIMIZATIONS --- */
-        .workspace-content, .widget, #cards-wrapper, #clock {
-        contain: content;
-        }
+        .workspace-content, .widget, #cards-wrapper, #clock { contain: content; }
     </style>
 </head>
 <body>
@@ -746,7 +726,7 @@
             <div class="card-switcher">
                 <div class="pill-container">
                     <button class="switcher-button active" id="show-calendar-btn">Calendar</button>
-                    <button class="switcher-button" id="show-alarms-btn">Schedules</button>
+                    <button class="switcher-button" id="show-alarms-btn">Upcoming</button>
                     <button class="switcher-button" id="show-calc-btn">Calculator</button>
                 </div>
                 <button id="toggle-cards-btn" title="Toggle Cards View">
@@ -776,7 +756,6 @@
                     
                     <div id="no-alarms-message">No alarms or coaching scheduled.</div>
                 </div>
-
                 <div id="calculator-container" class="widget hidden">
                     <div class="calc-view-switcher">
                         <button id="show-normal-calc-btn" class="active">Normal</button>
@@ -838,11 +817,11 @@
 
     <!-- Boost Modal -->
     <div id="boost-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px; width: 95%; display: flex; flex-direction: column;">
+        <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 80vh; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 0; flex-grow: 1;">Boost Notes</h2>
-                <button id="boost-ai-format-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 12px; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;">✨ Auto-Format</button>
+                <button id="boost-ai-format-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 8px; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;">✨ Auto-Format</button>
             </div>
             <div class="todo-nav" style="margin-bottom: 15px;">
                 <button id="boost-prev-week">&lt;</button>
@@ -852,7 +831,7 @@
             <div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1; min-height: 350px;">
                 <div style="display: flex; flex-direction: column; flex: 1; gap: 5px;">
                     <span style="font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color);">Raw Notes</span>
-                    <textarea id="boost-textarea-raw" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 12px;" placeholder="Enter raw coaching notes here..."></textarea>
+                    <textarea id="boost-textarea-raw" class="csv-textarea" style="flex: 1; resize: none; font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 8px;" placeholder="Enter raw coaching notes here..."></textarea>
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1; gap: 5px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -876,15 +855,15 @@
             
             <div class="form-group">
                 <label for="gemini-api-key-input">API Key</label>
-                <input type="password" id="gemini-api-key-input" placeholder="Paste your API key here..." style="width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-color); background: transparent; color: var(--text-color); font-family: 'Inter', sans-serif;">
+                <input type="password" id="gemini-api-key-input" placeholder="Paste your API key here..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;">
             </div>
 
-            <button id="verify-api-key-btn" class="modal-button" style="background-color: var(--line-color); color: var(--focus-color); margin-bottom: 10px;">Verify Key & Load Models</button>
+            <button id="verify-api-key-btn" class="modal-button" style="background-color: var(--widget-bg-color); color: var(--focus-color); border: 1.5px solid var(--focus-color); margin-bottom: 10px;">Verify Key & Load Models</button>
             <div id="api-key-status" style="font-size: 0.85rem; margin-bottom: 10px; text-align: center; font-weight: 500;"></div>
 
             <div class="form-group" id="model-select-group" style="display: none;">
                 <label for="gemini-model-select">Select Model</label>
-                <select id="gemini-model-select" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-color); background: transparent; color: var(--text-color); font-family: 'Inter', sans-serif;"></select>
+                <select id="gemini-model-select" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;"></select>
             </div>
 
             <button id="save-api-key-btn" class="modal-button" style="margin-top: 5px;">Save Configuration</button>
@@ -893,7 +872,7 @@
     
     <!-- WFM Analysis Modal -->
     <div id="wfm-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 800px; width: 95%; height: 100%; display: flex; flex-direction: column;">
+        <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; height: 100%; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" style="margin-bottom: 0;">WFM Analyzer</h2>
@@ -908,7 +887,7 @@
             </div>
             
             <div style="margin-bottom: 15px; text-align: center; flex-shrink: 0;">
-                <button id="trigger-wfm-upload-btn" class="modal-button" style="width: auto; padding: 12px 24px;">Upload WFM Excel & Analyze</button>
+                <button id="trigger-wfm-upload-btn" class="modal-button" style="width: auto; padding: 10px 20px;">Upload WFM Excel & Analyze</button>
             </div>
 
             <div style="display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; gap: 5px;">
@@ -935,9 +914,9 @@
             <div class="form-group"><label for="coaching-time">Coaching</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="coaching-time" placeholder="HH:MM" maxlength="5"><select id="coaching-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="meeting-time">Team Meeting</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="meeting-time" placeholder="HH:MM" maxlength="5"><select id="meeting-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <hr/>
-            <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--focus-color);">Custom Alarms</h4>
+            <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem;">Custom Alarms</h4>
             <div id="custom-alarms-form-container"></div>
-            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 36px; color: var(--focus-color); border-color: var(--focus-color); background: transparent;">+ Add Custom Alarm</button>
+            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 32px; color: var(--focus-color); border-color: var(--focus-color); background: transparent;">+ Add Custom Alarm</button>
 
             <button id="save-alarms-button" class="modal-button">Set Alarms</button>
         </div>
@@ -1234,40 +1213,6 @@
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
 
-        // --- DESKTOP NOTIFICATIONS API ---
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(permission => {
-                        console.log('Notification permission:', permission);
-                    }).catch(err => {
-                        console.warn('Notification permission prompt failed:', err);
-                    });
-                }
-            }
-        }
-
-        function sendDesktopNotification(title, body) {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                try {
-                    const iconSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"/></svg>`;
-                    
-                    const notif = new Notification(title, {
-                        body: body,
-                        icon: iconSvg,
-                        requireInteraction: true 
-                    });
-
-                    notif.onclick = () => {
-                        window.focus();
-                        if (notif.close) notif.close();
-                    };
-                } catch (e) {
-                    console.warn('Desktop notification failed:', e);
-                }
-            }
-        }
-
         // SHIFT DATE HELPER
         function getShiftDateObj() {
             const now = new Date(new Date().getTime() + localOffset);
@@ -1320,6 +1265,7 @@
         }
 
         // SPLIT DB SAVING LOGIC
+        // Helper function to safely defer database writes until the browser is idle
         function idleSave(saveFunction) {
             if ('requestIdleCallback' in window) {
                 requestIdleCallback(() => saveFunction());
@@ -1611,6 +1557,8 @@
 
         async function analyzeWfmData(csvData) {
             try {
+                // --- 1. CSV SANITIZER OPTIMIZATION ---
+                // Strip trailing commas from rows, and remove completely empty rows
                 const sanitizedCsv = csvData
                     .split(/\r?\n/) 
                     .map(row => row.replace(/,+$/, '').trim()) 
@@ -2022,7 +1970,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 row.dataset.idx = idx;
                 row.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
-                        <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-color); width: 80%; box-sizing: border-box;" value="${ca.label || ''}">
+                        <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); width: 80%; box-sizing: border-box;" value="${ca.label || ''}">
                         <button type="button" class="remove-custom-alarm-btn" style="background:none; border:none; color:var(--secondary-text-color); font-size:1.2rem; cursor:pointer; line-height:1;">&times;</button>
                     </div>
                     <div class="alarm-input-group">
@@ -2423,6 +2371,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
         });
 
         // --- SYSTEM STATUS BAR LOGIC ---
+        // --- SYSTEM STATUS BAR LOGIC ---
         function initBattery() {
             if ('getBattery' in navigator) {
                 navigator.getBattery().then(battery => {
@@ -2437,6 +2386,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                             ? `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="#42C948"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zm-2.67 13.5V14h1.5l-4.5-7v3.5H8.5l4.5 7z"/></svg>`
                             : `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>`;
                         
+                        // Using .status-bold-text for the battery number
                         const newText = `${batteryIcon}<span class="status-bold-text">${level}%</span><span class="status-text"> (${stateText})</span>`;
                         
                         if (lastBatteryText !== newText) {
@@ -2651,6 +2601,40 @@ ${sanitizedCsv.substring(0, 100000)}`;
             alarmModal.classList.add('show'); 
         });
         closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
+
+        // --- DESKTOP NOTIFICATIONS API ---
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        console.log('Notification permission:', permission);
+                    }).catch(err => {
+                        console.warn('Notification permission prompt failed:', err);
+                    });
+                }
+            }
+        }
+
+        function sendDesktopNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const iconSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"/></svg>`;
+                    
+                    const notif = new Notification(title, {
+                        body: body,
+                        icon: iconSvg,
+                        requireInteraction: true // Keeps notification visible until clicked
+                    });
+
+                    notif.onclick = () => {
+                        window.focus();
+                        if (notif.close) notif.close();
+                    };
+                } catch (e) {
+                    console.warn('Desktop notification failed:', e);
+                }
+            }
+        }
         
         function validateAndFormatTime(input) {
             let value = input.value.trim();
@@ -2695,7 +2679,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     alarmDatePHTString = tempDate.toISOString().split('T')[0];
                 }
                 newAlarm.dateTime = new Date(`${alarmDatePHTString}T${newAlarm.time}:00.000+08:00`);
-
+                
+                // Set tracking flags for advance notifications
                 const diff = (newAlarm.dateTime - now) / 60000;
                 newAlarm.notified10m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified10m || false) : (diff <= 10);
                 newAlarm.notified5m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified5m || false) : (diff <= 5);
@@ -2728,7 +2713,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
                     const dt = new Date(`${alarmDatePHTString}T${member.time}:00.000+08:00`);
                     const diff = (dt - now) / 60000;
-
+                    
                     teamAlarms.push({
                         id: member.id, 
                         label: `Coaching: ${member.name}`,
@@ -2743,7 +2728,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             });
             updateUpcomingView();
         }
-
+        
         function resetVisualAlarmState() {
             snoozedAlarm = null;
             clockWidget.classList.remove('snoozed-indicator');
@@ -2822,7 +2807,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             processAndSetAlarms(tempAlarms);
             saveAlarms();
-            requestNotificationPermission();
             alarmModal.classList.remove('show');
         });
 
@@ -2830,7 +2814,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
             alarmText.textContent = message;
             snoozeButton.style.display = isAlarm ? 'inline-block' : 'none';
             visualAlarm.classList.add('show');
-            
+
+            // Send native desktop notification if tab is unfocused or hidden
             if (document.hidden || !document.hasFocus()) {
                 const title = isAlarm ? '🚨 Gusto Toolset Alarm' : '⏱️ Gusto Toolset Timer';
                 sendDesktopNotification(title, message);
@@ -2878,6 +2863,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             if (visualAlarm.classList.contains('show')) return;
 
             const missedAlarms = [];
+            // Use direct object references so tracking flags save properly
             const allAlarms = [ 
                 ...Object.keys(alarms).map(k => { if(alarms[k]) { alarms[k].label = k; return alarms[k]; } }).filter(a => a), 
                 ...teamAlarms 
@@ -2890,6 +2876,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 if (alarm && alarm.dateTime && !alarm.triggered) {
                     const diff = (alarm.dateTime - now) / 60000;
                     
+                    // --- ADVANCE DESKTOP NOTIFICATIONS ---
                     if (diff <= 10 && diff > 5 && !alarm.notified10m) {
                         alarm.notified10m = true;
                         if (document.hidden || !document.hasFocus()) {
@@ -3230,4 +3217,201 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     e.preventDefault();
                     calculate();
                 } else if (e.key === 'Escape' || e.key === 'Delete') {
-                    e.preventDefault();Sorry, something went wrong. Please try your request again.
+                    e.preventDefault();
+                    clearDisplay();
+                } else if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    calcDisplay.value = calcDisplay.value.slice(0, -1);
+                }
+            } 
+            else if (!document.getElementById('formula-calc-view').classList.contains('is-hidden')) {
+                if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault();
+                    calculateFromFormula();
+                }
+            }
+        });
+
+        // HOLD TIMER
+        startHoldTimerBtn.addEventListener('click', () => {
+            if (activeTimers.some(t => t.name === 'Hold Timer')) return;
+            activeTimers.push({ id: synchronizedTime.getTime(), name: 'Hold Timer', endTime: synchronizedTime.getTime() + (120 * 1000) });
+            checkTimers(); 
+        });
+
+        function checkTimers() {
+            const now = synchronizedTime.getTime();
+            const finishedTimers = activeTimers.filter(timer => now >= timer.endTime);
+            if (finishedTimers.length > 0 && !visualAlarm.classList.contains('show')) {
+                triggerVisualAlert(`Timer Finished: ${finishedTimers.map(t => t.name).join(', ')}`, false);
+                activeTimers = activeTimers.filter(timer => now < timer.endTime);
+            }
+            
+            const holdTimer = activeTimers.find(t => t.name === 'Hold Timer');
+            if (holdTimer) {
+                startHoldTimerBtn.disabled = true; 
+                startHoldTimerBtn.style.cursor = 'not-allowed';
+                
+                const remaining = Math.max(0, Math.ceil((holdTimer.endTime - now) / 1000));
+                const m = Math.floor(remaining / 60);
+                const s = remaining % 60;
+                startHoldTimerBtn.textContent = `Hold Timer: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                
+                if (remaining <= 15) {
+                    startHoldTimerBtn.style.backgroundColor = 'var(--alarm-color)'; 
+                } else if (remaining <= 30) {
+                    startHoldTimerBtn.style.backgroundColor = 'var(--warning-color-orange)'; 
+                } else {
+                    startHoldTimerBtn.style.backgroundColor = '#6c757d'; 
+                }
+            } else {
+                startHoldTimerBtn.disabled = false; 
+                startHoldTimerBtn.textContent = 'Start Hold Timer'; 
+                startHoldTimerBtn.style.backgroundColor = 'var(--alarm-color)'; 
+                startHoldTimerBtn.style.cursor = 'pointer';
+            }
+        }
+
+        // CSV CONVERTER
+        listToCsvButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); csvModal.classList.add('show'); });
+        closeCsvModalButton.addEventListener('click', () => csvModal.classList.remove('show'));
+        generateCsvButton.addEventListener('click', () => {
+            const items = csvInput.value.split(/[\s\n\r\t]+/).filter(item => item.trim() !== '');
+            const csvStr = items.join(',');
+            csvOutput.value = csvStr;
+            if (csvStr) {
+                navigator.clipboard.writeText(csvStr).then(() => {
+                    const originalText = generateCsvButton.textContent;
+                    generateCsvButton.textContent = 'Copied to Clipboard!';
+                    generateCsvButton.style.backgroundColor = 'var(--success-color)';
+                    setTimeout(() => { generateCsvButton.textContent = originalText; generateCsvButton.style.backgroundColor = ''; }, 2000);
+                }).catch(err => console.error('Could not copy text: ', err));
+            }
+        });
+
+        // WINDOW & ABOUT
+        aboutButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); aboutModal.classList.add('show'); });
+        closeAboutModalButton.addEventListener('click', () => aboutModal.classList.remove('show'));
+
+        function handleWidthToggle() {
+            document.body.classList.toggle('wide-mode');
+            toggleWidthText.textContent = document.body.classList.contains('wide-mode') ? 'Disable Wide Mode' : 'Enable Wide Mode';
+            saveSettings();
+        }
+        toggleWidthButton.addEventListener('click', handleWidthToggle);
+        
+        function handleScrollToggle() {
+            document.body.classList.toggle('scroll-enabled');
+            toggleScrollText.textContent = document.body.classList.contains('scroll-enabled') ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
+            saveSettings();
+        }
+        toggleScrollButton.addEventListener('click', handleScrollToggle);
+
+        window.addEventListener('resize', () => {
+            if (window.innerHeight < 680) document.body.classList.add('compact-mode'); else document.body.classList.remove('compact-mode');
+            if (window.innerWidth > (screen.width * 0.5) && window.opener === null) resizeWarningModal.classList.add('show'); else resizeWarningModal.classList.remove('show');
+            if (window.innerWidth < 390 && window.innerWidth > 0) minWidthWarningModal.classList.add('show'); else minWidthWarningModal.classList.remove('show');
+        });
+        minWidthCloseButton.addEventListener('click', () => minWidthWarningModal.classList.remove('show'));
+        window.addEventListener('beforeunload', (e) => { e.preventDefault(); e.returnValue = ''; });
+
+        // INIT
+        async function initialize() {
+            textarea.value = defaultNotesTemplate;
+            setTheme('light'); 
+            
+            await syncTime();
+            currentTodoWeekStart = getShiftDateObj();
+            
+            await loadData(); 
+            isAppReady = true;
+        
+            if(window.innerHeight < 680) document.body.classList.add('compact-mode');
+            if(window.innerWidth > (screen.width * 0.5) && window.opener === null) resizeWarningModal.classList.add('show');
+            if(window.innerWidth < 390 && window.innerWidth > 0) minWidthWarningModal.classList.add('show');
+        
+            updateTeamAlarms();
+            updateAlarmsView();
+            renderCustomAlarmFormRows();
+            
+            initBattery();
+            updateNetworkStatus();
+            
+            // Request Wake Lock on load
+            requestWakeLock();
+
+            // Request Desktop Notification Permission on site initialization
+            requestNotificationPermission();
+            
+            scheduleNextTick();
+            setInterval(syncTime, 300000);
+        }
+
+        // --- OFFLINE SCRIPT BOOTLOADER ---
+        const externalScripts = [
+            "https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js",
+            "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+        ];
+
+        async function bootloadScripts() {
+            const fetchScript = async (url) => {
+                let scriptText = localStorage.getItem(url);
+                
+                // If online, fetch fresh code to ensure it's up to date
+                if (navigator.onLine) {
+                    try {
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            scriptText = await response.text();
+                            // Update the local cache with the new code
+                            try { localStorage.setItem(url, scriptText); } catch(e) { console.warn('Cache quota exceeded'); }
+                        }
+                    } catch (e) {
+                        console.log(`Network fetch failed, falling back to cache for ${url}`);
+                    }
+                }
+                return scriptText;
+            };
+
+            try {
+                // 1. Fetch all scripts in parallel for maximum speed
+                const scriptContents = await Promise.all(externalScripts.map(fetchScript));
+                
+                // 2. Inject them into the DOM sequentially so they execute in the correct order
+                scriptContents.forEach((text, index) => {
+                    if (text) {
+                        const scriptEl = document.createElement('script');
+                        scriptEl.textContent = text;
+                        document.body.appendChild(scriptEl);
+                    } else {
+                        console.error('Failed to load script (Offline and not cached):', externalScripts[index]);
+                    }
+                });
+
+                // 3. Once all scripts are injected and compiled, start the app!
+                initialize();
+            } catch (error) {
+                console.error("Bootloader failed:", error);
+            }
+        }
+
+        // --- SERVICE WORKER REGISTRATION (For Offline PWA) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+
+        // Kick off the bootloader instead of calling initialize() directly
+        bootloadScripts();
+    </script>
+</body>
+</html>
