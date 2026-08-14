@@ -153,7 +153,7 @@
         
         main {
             display: flex; flex-direction: column; flex-grow: 1;
-            padding: 14px; padding-top: 62px; padding-bottom: 34px; 
+            padding: 16px; padding-top: 66px; padding-bottom: 38px; 
             width: 100%; max-width: 440px; box-sizing: border-box;
             min-height: 0; margin: 0 auto; transition: max-width 0.4s ease-in-out;
         }
@@ -163,8 +163,8 @@
 
         /* M3 Top Bar */
         .top-bar {
-            width: 100%; height: 50px; position: fixed; top: 0; left: 0; right: 0; display: flex;
-            align-items: center; justify-content: space-between; padding: 0 14px; 
+            width: 100%; height: 52px; position: fixed; top: 0; left: 0; right: 0; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 16px; 
             background-color: var(--md-sys-color-surface-container);
             box-shadow: var(--shadow-elevation-1); z-index: 1000; box-sizing: border-box;
             transition: background-color 0.4s ease;
@@ -173,9 +173,9 @@
         .top-bar.snoozed .top-bar-title, .top-bar.snoozed .dropdown-button, .top-bar.snoozed #theme-label { color: var(--md-sys-color-on-error); transition: color 0.4s ease; }
         .top-bar.snoozed .dropdown-button { background-color: rgba(255, 255, 255, 0.2); border: none; }
 
-        .top-bar-left, .top-bar-right { display: flex; align-items: center; gap: 12px; }
+        .top-bar-left, .top-bar-right { display: flex; align-items: center; gap: 14px; }
         .top-bar-title {
-            font-size: 1.15rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease, max-width 0.4s ease-in-out;
+            font-size: 1.2rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease, max-width 0.4s ease-in-out;
             max-width: 200px; overflow: hidden; white-space: nowrap;
         }
         .top-bar-title.text-success { color: var(--success-color) !important; }
@@ -183,52 +183,60 @@
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
 
-        .modal-content, #cards-wrapper, #visual-alarm { will-change: transform, opacity; }
+        .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm { will-change: transform, opacity; }
 
+        .dropdown { position: relative; }
         .dropdown-button {
             background-color: var(--md-sys-color-surface-container-highest); border: none; color: var(--text-color);
-            padding: 5px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 999px; cursor: pointer;
+            padding: 6px 14px; font-size: 0.85rem; font-weight: 600; border-radius: 999px; cursor: pointer;
             transition: background-color 0.2s, color 0.2s;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-
-        /* Tools Modal List Formatting */
-        .tools-menu-list { list-style: none; padding: 0; margin: 0; }
-        .tools-menu-list .minibutton { padding: 10px 14px; font-size: 0.9rem; margin-bottom: 4px; border-radius: 10px; width: 100%; text-align: left; background: none; border: none; color: var(--text-color); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: background-color 0.2s, color 0.2s; }
-        .tools-menu-list .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-        .tools-menu-list .minibutton svg { width: 16px; height: 16px; fill: currentcolor; }
-        .tools-menu-list .dropdown-header { font-size: 0.72rem; padding: 10px 14px 6px; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tools-menu-list .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 8px 0; border: none; }
+        .dropdown-menu {
+            position: absolute; top: 120%; right: 0; background-color: var(--md-sys-color-surface-container-high); 
+            border-radius: 16px; box-shadow: var(--shadow-elevation-3); list-style: none; padding: 8px; margin: 0; width: 220px;
+            z-index: 1001; opacity: 0; transform: translateY(-10px); visibility: hidden; border: none;
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        }
+        .dropdown-menu.show { opacity: 1; transform: translateY(0); visibility: visible; }
+        .minibutton {
+            background: none; border: none; width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem;
+            color: var(--text-color); cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-weight: 500;
+        }
+        .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
+        .minibutton svg { width: 15px; height: 15px; fill: currentcolor; }
+        .dropdown-header { padding: 6px 10px; font-size: 0.72rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 5px 0; border: none; }
 
         /* M3 Switch & Tracking Icons */
-        .theme-switch, .format-switch { position: relative; display: inline-block; width: 44px; height: 26px; flex-shrink: 0; }
+        .theme-switch, .format-switch { position: relative; display: inline-block; width: 46px; height: 28px; flex-shrink: 0; }
         .theme-switch input, .format-switch input { display: none; }
-        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 26px; box-sizing: border-box;}
-        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; z-index: 2;}
+        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 28px; box-sizing: border-box;}
+        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; z-index: 2;}
         .theme-switch input:checked + .slider, .format-switch input:checked + .slider { background-color: var(--focus-color); border-color: var(--focus-color); }
-        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(18px); background-color: var(--md-sys-color-on-primary); height: 20px; width: 20px; left: 1px; bottom: 1px;}
+        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(18px); background-color: var(--md-sys-color-on-primary); height: 22px; width: 22px; left: 1px; bottom: 1px;}
 
-        .switch-icon { position: absolute; width: 11px; height: 11px; top: 7.5px; pointer-events: none; transition: transform 0.4s ease, opacity 0.2s ease; z-index: 3; }
-        .icon-moon { left: 7.5px; fill: var(--md-sys-color-surface-container-lowest); opacity: 1; transform: translateX(0); }
+        .switch-icon { position: absolute; width: 12px; height: 12px; top: 8px; pointer-events: none; transition: transform 0.4s ease, opacity 0.2s ease; z-index: 3; }
+        .icon-moon { left: 8px; fill: var(--md-sys-color-surface-container-lowest); opacity: 1; transform: translateX(0); }
         .theme-switch input:checked ~ .icon-moon { opacity: 0; transform: translateX(18px); }
-        .icon-sun { left: 7.5px; fill: var(--focus-color); opacity: 0; transform: translateX(0); }
+        .icon-sun { left: 8px; fill: var(--focus-color); opacity: 0; transform: translateX(0); }
         .theme-switch input:checked ~ .icon-sun { opacity: 1; transform: translateX(18px); }
-        #theme-label { font-size: 0.78rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease; }
+        #theme-label { font-size: 0.82rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease; }
 
         /* M3 Bottom Status Bar */
         .bottom-status-bar {
-            width: 100%; height: 24px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
-            align-items: center; justify-content: space-between; padding: 0 12px;
+            width: 100%; height: 26px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 14px;
             background-color: var(--md-sys-color-surface-container); border: none;
             box-shadow: 0px -1px 3px rgba(0,0,0,0.05); z-index: 4000; box-sizing: border-box;
-            font-size: 0.72rem; font-weight: 500; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; font-weight: 500; font-family: 'JetBrains Mono', monospace;
             color: var(--secondary-text-color); transition: background-color 0.4s ease, color 0.4s ease;
             user-select: none;
         }
         
-        .status-bar-left { display: flex; align-items: center; gap: 10px; }
-        .status-bar-right { display: flex; align-items: center; gap: 5px; }
-        .status-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; cursor: default; }
+        .status-bar-left { display: flex; align-items: center; gap: 12px; }
+        .status-bar-right { display: flex; align-items: center; gap: 6px; }
+        .status-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; cursor: default; }
         .status-svg-icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
         .status-bold-text { font-weight: 700; color: var(--text-color); }
 
@@ -240,66 +248,46 @@
         .battery-critical { color: var(--alarm-color) !important; font-weight: 700; }
         .battery-warning { color: var(--warning-color-orange) !important; font-weight: 700; }
         
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         
         /* M3 Widget Cards */
         .widget {
             background-color: var(--widget-bg-color); color: var(--text-color); border: none;
-            border-radius: 18px; box-shadow: var(--shadow-elevation-1); box-sizing: border-box; opacity: 1;
-            transition: background-color 0.4s ease, color 0.4s ease; padding: 10px;
+            border-radius: 20px; box-shadow: var(--shadow-elevation-1); box-sizing: border-box; opacity: 1;
+            transition: background-color 0.4s ease, color 0.4s ease; padding: 12px;
         }
         
         .textarea-container {
-            flex-grow: 1; flex-shrink: 1; min-height: 220px;
-            display: flex; flex-direction: column; margin-bottom: 14px;
+            flex-grow: 1; flex-shrink: 1; min-height: 230px;
+            display: flex; flex-direction: column; margin-bottom: 16px;
             opacity: 0; animation: fadeInUp 0.5s ease-out 0.1s forwards;
         }
         
-        /* Centered Workspaces Header */
+        /* Balanced Workspace Tab Header Controls */
         .textarea-controls {
-            display: flex; align-items: center; position: relative;
-            width: 100%; height: 38px; min-height: 38px; padding: 0;
+            display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 6px 12px;
             background-color: var(--md-sys-color-surface-container); border: none;
-            border-radius: 16px 16px 0 0; transition: background-color 0.4s ease;
-            box-sizing: border-box; overflow: hidden;
+            border-radius: 18px 18px 0 0; transition: background-color 0.4s ease;
         }
-
-        .workspace-tabs { 
-            display: flex; gap: 3px; align-items: center; position: absolute;
-            left: 8px; transform: translateX(0);
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Sliding magic for center layout */
-        .textarea-controls.centered-tabs .workspace-tabs {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
+        .workspace-tabs { display: flex; gap: 4px; align-items: center; position: relative; }
         .workspace-tab {
             background-color: transparent; border: none; color: var(--secondary-text-color);
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem;
-            padding: 4px 10px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
+            padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
         }
         .workspace-tab:hover { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .workspace-tab.active { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         
-        .font-controls { 
-            display: flex; gap: 4px; align-items: center; position: absolute; right: 8px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .font-controls.hidden-controls { 
-            opacity: 0; pointer-events: none; transform: translateX(10px);
-        }
+        .font-controls { display: flex; gap: 6px; align-items: center; transition: visibility 0.2s; }
         .hidden-view { display: none !important; }
         
         .control-button {
             background-color: var(--md-sys-color-surface-container-high); border: none; color: var(--focus-color);
-            font-family: 'JetBrains Mono', monospace; font-weight: 700; height: 26px; border-radius: 999px;
-            cursor: pointer; padding: 0 8px; font-size: 0.75rem; transition: background-color 0.2s, color 0.2s;
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; height: 30px; border-radius: 999px;
+            cursor: pointer; padding: 0 10px; font-size: 0.82rem; transition: background-color 0.2s, color 0.2s;
             white-space: nowrap; flex-shrink: 0;
         }
-        .control-button.resize { width: 26px; padding: 0; display: flex; justify-content: center; align-items: center;}
+        .control-button.resize { width: 30px; padding: 0; display: flex; justify-content: center; align-items: center;}
         .control-button:hover { background-color: var(--focus-bg); }
         
         .workspace-content {
@@ -318,76 +306,76 @@
 
         /* Notepad */
         textarea#main-content {
-            padding: 1.1rem; font-size: 12px; line-height: 1.6; resize: none; 
+            padding: 1.25rem; font-size: 13px; line-height: 1.65; resize: none; 
             font-family: 'Inter', sans-serif; outline: none;
         }
 
         /* To-Do List */
-        #todo-view { display: flex; flex-direction: column; padding: 1.1rem; }
-        .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .todo-nav button { background: none; border: none; border-radius: 999px; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.9rem;}
+        #todo-view { display: flex; flex-direction: column; padding: 1.25rem; }
+        .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .todo-nav button { background: none; border: none; border-radius: 999px; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.95rem;}
         .todo-nav button:hover { background-color: var(--md-sys-color-surface-container-highest); }
-        #todo-week-label { font-weight: 700; font-size: 0.85rem; }
-        .todo-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 14px; text-align: center; }
-        .todo-day { padding: 5px 0; border-radius: 10px; border: none; cursor: pointer; font-size: 0.72rem; transition: all 0.2s; color: var(--secondary-text-color); background-color: var(--md-sys-color-surface-container-high);}
-        .todo-day span { display: block; font-size: 0.95rem; font-weight: 700; color: var(--text-color); margin-top: 1px; }
+        #todo-week-label { font-weight: 700; font-size: 0.9rem; }
+        .todo-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 16px; text-align: center; }
+        .todo-day { padding: 6px 0; border-radius: 12px; border: none; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; color: var(--secondary-text-color); background-color: var(--md-sys-color-surface-container-high);}
+        .todo-day span { display: block; font-size: 1rem; font-weight: 700; color: var(--text-color); margin-top: 2px; }
         .todo-day.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         .todo-day.active span { color: var(--md-sys-color-on-primary); }
         .todo-day.is-today { position: relative; }
-        .todo-day.is-today::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; background-color: var(--md-sys-color-primary); border-radius: 50%; }
+        .todo-day.is-today::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background-color: var(--md-sys-color-primary); border-radius: 50%; }
         .todo-day.active.is-today::after { background-color: var(--md-sys-color-on-primary); }
         
-        .todo-input-group { display: flex; gap: 6px; margin-bottom: 10px; }
-        #todo-input { flex-grow: 1; padding: 8px 12px; border: none; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); font-family: 'Inter', sans-serif; font-size: 0.82rem; outline: none; transition: box-shadow 0.2s;}
+        .todo-input-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        #todo-input { flex-grow: 1; padding: 10px 14px; border: none; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); font-family: 'Inter', sans-serif; font-size: 0.88rem; outline: none; transition: box-shadow 0.2s;}
         #todo-input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
-        #todo-add-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); border: none; border-radius: 999px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; transition: transform 0.1s; flex-shrink: 0;}
+        #todo-add-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); border: none; border-radius: 999px; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 1.3rem; transition: transform 0.1s; flex-shrink: 0;}
         #todo-add-btn:active { transform: scale(0.95); }
         
         #todo-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
-        .todo-item { display: flex; align-items: center; gap: 8px; padding: 8px 4px; border-bottom: 1px solid var(--line-color); }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-bottom: 1px solid var(--line-color); }
         .todo-item:last-child { border-bottom: none; }
-        .todo-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--focus-color); flex-shrink: 0;}
-        .todo-text { flex-grow: 1; font-size: 0.85rem; font-weight: 500; word-break: break-word; transition: color 0.2s; }
+        .todo-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--focus-color); flex-shrink: 0;}
+        .todo-text { flex-grow: 1; font-size: 0.9rem; font-weight: 500; word-break: break-word; transition: color 0.2s; }
         .todo-item.done .todo-text { text-decoration: line-through; color: var(--secondary-text-color); }
-        .todo-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0 4px; flex-shrink: 0; transition: color 0.2s;}
+        .todo-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 0 6px; flex-shrink: 0; transition: color 0.2s;}
         .todo-delete:hover { color: var(--alarm-color); }
 
         /* My Team (Excel Grid Layout) */
         #team-view { 
-            display: flex; flex-direction: column; padding: 1.1rem; overflow-x: auto; 
-            --col-eid: 55px;
-            --col-sfdc: 60px;
+            display: flex; flex-direction: column; padding: 1.25rem; overflow-x: auto; 
+            --col-eid: 60px;
+            --col-sfdc: 65px;
             --col-name: 1fr;
-            --col-day: 70px;
-            --col-time: 95px; 
-            --col-boost: 36px;
-            --col-del: 22px;
+            --col-day: 75px;
+            --col-time: 100px; 
+            --col-boost: 40px;
+            --col-del: 25px;
         }
-        .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 480px; height: 100%; }
+        .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 500px; height: 100%; }
         
-        .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.7rem; font-weight: 700; color: var(--focus-color); margin-bottom: 4px; padding: 0; text-transform: uppercase;}
-        .team-header-row > span { padding: 3px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; }
+        .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.75rem; font-weight: 700; color: var(--focus-color); margin-bottom: 5px; padding: 0; text-transform: uppercase;}
+        .team-header-row > span { padding: 4px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; position: relative; }
         
         .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-        .sort-icon { font-size: 0.8em; margin-left: 3px; display: inline-block; width: 8px; }
+        .sort-icon { font-size: 0.8em; margin-left: 4px; display: inline-block; width: 10px; }
 
         .col-resizer { position: absolute; top: 0; right: 0; width: 4px; height: 100%; cursor: col-resize; z-index: 10; opacity: 0; transition: opacity 0.2s; background-color: var(--focus-color); border-radius: 4px;}
         .team-header-row span:hover .col-resizer { opacity: 0.5; }
         .col-resizer:hover, .col-resizer:active { opacity: 1 !important; }
 
-        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 10px; border-radius: 8px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--line-color);}
+        #team-list-container { display: flex; flex-direction: column; flex-grow: 1; margin-bottom: 12px; border-radius: 10px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--line-color);}
         
         .team-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); align-items: stretch; border-bottom: 1px solid var(--line-color); }
         .team-row:last-child { border-bottom: none; }
         
         .team-row input, .team-row select { 
-            padding: 5px; border: none; border-right: 1px solid var(--line-color); border-radius: 0; 
-            background-color: transparent; color: var(--text-color); font-size: 0.8rem; font-weight: 500;
+            padding: 6px; border: none; border-right: 1px solid var(--line-color); border-radius: 0; 
+            background-color: transparent; color: var(--text-color); font-size: 0.85rem; font-weight: 500;
             width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;
         }
-        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; padding: 3px; letter-spacing: -0.5px; }
+        .team-row input[type="time"] { font-family: 'JetBrains Mono', monospace; padding: 4px; letter-spacing: -0.5px; }
         
-        .team-delete { background: transparent; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; padding: 0; transition: color 0.2s;}
+        .team-delete { background: transparent; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; padding: 0; transition: color 0.2s;}
         .team-delete:hover { color: var(--alarm-color); }
         
         .team-row input:focus, .team-row select:focus { outline: none; background-color: var(--md-sys-color-surface-container-highest); z-index: 10; position: relative; }
@@ -395,19 +383,19 @@
 
         .boost-btn {
             background: var(--md-sys-color-secondary-container); border: none; color: var(--md-sys-color-on-secondary-container);
-            cursor: pointer; border-radius: 5px; font-weight: bold; padding: 0; width: 22px; height: 22px; margin: auto;
-            display: flex; justify-content: center; align-items: center; transition: all 0.2s; font-size: 0.75rem;
+            cursor: pointer; border-radius: 6px; font-weight: bold; padding: 0; width: 24px; height: 24px; margin: auto;
+            display: flex; justify-content: center; align-items: center; transition: all 0.2s; font-size: 0.8rem;
         }
         .boost-btn:hover { background: var(--focus-color); color: var(--md-sys-color-on-primary); }
 
-        #add-team-btn { padding: 8px; font-size: 0.82rem; cursor: pointer; border: 2px dashed var(--md-sys-color-outline-variant); border-radius: 10px; background-color: transparent; color: var(--text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
+        #add-team-btn { padding: 10px; font-size: 0.88rem; cursor: pointer; border: 2px dashed var(--md-sys-color-outline-variant); border-radius: 12px; background-color: transparent; color: var(--text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
         #add-team-btn:hover:not(:disabled) { border-color: var(--focus-color); background-color: var(--focus-bg); color: var(--md-sys-color-on-primary-container); }
         #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* M3 Hold Timer FAB */
-        #hold-timer-container { margin-bottom: 10px; display: none; }
+        #hold-timer-container { margin-bottom: 12px; display: none; }
         #start-hold-timer-btn {
-            width: 100%; padding: 0 14px; height: 44px; font-size: 0.92rem; font-weight: 600; cursor: pointer; border-radius: 10px; border: none;
+            width: 100%; padding: 0 16px; height: 48px; font-size: 0.98rem; font-weight: 600; cursor: pointer; border-radius: 12px; border: none;
             background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); 
             box-shadow: var(--shadow-elevation-1); transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px;
@@ -415,25 +403,25 @@
         #start-hold-timer-btn:hover { box-shadow: var(--shadow-elevation-2); background-color: #ffb4ab; } 
         #start-hold-timer-btn:active { transform: scale(0.98); }
         
-        /* M3 Clock with Enhanced Vertical Spacing */
+        /* M3 Condense Clock */
         #clock {
-            flex-shrink: 0; font-family: 'JetBrains Mono', monospace; padding: 1.1rem 1.2rem;
+            flex-shrink: 0; font-family: 'JetBrains Mono', monospace; padding: 0.85rem 1.1rem;
             text-align: center; animation: fadeInUp 0.5s ease-out 0.2s forwards; margin-bottom: 10px;
         }
-        #clock-date-display { font-size: 0.8rem; font-weight: 600; color: var(--secondary-text-color); font-family: 'Inter', sans-serif;}
-        #shift-date-display { font-size: 0.72rem; font-weight: 700; color: var(--focus-color); margin-top: 6px; margin-bottom: 4px; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;}
+        #clock-date-display { font-size: 0.82rem; font-weight: 600; color: var(--secondary-text-color); font-family: 'Inter', sans-serif;}
+        #shift-date-display { font-size: 0.72rem; font-weight: 700; color: var(--focus-color); margin-top: 3px; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;}
         #time { 
-            font-size: 1.65rem; font-weight: 700; color: var(--text-color); margin: 8px 0; position: relative; height: 1.8rem; line-height: 1.8rem;
+            font-size: 1.8rem; font-weight: 700; color: var(--text-color); margin: 3px 0; position: relative; height: 1.8rem; line-height: 1.8rem;
         }
         #time .clock-display, #time .warning-display { position: absolute; top: 0; left: 0; right: 0; transition: opacity 0.4s ease-in-out; }
         #time .warning-display { color: var(--alarm-color); opacity: 0; }
         #time.warning-active .clock-display { opacity: 0; }
         #time.warning-active .warning-display { opacity: 1; }
 
-        #clock-time-display, .clock-controls { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 10px; font-family: 'Inter', sans-serif;}
-        .tz-button { cursor: pointer; font-size: 0.7rem; font-weight: 600; padding: 3px 8px; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); transition: background-color 0.2s, color 0.2s; }
+        #clock-time-display, .clock-controls { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 4px; font-family: 'Inter', sans-serif;}
+        .tz-button { cursor: pointer; font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); transition: background-color 0.2s, color 0.2s; }
         .tz-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
-        .format-toggle-label { font-size: 0.72rem; font-weight: 600; color: var(--secondary-text-color); }
+        .format-toggle-label { font-size: 0.75rem; font-weight: 600; color: var(--secondary-text-color); }
         
         @keyframes glow-pulse { 0% { box-shadow: var(--shadow-elevation-1), 0 0 0 0 var(--glow-color); } 70% { box-shadow: var(--shadow-elevation-1), 0 0 16px 12px transparent; } 100% { box-shadow: var(--shadow-elevation-1), 0 0 0 0 transparent; } }
         #clock.glow-orange { --glow-color: rgba(213, 92, 0, 0.4); background-color: var(--warning-bg-orange-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
@@ -442,14 +430,14 @@
 
         /* M3 Condense Card Switcher */
         .card-viewer-area { flex-shrink: 0; }
-        .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 6px; gap: 6px; }
-        .pill-container { display: inline-flex; border-radius: 999px; padding: 2px; background-color: var(--md-sys-color-surface-container-high); }
-        .switcher-button { background: transparent; border: none; padding: 4px 12px; border-radius: 999px; color: var(--text-color); font-weight: 600; font-size: 0.78rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+        .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; gap: 8px; }
+        .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); }
+        .switcher-button { background: transparent; border: none; padding: 6px 14px; border-radius: 999px; color: var(--text-color); font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
         .switcher-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
-        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
+        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
         #toggle-cards-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
-        #toggle-cards-btn svg { width: 14px; height: 14px; fill: currentColor; transition: transform 0.4s ease; }
+        #toggle-cards-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.4s ease; }
 
         #cards-wrapper { transition: max-height 0.5s ease, opacity 0.4s ease, transform 0.5s ease; display: grid; transform-origin: bottom; }
         .card-viewer-area.cards-collapsed #cards-wrapper { max-height: 0; opacity: 0; overflow: hidden; transform: scaleY(0); }
@@ -459,31 +447,31 @@
         .hidden { max-height: 0 !important; opacity: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-width: 0 !important; margin-top: 0 !important; }
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
-        #alarms-view-container { max-height: 340px; overflow-y: auto; padding: 0.8rem 1rem; }
-        #alarms-view-container h4 { margin: 1.2rem 0 0.4rem; font-weight: 700; font-size: 0.72rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
+        #alarms-view-container { max-height: 320px; overflow-y: auto; padding: 0.5rem 0.8rem; }
+        #alarms-view-container h4 { margin: 0.6rem 0 0.3rem; font-weight: 700; font-size: 0.78rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
         #alarms-view-container h4:first-child { margin-top: 0; }
         #break-alarms-list, #activity-alarms-list, #custom-alarms-list, #upcoming-list { list-style: none; padding: 0; margin: 0; }
-        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.2rem; font-size: 0.8rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
+        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.25rem; font-size: 0.88rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
         .alarm-display-item:last-child { border-bottom: none; }
-        .alarm-details-container { display: flex; align-items: center; gap: 5px; }
-        .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;}
-        .alarm-status { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.65rem; padding: 2px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .alarm-details-container { display: flex; align-items: center; gap: 6px; }
+        .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.88rem;}
+        .alarm-status { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.7rem; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;}
         .status-triggered { color: var(--md-sys-color-secondary); background-color: var(--md-sys-color-surface-container-highest); }
         .status-upcoming { color: var(--md-sys-color-on-primary-container); background-color: var(--md-sys-color-primary-container); }
         .status-missed { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
-        #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.8rem; font-weight: 500; padding: 1rem 0; display: none; }
+        #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.88rem; font-weight: 500; padding: 1.25rem 0; display: none; }
 
         /* M3 Condense Calendar */
-        #calendar-container { max-height: 360px; }
-        #calendar { font-family: 'JetBrains Mono', monospace; padding: 0.3rem; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.2rem 0.3rem; }
-        .calendar-header h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9rem; margin: 0; color: var(--text-color);}
-        .calendar-header button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.88rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
+        #calendar-container { max-height: 380px; }
+        #calendar { font-family: 'JetBrains Mono', monospace; padding: 0.4rem; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.4rem; }
+        .calendar-header h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; margin: 0; color: var(--text-color);}
+        .calendar-header button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
         .calendar-header button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calendar-body { text-align: center; }
         .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-        .calendar-weekdays div { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--secondary-text-color); padding-bottom: 0.25rem; text-transform: uppercase;}
-        .calendar-days div { padding: 0; font-size: 0.78rem; font-weight: 600; transition: background-color 0.2s, color 0.2s; border-radius: 999px; cursor: pointer; display: flex; justify-content: center; align-items: center; height: 24px; width: 24px; margin: auto;}
+        .calendar-weekdays div { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--secondary-text-color); padding-bottom: 0.3rem; text-transform: uppercase;}
+        .calendar-days div { padding: 0; font-size: 0.82rem; font-weight: 600; transition: background-color 0.2s, color 0.2s; border-radius: 999px; cursor: pointer; display: flex; justify-content: center; align-items: center; height: 28px; width: 28px; margin: auto;}
         .calendar-days div:hover:not(.current-day):not(.us-holiday):not(.ph-holiday) { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .calendar-days .prev-date, .calendar-days .next-date { color: var(--secondary-text-color); opacity: 0.3; }
         .calendar-days .current-day { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
@@ -493,9 +481,9 @@
         .holiday-marker { font-size: 0.5em; vertical-align: super; margin-left: 1px; opacity: 0.9; line-height: 1; font-family: 'Inter', sans-serif;}
 
         /* M3 Condense Calculator */
-        #calculator-container { max-height: 300px; overflow: hidden; padding: 0.5rem; }
-        .calc-view-switcher { display: flex; justify-content: center; margin-top: -2px; margin-bottom: 8px; background-color: var(--md-sys-color-surface-container-high); border-radius: 999px; padding: 2px; }
-        .calc-view-switcher button { width: 33.33%; padding: 3px 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: none; border-radius: 999px; background-color: transparent; color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; }
+        #calculator-container { max-height: 320px; overflow: hidden; padding: 0.65rem; }
+        .calc-view-switcher { display: flex; justify-content: center; margin-top: -2px; margin-bottom: 8px; background-color: var(--md-sys-color-surface-container-high); border-radius: 999px; padding: 3px; }
+        .calc-view-switcher button { width: 33.33%; padding: 4px 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; border-radius: 999px; background-color: transparent; color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; }
         .calc-view-switcher button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
         .calc-views-wrapper { display: grid; }
@@ -504,35 +492,35 @@
         
         @keyframes result-pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         #calc-display, #formula-input {
-            width: 100%; height: 32px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; text-align: right; padding: 0 8px; margin-bottom: 5px; box-sizing: border-box; transition: box-shadow 0.2s; outline: none;
+            width: 100%; height: 36px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; text-align: right; padding: 0 10px; margin-bottom: 6px; box-sizing: border-box; transition: box-shadow 0.2s; outline: none;
         }
         #calc-display:focus, #formula-input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
 
-        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-        .calc-buttons button { height: 28px; font-size: 0.95rem; border: none; cursor: pointer; background-color: var(--md-sys-color-surface-container-high); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 999px; transition: background-color 0.2s, transform 0.1s; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .calc-buttons button { height: 32px; font-size: 1.05rem; border: none; cursor: pointer; background-color: var(--md-sys-color-surface-container-high); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 999px; transition: background-color 0.2s, transform 0.1s; }
         .calc-buttons button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calc-buttons button:active { transform: scale(0.95); }
         .calc-buttons .operator { color: var(--focus-color); background-color: var(--md-sys-color-surface-container-low); }
         .calc-buttons .equals { grid-column: span 2; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         
-        #formula-calculate-btn { width: 100%; padding: 5px; font-size: 0.85rem; cursor: pointer; border: none; border-radius: 999px; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); margin-bottom: 5px; transition: background-color 0.2s, transform 0.1s; font-weight: 700; }
+        #formula-calculate-btn { width: 100%; padding: 6px; font-size: 0.9rem; cursor: pointer; border: none; border-radius: 999px; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); margin-bottom: 6px; transition: background-color 0.2s, transform 0.1s; font-weight: 700; }
         #formula-calculate-btn:active { transform: scale(0.98); }
-        .calc-help-note { font-size: 0.68rem; color: var(--secondary-text-color); text-align: center; margin: 0 0 5px 0; font-weight: 500;}
-        #formula-result { min-height: 24px; width: 100%; text-align: center; font-size: 1.3rem; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; margin: 0;}
+        .calc-help-note { font-size: 0.72rem; color: var(--secondary-text-color); text-align: center; margin: 0 0 6px 0; font-weight: 500;}
+        #formula-result { min-height: 26px; width: 100%; text-align: center; font-size: 1.4rem; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; margin: 0;}
         
-        #time-calc-view { display: flex; flex-direction: column; gap: 5px; }
-        #time-entries { display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto; padding-right: 3px; }
-        .time-entry-row { display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .time-entry-row input { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-align: center; padding: 4px; border: none; background-color: var(--md-sys-color-surface-container-highest); border-radius: 5px; width: 45px; outline: none; transition: box-shadow 0.2s;}
+        #time-calc-view { display: flex; flex-direction: column; gap: 6px; }
+        #time-entries { display: flex; flex-direction: column; gap: 5px; max-height: 130px; overflow-y: auto; padding-right: 4px; }
+        .time-entry-row { display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .time-entry-row input { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; text-align: center; padding: 5px; border: none; background-color: var(--md-sys-color-surface-container-highest); border-radius: 6px; width: 48px; outline: none; transition: box-shadow 0.2s;}
         .time-entry-row input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
-        .time-entry-row span { font-size: 1rem; font-weight: 700; color: var(--text-color); }
-        .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0 3px; transition: color 0.2s;}
+        .time-entry-row span { font-size: 1.1rem; font-weight: 700; color: var(--text-color); }
+        .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.2rem; cursor: pointer; line-height: 1; padding: 0 4px; transition: color 0.2s;}
         .remove-row-btn:hover { color: var(--alarm-color); }
-        #add-time-row-btn, #time-calculate-btn { padding: 5px; font-size: 0.8rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
+        #add-time-row-btn, #time-calculate-btn { padding: 6px; font-size: 0.85rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
         #add-time-row-btn { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         #add-time-row-btn:active, #time-calculate-btn:active { transform: scale(0.98); }
         #time-calculate-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
-        #time-result { min-height: 24px; text-align: center; font-size: 1.1em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 2px;}
+        #time-result { min-height: 26px; text-align: center; font-size: 1.2em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 2px;}
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);}
@@ -543,10 +531,9 @@
         .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1.2rem; }
         .resize-warning-content p { margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;}
 
-        /* Enhanced Sliding Modal Content */
-        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
+        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
         .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 16px 0; }
-        .modal-overlay.show .modal-content { transform: translateY(0) scale(1); }
+        .modal-overlay.show .modal-content { transform: scale(1); }
         
         .modal-close-button { position: absolute; top: 14px; right: 14px; background-color: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; font-weight: bold; line-height: 1; cursor: pointer; color: var(--text-color); z-index: 10; transition: background-color 0.2s, color 0.2s; }
         .modal-close-button:hover { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
@@ -556,11 +543,6 @@
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
             overflow: hidden; white-space: normal; line-height: 1.3; font-weight: 700; font-size: 1.25rem;
         }
-
-        /* Flex header for specific modals (like Tools) */
-        .modal-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 4px 0;}
-        .modal-header-flex .modal-title { margin-bottom: 0; padding-right: 0; font-size: 1.3rem;}
-        .modal-header-flex .modal-close-button { position: static; flex-shrink: 0;}
         
         .alarm-form-note { font-size: 0.8rem; color: var(--secondary-text-color); margin-bottom: 1rem; line-height: 1.4; font-weight: 500;}
         .form-group { margin-bottom: 1rem; }
@@ -615,8 +597,39 @@
             <div class="top-bar-title"><span>Gusto Toolset</span></div>
         </div>
         <div class="top-bar-right">
-            <!-- Tools Modal Trigger -->
-            <button class="dropdown-button" id="tools-dropdown-btn">Tools</button>
+            <div class="dropdown">
+                <button class="dropdown-button">Tools ▼</button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-header">Utilities</li>
+                    <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
+                    <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
+                    <li>
+                        <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                        <button id="analyze-wfm-btn" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
+                            <span>Analyze WFM Schedule</span>
+                        </button>
+                    </li>
+                    <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
+                    <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
+                    <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
+                    <li class="dropdown-divider"></li>
+                    <li class="dropdown-header">Page Controls</li>
+                    <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Hide Status Bar Clock</span></button></li>
+                    <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
+                    <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
+                    <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
+                    <li class="dropdown-divider"></li>
+                    <li class="dropdown-header">Data & AI Settings</li>
+                    <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
+                    <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
+                    <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
+                    <li>
+                        <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
+                        <button id="import-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg><span>Import Data</span></button>
+                    </li>
+                </ul>
+            </div>
             <span id="theme-label">Light Mode</span>
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
@@ -626,7 +639,6 @@
         </div>
     </div>
 
-    <!-- Main Content Workspace -->
     <main id="main-content-wrapper">
         <div class="textarea-container">
             <div class="textarea-controls">
@@ -792,51 +804,8 @@
         </div>
     </main>
 
-    <!-- Tools Modal -->
-    <div id="tools-modal" class="modal-overlay blur-backdrop">
-        <div class="modal-content" style="max-width: 320px;">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">Tools</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
-            
-            <ul class="tools-menu-list">
-                <li class="dropdown-header">Utilities</li>
-                <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
-                <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
-                <li>
-                    <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
-                    <button id="analyze-wfm-btn" class="minibutton">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
-                        <span>Analyze WFM Schedule</span>
-                    </button>
-                </li>
-                <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
-                <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
-                <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
-                
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-header">Page Controls</li>
-                <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Hide Status Bar Clock</span></button></li>
-                <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
-                <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
-                <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
-                
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-header">Data & AI Settings</li>
-                <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
-                <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
-                <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
-                <li>
-                    <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
-                    <button id="import-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg><span>Import Data</span></button>
-                </li>
-            </ul>
-        </div>
-    </div>
-
     <!-- Boost Modal -->
-    <div id="boost-modal" class="modal-overlay blur-backdrop">
+    <div id="boost-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 80vh; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
@@ -867,12 +836,10 @@
     </div>
 
     <!-- Boost Prompt Modal -->
-    <div id="boost-prompt-modal" class="modal-overlay blur-backdrop">
+    <div id="boost-prompt-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 450px;">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">Configure Boost Prompt</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">Configure Boost Prompt</h2>
             <p class="alarm-form-note">Customize the instruction template sent to Gemini AI when formatting raw coaching notes. Leave empty to use default, or use <code>{rawNotes}</code> as the placeholder for your input notes.</p>
             
             <div class="form-group">
@@ -888,12 +855,10 @@
     </div>
 
     <!-- API Key Modal -->
-    <div id="api-key-modal" class="modal-overlay blur-backdrop">
+    <div id="api-key-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">Gemini API Key</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">Gemini API Key</h2>
             <p class="alarm-form-note">Get a free API key from <a href="https://aistudio.google.com" target="_blank" style="color: var(--focus-color);">Google AI Studio</a> to use the Auto-Formatter.</p>
             
             <div class="form-group">
@@ -914,7 +879,7 @@
     </div>
     
     <!-- WFM Analysis Modal -->
-    <div id="wfm-modal" class="modal-overlay blur-backdrop">
+    <div id="wfm-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; height: 100%; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
@@ -943,12 +908,10 @@
     </div>
 
     <!-- Alarm Modals -->
-    <div id="alarm-modal" class="modal-overlay blur-backdrop">
+    <div id="alarm-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 360px;">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">Set Visual Alarms</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">Set Visual Alarms</h2>
             <p class="alarm-form-note">Enter times in 12-hour format (e.g., 01:30). Alarms operate on PHT.</p>
             <div class="form-group"><label for="first-break-time">First Break</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="first-break-time" placeholder="HH:MM" maxlength="5"><select id="first-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="lunch-break-time">Lunch</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="lunch-break-time" placeholder="HH:MM" maxlength="5"><select id="lunch-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
@@ -968,12 +931,10 @@
     </div>
 
     <!-- CSV Modal -->
-    <div id="csv-modal" class="modal-overlay blur-backdrop">
+    <div id="csv-modal" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">List to CSV</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">List to CSV</h2>
             <p class="alarm-form-note">Paste a list (space or newline separated) to convert to comma-separated values.</p>
             <div class="form-group">
                 <label for="csv-input">Input List</label>
@@ -1013,12 +974,10 @@
     </div>
 
     <!-- About Modal -->
-    <div id="about-modal" class="modal-overlay blur-backdrop">
+    <div id="about-modal" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header-flex">
-                <h2 class="modal-title">About Gusto Toolset</h2>
-                <button class="modal-close-button">&times;</button>
-            </div>
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">About Gusto Toolset</h2>
             <p>This is a lightweight, all-in-one productivity tool designed for focus and efficiency.</p>
             
             <h4>Core Functions:</h4>
@@ -1067,8 +1026,8 @@
         const topBarTitleSpan = topBarTitleContainer.querySelector('span');
         const scheduleButton = document.getElementById("scheduleButton");
         const popoutButton = document.getElementById('popout-button');
-        const toolsDropdownBtn = document.getElementById('tools-dropdown-btn');
-        const toolsModal = document.getElementById('tools-modal');
+        const dropdownButton = document.querySelector('.dropdown-button');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
         const themeToggle = document.getElementById('theme-toggle');
         const themeLabel = document.getElementById('theme-label');
         
@@ -1083,8 +1042,6 @@
         const formatToggle = document.getElementById('format-toggle');
         
         // DOM Variables - Main Workspace
-        const textareaContainer = document.querySelector('.textarea-container');
-        const textareaControls = document.querySelector('.textarea-controls');
         const textarea = document.getElementById('main-content');
         const increaseFontBtn = document.getElementById('increase-font');
         const decreaseFontBtn = document.getElementById('decrease-font');
@@ -1127,12 +1084,14 @@
         const triggerWfmUploadBtn = document.getElementById('trigger-wfm-upload-btn');
         const wfmModal = document.getElementById('wfm-modal');
         const wfmAnalysisOutput = document.getElementById('wfm-analysis-output');
+        const closeWfmModalBtn = wfmModal.querySelector('.modal-close-button');
         const copyWfmBtn = document.getElementById('copy-wfm-btn');
         const tlScheduleInput = document.getElementById('tl-schedule-input');
 
         // DOM Variables - Boost Prompt Modal
         const setBoostPromptBtn = document.getElementById('set-boost-prompt-btn');
         const boostPromptModal = document.getElementById('boost-prompt-modal');
+        const closeBoostPromptModalBtn = boostPromptModal.querySelector('.modal-close-button');
         const boostPromptTextarea = document.getElementById('boost-prompt-textarea');
         const resetBoostPromptBtn = document.getElementById('reset-boost-prompt-btn');
         const saveBoostPromptBtn = document.getElementById('save-boost-prompt-btn');
@@ -1140,6 +1099,7 @@
         // DOM Variables - API Key Modal
         const setApiKeyBtn = document.getElementById('set-api-key-btn');
         const apiKeyModal = document.getElementById('api-key-modal');
+        const closeApiKeyModalBtn = apiKeyModal.querySelector('.modal-close-button');
         const verifyApiKeyBtn = document.getElementById('verify-api-key-btn');
         const apiKeyStatus = document.getElementById('api-key-status');
         const modelSelectGroup = document.getElementById('model-select-group');
@@ -1149,6 +1109,7 @@
         
         const aboutButton = document.getElementById('about-button');
         const aboutModal = document.getElementById('about-modal');
+        const closeAboutModalButton = aboutModal.querySelector('.modal-close-button');
         const resizeWarningModal = document.getElementById('resize-warning-modal');
         const resizePopoutButton = document.getElementById('resize-popout-button');
         const minWidthWarningModal = document.getElementById('min-width-warning-modal');
@@ -1157,6 +1118,7 @@
         // DOM Variables - Alarms
         const setAlarmsButton = document.getElementById('set-alarms-button');
         const alarmModal = document.getElementById('alarm-modal');
+        const closeAlarmModalButton = alarmModal.querySelector('.modal-close-button');
         const saveAlarmsButton = document.getElementById('save-alarms-button');
         const addCustomAlarmBtn = document.getElementById('add-custom-alarm-btn');
         const customAlarmsFormContainer = document.getElementById('custom-alarms-form-container');
@@ -1209,6 +1171,7 @@
         const startHoldTimerBtn = document.getElementById('start-hold-timer-btn');
         const listToCsvButton = document.getElementById('list-to-csv-button');
         const csvModal = document.getElementById('csv-modal');
+        const closeCsvModalButton = csvModal.querySelector('.modal-close-button');
         const csvInput = document.getElementById('csv-input');
         const csvOutput = document.getElementById('csv-output');
         const generateCsvButton = document.getElementById('generate-csv-button');
@@ -1268,15 +1231,6 @@
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
-
-        // MODAL CLICK-OUTSIDE LISTENER
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('mousedown', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                }
-            });
-        });
 
         // DESKTOP NOTIFICATIONS API
         function requestNotificationPermission() {
@@ -1582,7 +1536,7 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            toolsModal.classList.remove('show');
+            dropdownMenu.classList.remove('show');
         });
 
         importSettingsBtn.addEventListener('click', () => {
@@ -1603,25 +1557,20 @@
                 }
             };
             reader.readAsText(file);
-            toolsModal.classList.remove('show');
+            dropdownMenu.classList.remove('show');
             e.target.value = '';
         });
 
         // Boost Prompt Modal Logic
         setBoostPromptBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
-            toolsModal.classList.remove('show');
+            dropdownMenu.classList.remove('show');
             boostPromptTextarea.placeholder = defaultBoostPromptTemplate;
             boostPromptTextarea.value = boostCustomPrompt || '';
             boostPromptModal.classList.add('show');
         });
 
-        document.querySelectorAll('.modal-close-button').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modal = e.target.closest('.modal-overlay');
-                if(modal) modal.classList.remove('show');
-            });
-        });
+        closeBoostPromptModalBtn.addEventListener('click', () => boostPromptModal.classList.remove('show'));
 
         resetBoostPromptBtn.addEventListener('click', () => {
             boostPromptTextarea.value = '';
@@ -1634,6 +1583,7 @@
         });
 
         // WFM Analyzer Script
+        closeWfmModalBtn.addEventListener('click', () => wfmModal.classList.remove('show'));
         copyWfmBtn.addEventListener('click', () => {
             const content = wfmAnalysisOutput.innerText;
             if(content) {
@@ -1646,7 +1596,7 @@
 
         analyzeWfmBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            toolsModal.classList.remove('show');
+            dropdownMenu.classList.remove('show');
             if (!geminiApiKey || !geminiModel) {
                 alert("Please verify your API key and select a model in the 'Tools > Set Gemini API Key' menu first.");
                 setApiKeyBtn.click();
@@ -1747,12 +1697,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         // API Key Verify and Setup Logic
         setApiKeyBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); toolsModal.classList.remove('show');
+            e.stopPropagation(); dropdownMenu.classList.remove('show');
             apiKeyInput.value = geminiApiKey;
             modelSelectGroup.style.display = 'none';
             apiKeyStatus.textContent = '';
             apiKeyModal.classList.add('show');
         });
+        
+        closeApiKeyModalBtn.addEventListener('click', () => apiKeyModal.classList.remove('show'));
         
         verifyApiKeyBtn.addEventListener('click', async () => {
             const key = apiKeyInput.value.trim();
@@ -1936,6 +1888,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         // MY TEAM & BOOST MODAL LOGIC
         const boostModal = document.getElementById('boost-modal');
+        const closeBoostModalBtn = boostModal.querySelector('.modal-close-button');
         const boostPrevWeekBtn = document.getElementById('boost-prev-week');
         const boostNextWeekBtn = document.getElementById('boost-next-week');
         const boostWeekLabel = document.getElementById('boost-week-label');
@@ -1947,6 +1900,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         let currentBoostMember = null;
         let currentBoostWeekStart = null;
+
+        closeBoostModalBtn.addEventListener('click', () => boostModal.classList.remove('show'));
 
         function openBoostModal(member) {
             currentBoostMember = member;
@@ -2472,10 +2427,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
             window.open(`https://gusto.nicecloudsvc.com/agent/displayMyScheduleAction.mvc?startDay=1${y}${m}${d}&viewFormat=daily`, "_blank");
         });
 
-        toolsDropdownBtn.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            toolsModal.classList.add('show'); 
-        });
+        dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+        document.addEventListener('click', () => { if (dropdownMenu.classList.contains('show')) dropdownMenu.classList.remove('show'); });
 
         function setTheme(theme) {
             if (theme === 'dark') document.body.classList.add('dark-mode');
@@ -2700,24 +2653,18 @@ ${sanitizedCsv.substring(0, 100000)}`;
         tabNotepad.addEventListener('click', () => {
             tabNotepad.classList.add('active'); tabTodo.classList.remove('active'); tabTeam.classList.remove('active');
             textarea.classList.remove('hidden-view'); todoView.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            
-            fontControls.classList.remove('hidden-controls');
-            textareaControls.classList.remove('centered-tabs');
+            fontControls.style.visibility = 'visible';
         });
         tabTodo.addEventListener('click', () => {
             tabTodo.classList.add('active'); tabNotepad.classList.remove('active'); tabTeam.classList.remove('active');
             todoView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            
-            fontControls.classList.add('hidden-controls');
-            textareaControls.classList.add('centered-tabs');
+            fontControls.style.visibility = 'hidden';
             renderTodoWeek();
         });
         tabTeam.addEventListener('click', () => {
             tabTeam.classList.add('active'); tabNotepad.classList.remove('active'); tabTodo.classList.remove('active');
             teamView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); todoView.classList.add('hidden-view');
-            
-            fontControls.classList.add('hidden-controls');
-            textareaControls.classList.add('centered-tabs');
+            fontControls.style.visibility = 'hidden';
             renderTeamList();
         });
 
@@ -2731,10 +2678,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
         // ALARMS
         setAlarmsButton.addEventListener('click', (e) => { 
             e.stopPropagation(); 
-            toolsModal.classList.remove('show'); 
+            dropdownMenu.classList.remove('show'); 
             renderCustomAlarmFormRows();
             alarmModal.classList.add('show'); 
         });
+        closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
         
         function validateAndFormatTime(input) {
             let value = input.value.trim();
