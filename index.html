@@ -183,30 +183,22 @@
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
 
-        .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm { will-change: transform, opacity; }
+        .modal-content, #cards-wrapper, #visual-alarm { will-change: transform, opacity; }
 
-        .dropdown { position: relative; }
         .dropdown-button {
             background-color: var(--md-sys-color-surface-container-highest); border: none; color: var(--text-color);
             padding: 5px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 999px; cursor: pointer;
             transition: background-color 0.2s, color 0.2s;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-        .dropdown-menu {
-            position: absolute; top: 120%; right: 0; background-color: var(--md-sys-color-surface-container-high); 
-            border-radius: 14px; box-shadow: var(--shadow-elevation-3); list-style: none; padding: 6px; margin: 0; width: 210px;
-            z-index: 1001; opacity: 0; transform: translateY(-10px); visibility: hidden; border: none;
-            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-        }
-        .dropdown-menu.show { opacity: 1; transform: translateY(0); visibility: visible; }
-        .minibutton {
-            background: none; border: none; width: 100%; text-align: left; padding: 7px 10px; font-size: 0.8rem;
-            color: var(--text-color); cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-weight: 500;
-        }
-        .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-        .minibutton svg { width: 14px; height: 14px; fill: currentcolor; }
-        .dropdown-header { padding: 5px 8px; font-size: 0.68rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 4px 0; border: none; }
+
+        /* Tools Modal List Formatting */
+        .tools-menu-list { list-style: none; padding: 0; margin: 0; }
+        .tools-menu-list .minibutton { padding: 10px 14px; font-size: 0.9rem; margin-bottom: 4px; border-radius: 10px; width: 100%; text-align: left; background: none; border: none; color: var(--text-color); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: background-color 0.2s, color 0.2s; }
+        .tools-menu-list .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
+        .tools-menu-list .minibutton svg { width: 16px; height: 16px; fill: currentcolor; }
+        .tools-menu-list .dropdown-header { font-size: 0.72rem; padding: 10px 14px 6px; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tools-menu-list .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 8px 0; border: none; }
 
         /* M3 Switch & Tracking Icons */
         .theme-switch, .format-switch { position: relative; display: inline-block; width: 44px; height: 26px; flex-shrink: 0; }
@@ -263,21 +255,27 @@
             opacity: 0; animation: fadeInUp 0.5s ease-out 0.1s forwards;
         }
         
-        /* Compact Workspace Tab Header Controls */
+        /* Centered Workspaces Header */
         .textarea-controls {
-            display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 3px 8px;
+            display: flex; align-items: center; position: relative;
+            width: 100%; height: 38px; min-height: 38px; padding: 0;
             background-color: var(--md-sys-color-surface-container); border: none;
             border-radius: 16px 16px 0 0; transition: background-color 0.4s ease;
-        }
-        
-        /* Auto-center tabs when font controls are hidden */
-        .textarea-controls:has(.hidden-view),
-        .textarea-controls:has([style*="hidden"]),
-        .textarea-controls:has([style*="none"]) {
-            justify-content: center;
+            box-sizing: border-box; overflow: hidden;
         }
 
-        .workspace-tabs { display: flex; gap: 3px; align-items: center; position: relative; }
+        .workspace-tabs { 
+            display: flex; gap: 3px; align-items: center; position: absolute;
+            left: 8px; transform: translateX(0);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Sliding magic for center layout */
+        .textarea-controls.centered-tabs .workspace-tabs {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         .workspace-tab {
             background-color: transparent; border: none; color: var(--secondary-text-color);
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem;
@@ -286,7 +284,13 @@
         .workspace-tab:hover { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .workspace-tab.active { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         
-        .font-controls { display: flex; gap: 4px; align-items: center; transition: visibility 0.2s; }
+        .font-controls { 
+            display: flex; gap: 4px; align-items: center; position: absolute; right: 8px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .font-controls.hidden-controls { 
+            opacity: 0; pointer-events: none; transform: translateX(10px);
+        }
         .hidden-view { display: none !important; }
         
         .control-button {
@@ -419,7 +423,7 @@
         #clock-date-display { font-size: 0.8rem; font-weight: 600; color: var(--secondary-text-color); font-family: 'Inter', sans-serif;}
         #shift-date-display { font-size: 0.72rem; font-weight: 700; color: var(--focus-color); margin-top: 6px; margin-bottom: 4px; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;}
         #time { 
-            font-size: 1.85rem; font-weight: 700; color: var(--text-color); margin: 8px 0; position: relative; height: 2rem; line-height: 2rem;
+            font-size: 1.65rem; font-weight: 700; color: var(--text-color); margin: 8px 0; position: relative; height: 1.8rem; line-height: 1.8rem;
         }
         #time .clock-display, #time .warning-display { position: absolute; top: 0; left: 0; right: 0; transition: opacity 0.4s ease-in-out; }
         #time .warning-display { color: var(--alarm-color); opacity: 0; }
@@ -455,11 +459,11 @@
         .hidden { max-height: 0 !important; opacity: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; border-width: 0 !important; margin-top: 0 !important; }
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
-        #alarms-view-container { max-height: 300px; overflow-y: auto; padding: 0.3rem 0.7rem; }
-        #alarms-view-container h4 { margin: 0.5rem 0 0.2rem; font-weight: 700; font-size: 0.72rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
+        #alarms-view-container { max-height: 340px; overflow-y: auto; padding: 0.8rem 1rem; }
+        #alarms-view-container h4 { margin: 1.2rem 0 0.4rem; font-weight: 700; font-size: 0.72rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
         #alarms-view-container h4:first-child { margin-top: 0; }
         #break-alarms-list, #activity-alarms-list, #custom-alarms-list, #upcoming-list { list-style: none; padding: 0; margin: 0; }
-        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0.2rem; font-size: 0.8rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
+        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.2rem; font-size: 0.8rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
         .alarm-display-item:last-child { border-bottom: none; }
         .alarm-details-container { display: flex; align-items: center; gap: 5px; }
         .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;}
@@ -539,9 +543,10 @@
         .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1.2rem; }
         .resize-warning-content p { margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;}
 
-        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
+        /* Enhanced Sliding Modal Content */
+        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
         .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 16px 0; }
-        .modal-overlay.show .modal-content { transform: scale(1); }
+        .modal-overlay.show .modal-content { transform: translateY(0) scale(1); }
         
         .modal-close-button { position: absolute; top: 14px; right: 14px; background-color: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; font-weight: bold; line-height: 1; cursor: pointer; color: var(--text-color); z-index: 10; transition: background-color 0.2s, color 0.2s; }
         .modal-close-button:hover { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
@@ -551,6 +556,11 @@
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
             overflow: hidden; white-space: normal; line-height: 1.3; font-weight: 700; font-size: 1.25rem;
         }
+
+        /* Flex header for specific modals (like Tools) */
+        .modal-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 4px 0;}
+        .modal-header-flex .modal-title { margin-bottom: 0; padding-right: 0; font-size: 1.3rem;}
+        .modal-header-flex .modal-close-button { position: static; flex-shrink: 0;}
         
         .alarm-form-note { font-size: 0.8rem; color: var(--secondary-text-color); margin-bottom: 1rem; line-height: 1.4; font-weight: 500;}
         .form-group { margin-bottom: 1rem; }
@@ -605,39 +615,8 @@
             <div class="top-bar-title"><span>Gusto Toolset</span></div>
         </div>
         <div class="top-bar-right">
-            <div class="dropdown">
-                <button class="dropdown-button">Tools ▼</button>
-                <ul class="dropdown-menu">
-                    <li class="dropdown-header">Utilities</li>
-                    <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
-                    <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
-                    <li>
-                        <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
-                        <button id="analyze-wfm-btn" class="minibutton">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
-                            <span>Analyze WFM Schedule</span>
-                        </button>
-                    </li>
-                    <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
-                    <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
-                    <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
-                    <li class="dropdown-divider"></li>
-                    <li class="dropdown-header">Page Controls</li>
-                    <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Hide Status Bar Clock</span></button></li>
-                    <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
-                    <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
-                    <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
-                    <li class="dropdown-divider"></li>
-                    <li class="dropdown-header">Data & AI Settings</li>
-                    <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
-                    <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
-                    <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
-                    <li>
-                        <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
-                        <button id="import-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg><span>Import Data</span></button>
-                    </li>
-                </ul>
-            </div>
+            <!-- Tools Modal Trigger -->
+            <button class="dropdown-button" id="tools-dropdown-btn">Tools</button>
             <span id="theme-label">Light Mode</span>
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
@@ -647,6 +626,7 @@
         </div>
     </div>
 
+    <!-- Main Content Workspace -->
     <main id="main-content-wrapper">
         <div class="textarea-container">
             <div class="textarea-controls">
@@ -812,8 +792,51 @@
         </div>
     </main>
 
+    <!-- Tools Modal -->
+    <div id="tools-modal" class="modal-overlay blur-backdrop">
+        <div class="modal-content" style="max-width: 320px;">
+            <div class="modal-header-flex">
+                <h2 class="modal-title">Tools</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
+            
+            <ul class="tools-menu-list">
+                <li class="dropdown-header">Utilities</li>
+                <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
+                <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
+                <li>
+                    <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                    <button id="analyze-wfm-btn" class="minibutton">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
+                        <span>Analyze WFM Schedule</span>
+                    </button>
+                </li>
+                <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
+                <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
+                <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
+                
+                <li class="dropdown-divider"></li>
+                <li class="dropdown-header">Page Controls</li>
+                <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Hide Status Bar Clock</span></button></li>
+                <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
+                <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
+                <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
+                
+                <li class="dropdown-divider"></li>
+                <li class="dropdown-header">Data & AI Settings</li>
+                <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
+                <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
+                <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
+                <li>
+                    <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
+                    <button id="import-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg><span>Import Data</span></button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <!-- Boost Modal -->
-    <div id="boost-modal" class="modal-overlay">
+    <div id="boost-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 80vh; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
@@ -844,10 +867,12 @@
     </div>
 
     <!-- Boost Prompt Modal -->
-    <div id="boost-prompt-modal" class="modal-overlay">
+    <div id="boost-prompt-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content" style="max-width: 450px;">
-            <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">Configure Boost Prompt</h2>
+            <div class="modal-header-flex">
+                <h2 class="modal-title">Configure Boost Prompt</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
             <p class="alarm-form-note">Customize the instruction template sent to Gemini AI when formatting raw coaching notes. Leave empty to use default, or use <code>{rawNotes}</code> as the placeholder for your input notes.</p>
             
             <div class="form-group">
@@ -863,10 +888,12 @@
     </div>
 
     <!-- API Key Modal -->
-    <div id="api-key-modal" class="modal-overlay">
+    <div id="api-key-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content" style="max-width: 400px;">
-            <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">Gemini API Key</h2>
+            <div class="modal-header-flex">
+                <h2 class="modal-title">Gemini API Key</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
             <p class="alarm-form-note">Get a free API key from <a href="https://aistudio.google.com" target="_blank" style="color: var(--focus-color);">Google AI Studio</a> to use the Auto-Formatter.</p>
             
             <div class="form-group">
@@ -887,7 +914,7 @@
     </div>
     
     <!-- WFM Analysis Modal -->
-    <div id="wfm-modal" class="modal-overlay">
+    <div id="wfm-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; height: 100%; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
@@ -916,10 +943,12 @@
     </div>
 
     <!-- Alarm Modals -->
-    <div id="alarm-modal" class="modal-overlay">
+    <div id="alarm-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content" style="max-width: 360px;">
-            <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">Set Visual Alarms</h2>
+            <div class="modal-header-flex">
+                <h2 class="modal-title">Set Visual Alarms</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
             <p class="alarm-form-note">Enter times in 12-hour format (e.g., 01:30). Alarms operate on PHT.</p>
             <div class="form-group"><label for="first-break-time">First Break</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="first-break-time" placeholder="HH:MM" maxlength="5"><select id="first-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="lunch-break-time">Lunch</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="lunch-break-time" placeholder="HH:MM" maxlength="5"><select id="lunch-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
@@ -939,10 +968,12 @@
     </div>
 
     <!-- CSV Modal -->
-    <div id="csv-modal" class="modal-overlay">
+    <div id="csv-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content">
-            <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">List to CSV</h2>
+            <div class="modal-header-flex">
+                <h2 class="modal-title">List to CSV</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
             <p class="alarm-form-note">Paste a list (space or newline separated) to convert to comma-separated values.</p>
             <div class="form-group">
                 <label for="csv-input">Input List</label>
@@ -982,10 +1013,12 @@
     </div>
 
     <!-- About Modal -->
-    <div id="about-modal" class="modal-overlay">
+    <div id="about-modal" class="modal-overlay blur-backdrop">
         <div class="modal-content">
-            <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">About Gusto Toolset</h2>
+            <div class="modal-header-flex">
+                <h2 class="modal-title">About Gusto Toolset</h2>
+                <button class="modal-close-button">&times;</button>
+            </div>
             <p>This is a lightweight, all-in-one productivity tool designed for focus and efficiency.</p>
             
             <h4>Core Functions:</h4>
@@ -1034,8 +1067,8 @@
         const topBarTitleSpan = topBarTitleContainer.querySelector('span');
         const scheduleButton = document.getElementById("scheduleButton");
         const popoutButton = document.getElementById('popout-button');
-        const dropdownButton = document.querySelector('.dropdown-button');
-        const dropdownMenu = document.querySelector('.dropdown-menu');
+        const toolsDropdownBtn = document.getElementById('tools-dropdown-btn');
+        const toolsModal = document.getElementById('tools-modal');
         const themeToggle = document.getElementById('theme-toggle');
         const themeLabel = document.getElementById('theme-label');
         
@@ -1050,6 +1083,8 @@
         const formatToggle = document.getElementById('format-toggle');
         
         // DOM Variables - Main Workspace
+        const textareaContainer = document.querySelector('.textarea-container');
+        const textareaControls = document.querySelector('.textarea-controls');
         const textarea = document.getElementById('main-content');
         const increaseFontBtn = document.getElementById('increase-font');
         const decreaseFontBtn = document.getElementById('decrease-font');
@@ -1092,14 +1127,12 @@
         const triggerWfmUploadBtn = document.getElementById('trigger-wfm-upload-btn');
         const wfmModal = document.getElementById('wfm-modal');
         const wfmAnalysisOutput = document.getElementById('wfm-analysis-output');
-        const closeWfmModalBtn = wfmModal.querySelector('.modal-close-button');
         const copyWfmBtn = document.getElementById('copy-wfm-btn');
         const tlScheduleInput = document.getElementById('tl-schedule-input');
 
         // DOM Variables - Boost Prompt Modal
         const setBoostPromptBtn = document.getElementById('set-boost-prompt-btn');
         const boostPromptModal = document.getElementById('boost-prompt-modal');
-        const closeBoostPromptModalBtn = boostPromptModal.querySelector('.modal-close-button');
         const boostPromptTextarea = document.getElementById('boost-prompt-textarea');
         const resetBoostPromptBtn = document.getElementById('reset-boost-prompt-btn');
         const saveBoostPromptBtn = document.getElementById('save-boost-prompt-btn');
@@ -1107,7 +1140,6 @@
         // DOM Variables - API Key Modal
         const setApiKeyBtn = document.getElementById('set-api-key-btn');
         const apiKeyModal = document.getElementById('api-key-modal');
-        const closeApiKeyModalBtn = apiKeyModal.querySelector('.modal-close-button');
         const verifyApiKeyBtn = document.getElementById('verify-api-key-btn');
         const apiKeyStatus = document.getElementById('api-key-status');
         const modelSelectGroup = document.getElementById('model-select-group');
@@ -1117,7 +1149,6 @@
         
         const aboutButton = document.getElementById('about-button');
         const aboutModal = document.getElementById('about-modal');
-        const closeAboutModalButton = aboutModal.querySelector('.modal-close-button');
         const resizeWarningModal = document.getElementById('resize-warning-modal');
         const resizePopoutButton = document.getElementById('resize-popout-button');
         const minWidthWarningModal = document.getElementById('min-width-warning-modal');
@@ -1126,7 +1157,6 @@
         // DOM Variables - Alarms
         const setAlarmsButton = document.getElementById('set-alarms-button');
         const alarmModal = document.getElementById('alarm-modal');
-        const closeAlarmModalButton = alarmModal.querySelector('.modal-close-button');
         const saveAlarmsButton = document.getElementById('save-alarms-button');
         const addCustomAlarmBtn = document.getElementById('add-custom-alarm-btn');
         const customAlarmsFormContainer = document.getElementById('custom-alarms-form-container');
@@ -1179,7 +1209,6 @@
         const startHoldTimerBtn = document.getElementById('start-hold-timer-btn');
         const listToCsvButton = document.getElementById('list-to-csv-button');
         const csvModal = document.getElementById('csv-modal');
-        const closeCsvModalButton = csvModal.querySelector('.modal-close-button');
         const csvInput = document.getElementById('csv-input');
         const csvOutput = document.getElementById('csv-output');
         const generateCsvButton = document.getElementById('generate-csv-button');
@@ -1239,6 +1268,15 @@
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
+
+        // MODAL CLICK-OUTSIDE LISTENER
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('mousedown', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
 
         // DESKTOP NOTIFICATIONS API
         function requestNotificationPermission() {
@@ -1544,7 +1582,7 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            dropdownMenu.classList.remove('show');
+            toolsModal.classList.remove('show');
         });
 
         importSettingsBtn.addEventListener('click', () => {
@@ -1565,20 +1603,25 @@
                 }
             };
             reader.readAsText(file);
-            dropdownMenu.classList.remove('show');
+            toolsModal.classList.remove('show');
             e.target.value = '';
         });
 
         // Boost Prompt Modal Logic
         setBoostPromptBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
-            dropdownMenu.classList.remove('show');
+            toolsModal.classList.remove('show');
             boostPromptTextarea.placeholder = defaultBoostPromptTemplate;
             boostPromptTextarea.value = boostCustomPrompt || '';
             boostPromptModal.classList.add('show');
         });
 
-        closeBoostPromptModalBtn.addEventListener('click', () => boostPromptModal.classList.remove('show'));
+        document.querySelectorAll('.modal-close-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal-overlay');
+                if(modal) modal.classList.remove('show');
+            });
+        });
 
         resetBoostPromptBtn.addEventListener('click', () => {
             boostPromptTextarea.value = '';
@@ -1591,7 +1634,6 @@
         });
 
         // WFM Analyzer Script
-        closeWfmModalBtn.addEventListener('click', () => wfmModal.classList.remove('show'));
         copyWfmBtn.addEventListener('click', () => {
             const content = wfmAnalysisOutput.innerText;
             if(content) {
@@ -1604,7 +1646,7 @@
 
         analyzeWfmBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            dropdownMenu.classList.remove('show');
+            toolsModal.classList.remove('show');
             if (!geminiApiKey || !geminiModel) {
                 alert("Please verify your API key and select a model in the 'Tools > Set Gemini API Key' menu first.");
                 setApiKeyBtn.click();
@@ -1705,14 +1747,12 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         // API Key Verify and Setup Logic
         setApiKeyBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); dropdownMenu.classList.remove('show');
+            e.stopPropagation(); toolsModal.classList.remove('show');
             apiKeyInput.value = geminiApiKey;
             modelSelectGroup.style.display = 'none';
             apiKeyStatus.textContent = '';
             apiKeyModal.classList.add('show');
         });
-        
-        closeApiKeyModalBtn.addEventListener('click', () => apiKeyModal.classList.remove('show'));
         
         verifyApiKeyBtn.addEventListener('click', async () => {
             const key = apiKeyInput.value.trim();
@@ -1896,7 +1936,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         // MY TEAM & BOOST MODAL LOGIC
         const boostModal = document.getElementById('boost-modal');
-        const closeBoostModalBtn = boostModal.querySelector('.modal-close-button');
         const boostPrevWeekBtn = document.getElementById('boost-prev-week');
         const boostNextWeekBtn = document.getElementById('boost-next-week');
         const boostWeekLabel = document.getElementById('boost-week-label');
@@ -1908,8 +1947,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         let currentBoostMember = null;
         let currentBoostWeekStart = null;
-
-        closeBoostModalBtn.addEventListener('click', () => boostModal.classList.remove('show'));
 
         function openBoostModal(member) {
             currentBoostMember = member;
@@ -2435,8 +2472,10 @@ ${sanitizedCsv.substring(0, 100000)}`;
             window.open(`https://gusto.nicecloudsvc.com/agent/displayMyScheduleAction.mvc?startDay=1${y}${m}${d}&viewFormat=daily`, "_blank");
         });
 
-        dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
-        document.addEventListener('click', () => { if (dropdownMenu.classList.contains('show')) dropdownMenu.classList.remove('show'); });
+        toolsDropdownBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            toolsModal.classList.add('show'); 
+        });
 
         function setTheme(theme) {
             if (theme === 'dark') document.body.classList.add('dark-mode');
@@ -2661,18 +2700,24 @@ ${sanitizedCsv.substring(0, 100000)}`;
         tabNotepad.addEventListener('click', () => {
             tabNotepad.classList.add('active'); tabTodo.classList.remove('active'); tabTeam.classList.remove('active');
             textarea.classList.remove('hidden-view'); todoView.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            fontControls.classList.remove('hidden-view'); // Allows flex-between alignment
+            
+            fontControls.classList.remove('hidden-controls');
+            textareaControls.classList.remove('centered-tabs');
         });
         tabTodo.addEventListener('click', () => {
             tabTodo.classList.add('active'); tabNotepad.classList.remove('active'); tabTeam.classList.remove('active');
             todoView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            fontControls.classList.add('hidden-view'); // Triggers CSS auto-centering
+            
+            fontControls.classList.add('hidden-controls');
+            textareaControls.classList.add('centered-tabs');
             renderTodoWeek();
         });
         tabTeam.addEventListener('click', () => {
             tabTeam.classList.add('active'); tabNotepad.classList.remove('active'); tabTodo.classList.remove('active');
             teamView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); todoView.classList.add('hidden-view');
-            fontControls.classList.add('hidden-view'); // Triggers CSS auto-centering
+            
+            fontControls.classList.add('hidden-controls');
+            textareaControls.classList.add('centered-tabs');
             renderTeamList();
         });
 
@@ -2686,11 +2731,10 @@ ${sanitizedCsv.substring(0, 100000)}`;
         // ALARMS
         setAlarmsButton.addEventListener('click', (e) => { 
             e.stopPropagation(); 
-            dropdownMenu.classList.remove('show'); 
+            toolsModal.classList.remove('show'); 
             renderCustomAlarmFormRows();
             alarmModal.classList.add('show'); 
         });
-        closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
         
         function validateAndFormatTime(input) {
             let value = input.value.trim();
