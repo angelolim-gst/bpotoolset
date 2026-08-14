@@ -558,11 +558,12 @@
         .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1rem; }
         .resize-warning-content p { margin-bottom: 1.5rem; }
 
-        .modal-content { background-color: var(--widget-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s ease; max-height: 95vh; overflow-y: auto; }
+        .modal-content { background-color: var(--widget-bg-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s ease; max-height: 80vh; overflow-y: auto; }
         .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 1.5rem 0; }
         .modal-overlay.show .modal-content { transform: scale(1); }
-        .modal-close-button { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.75rem; line-height: 1; cursor: pointer; color: var(--secondary-text-color); }
-        .modal-title { margin-top: 0; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .modal-close-button { position: absolute; top: 12px; right: 12px; background-color: var(--bg-color); border: 1.5px solid var(--border-color); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 1.25rem; line-height: 1; cursor: pointer; color: var(--secondary-text-color); z-index: 10; transition: color 0.2s, border-color 0.2s; }
+        .modal-close-button:hover { color: var(--alarm-color); border-color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
+        .modal-title { margin-top: 0; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 35px; }
         .alarm-form-note { font-size: 0.8rem; color: var(--secondary-text-color); margin-bottom: 1rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
@@ -823,9 +824,9 @@
 
     <!-- Boost Modal -->
     <div id="boost-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 95vh; display: flex; flex-direction: column;">
+        <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 80vh; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 0; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Boost Notes</h2>
                 <button id="boost-ai-format-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 8px; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;">✨ Auto-Format</button>
             </div>
@@ -878,9 +879,9 @@
     
     <!-- WFM Analysis Modal -->
     <div id="wfm-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 800px; width: 95%; height: 95vh; display: flex; flex-direction: column;">
+        <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; height: 100%; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" style="margin-bottom: 0; white-space: nowrap;">WFM Analyzer</h2>
                 <div style="display: flex; gap: 10px;">
                     <button id="copy-wfm-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; white-space: nowrap;">Copy Report</button>
