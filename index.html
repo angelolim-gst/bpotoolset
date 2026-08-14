@@ -263,31 +263,31 @@
             opacity: 0; animation: fadeInUp 0.5s ease-out 0.1s forwards;
         }
         
-        /* Highlighted & Spacious Tab Header Controls */
+        /* Balanced Workspace Tab Header Controls */
         .textarea-controls {
-            display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 10px;
+            display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 10px;
             background-color: var(--md-sys-color-surface-container); border: none;
-            border-radius: 18px 18px 0 0; transition: background-color 0.4s ease;
+            border-radius: 16px 16px 0 0; transition: background-color 0.4s ease;
         }
-        .workspace-tabs { display: flex; gap: 4px; align-items: center; position: relative; }
+        .workspace-tabs { display: flex; gap: 3px; align-items: center; position: relative; }
         .workspace-tab {
             background-color: transparent; border: none; color: var(--secondary-text-color);
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
-            padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.82rem;
+            padding: 5px 11px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
         }
         .workspace-tab:hover { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .workspace-tab.active { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         
-        .font-controls { display: flex; gap: 6px; align-items: center; transition: visibility 0.2s; }
+        .font-controls { display: flex; gap: 5px; align-items: center; transition: visibility 0.2s; }
         .hidden-view { display: none !important; }
         
         .control-button {
             background-color: var(--md-sys-color-surface-container-high); border: none; color: var(--focus-color);
-            font-family: 'JetBrains Mono', monospace; font-weight: 700; height: 30px; border-radius: 999px;
-            cursor: pointer; padding: 0 10px; font-size: 0.8rem; transition: background-color 0.2s, color 0.2s;
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; height: 28px; border-radius: 999px;
+            cursor: pointer; padding: 0 9px; font-size: 0.78rem; transition: background-color 0.2s, color 0.2s;
             white-space: nowrap; flex-shrink: 0;
         }
-        .control-button.resize { width: 30px; padding: 0; display: flex; justify-content: center; align-items: center;}
+        .control-button.resize { width: 28px; padding: 0; display: flex; justify-content: center; align-items: center;}
         .control-button:hover { background-color: var(--focus-bg); }
         
         .workspace-content {
