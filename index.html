@@ -131,13 +131,13 @@
             --success-color: #79d28a;
         }
         
-        body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
+        body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
         
-        html, body { height: 100%; }
+        /* 90% Base Scaling Fix for Extenstions */
+        html { font-size: 90%; height: 100%; }
+        
         body {
-            zoom: 0.9; /* Internal scaling down to 90% */
+            height: 100%;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -149,33 +149,15 @@
             overflow: hidden; 
         }
 
-        body.scroll-enabled {
-            display: block;
-            height: auto;
-            overflow-y: auto;
-        }
-        body.scroll-enabled .textarea-container {
-            flex-grow: 0;
-            height: 55vh;
-        }
-        body.scroll-enabled.compact-mode #clock,
-        body.scroll-enabled.compact-mode .card-viewer-area {
-            display: block;
-        }
+        body.scroll-enabled { display: block; height: auto; overflow-y: auto; }
+        body.scroll-enabled .textarea-container { flex-grow: 0; height: 55vh; }
+        body.scroll-enabled.compact-mode #clock, body.scroll-enabled.compact-mode .card-viewer-area { display: block; }
         
         main {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            padding: 20px;
-            padding-top: 80px; 
-            padding-bottom: 50px; 
-            width: 100%;
-            max-width: 440px;
-            box-sizing: border-box;
-            min-height: 0;
-            margin: 0 auto;
-            transition: max-width 0.4s ease-in-out;
+            display: flex; flex-direction: column; flex-grow: 1;
+            padding: 16px; padding-top: 70px; padding-bottom: 40px; 
+            width: 100%; max-width: 440px; box-sizing: border-box;
+            min-height: 0; margin: 0 auto; transition: max-width 0.4s ease-in-out;
         }
 
         body.wide-mode main { max-width: 650px; }
@@ -183,8 +165,8 @@
 
         /* M3 Top Bar */
         .top-bar {
-            width: 100%; height: 60px; position: fixed; top: 0; left: 0; right: 0; display: flex;
-            align-items: center; justify-content: space-between; padding: 0 20px; 
+            width: 100%; height: 54px; position: fixed; top: 0; left: 0; right: 0; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 16px; 
             background-color: var(--md-sys-color-surface-container);
             box-shadow: var(--shadow-elevation-1); z-index: 1000; box-sizing: border-box;
             transition: background-color 0.4s ease;
@@ -203,9 +185,7 @@
         .top-bar-title.marquee span { padding-left: 100%; animation: marquee-scroll 8s linear infinite; }
         @keyframes marquee-scroll { from { transform: translateX(0%); } to { transform: translateX(-100%); } }
 
-        .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm {
-            will-change: transform, opacity;
-        }
+        .dropdown-menu, .modal-content, #cards-wrapper, #visual-alarm { will-change: transform, opacity; }
 
         .dropdown { position: relative; }
         .dropdown-button {
@@ -230,28 +210,24 @@
         .dropdown-header { padding: 8px 12px; font-size: 0.75rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 6px 0; border: none; }
 
-        /* M3 Switch & Tracking Icons */
-        .theme-switch, .format-switch { position: relative; display: inline-block; width: 52px; height: 32px; flex-shrink: 0; }
+        /* M3 Switch & Tracking Icons (Scaled down) */
+        .theme-switch, .format-switch { position: relative; display: inline-block; width: 46px; height: 28px; flex-shrink: 0; }
         .theme-switch input, .format-switch input { display: none; }
-        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 32px; box-sizing: border-box;}
-        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; z-index: 2;}
+        .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 28px; box-sizing: border-box;}
+        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; z-index: 2;}
         .theme-switch input:checked + .slider, .format-switch input:checked + .slider { background-color: var(--focus-color); border-color: var(--focus-color); }
-        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(20px); background-color: var(--md-sys-color-on-primary); height: 24px; width: 24px; left: 2px; bottom: 2px;}
+        .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(18px); background-color: var(--md-sys-color-on-primary); height: 22px; width: 22px; left: 1px; bottom: 1px;}
 
-        /* Icon tracking animation inside thumb */
-        .switch-icon { position: absolute; width: 14px; height: 14px; top: 9px; pointer-events: none; transition: transform 0.4s ease, opacity 0.2s ease; z-index: 3; }
-        
-        .icon-moon { left: 9px; fill: var(--md-sys-color-surface-container-lowest); opacity: 1; transform: translateX(0); }
-        .theme-switch input:checked ~ .icon-moon { opacity: 0; transform: translateX(20px); }
-        
-        .icon-sun { left: 9px; fill: var(--focus-color); opacity: 0; transform: translateX(0); }
-        .theme-switch input:checked ~ .icon-sun { opacity: 1; transform: translateX(20px); }
-        
+        .switch-icon { position: absolute; width: 12px; height: 12px; top: 8px; pointer-events: none; transition: transform 0.4s ease, opacity 0.2s ease; z-index: 3; }
+        .icon-moon { left: 8px; fill: var(--md-sys-color-surface-container-lowest); opacity: 1; transform: translateX(0); }
+        .theme-switch input:checked ~ .icon-moon { opacity: 0; transform: translateX(18px); }
+        .icon-sun { left: 8px; fill: var(--focus-color); opacity: 0; transform: translateX(0); }
+        .theme-switch input:checked ~ .icon-sun { opacity: 1; transform: translateX(18px); }
         #theme-label { font-size: 0.85rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease; }
 
         /* M3 Bottom Status Bar */
         .bottom-status-bar {
-            width: 100%; height: 32px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
+            width: 100%; height: 28px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
             align-items: center; justify-content: space-between; padding: 0 16px;
             background-color: var(--md-sys-color-surface-container); border: none;
             box-shadow: 0px -1px 3px rgba(0,0,0,0.05); z-index: 4000; box-sizing: border-box;
@@ -368,13 +344,13 @@
         /* My Team (Excel Grid Layout) */
         #team-view { 
             display: flex; flex-direction: column; padding: 1.5rem; overflow-x: auto; 
-            --col-eid: 65px;
-            --col-sfdc: 70px;
+            --col-eid: 60px;
+            --col-sfdc: 65px;
             --col-name: 1fr;
-            --col-day: 80px;
-            --col-time: 110px; 
-            --col-boost: 45px;
-            --col-del: 30px;
+            --col-day: 75px;
+            --col-time: 100px; 
+            --col-boost: 40px;
+            --col-del: 25px;
         }
         .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 520px; height: 100%; }
         
@@ -418,16 +394,17 @@
         #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* M3 Hold Timer FAB */
-        #hold-timer-container { margin-bottom: 20px; display: none; }
+        #hold-timer-container { margin-bottom: 16px; display: none; }
         #start-hold-timer-btn {
-            width: 100%; padding: 0 24px; height: 64px; font-size: 1.15rem; font-weight: 600; cursor: pointer; border-radius: 16px; border: none;
+            width: 100%; padding: 0 20px; height: 54px; font-size: 1.05rem; font-weight: 600; cursor: pointer; border-radius: 14px; border: none;
             background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); 
             box-shadow: var(--shadow-elevation-1); transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             display: flex; justify-content: center; align-items: center; letter-spacing: 0.5px;
         }
-        #start-hold-timer-btn:hover { box-shadow: var(--shadow-elevation-2); background-color: #ffb4ab; } /* M3 Error Light */
+        #start-hold-timer-btn:hover { box-shadow: var(--shadow-elevation-2); background-color: #ffb4ab; } 
         #start-hold-timer-btn:active { transform: scale(0.98); }
-
+        
+        /* M3 Condense Clock */
         #clock {
             flex-shrink: 0; font-family: 'JetBrains Mono', monospace; padding: 1rem 1.2rem;
             text-align: center; animation: fadeInUp 0.5s ease-out 0.2s forwards; margin-bottom: 12px;
@@ -452,6 +429,7 @@
         #clock.glow-red { --glow-color: rgba(186, 26, 26, 0.4); background-color: var(--warning-bg-red-current); animation: glow-pulse 1.5s infinite, fadeInUp 0.5s ease-out 0.2s forwards; }
         #clock.snoozed-indicator { background-color: var(--warning-bg-red-current); }
 
+        /* M3 Condense Card Switcher */
         .card-viewer-area { flex-shrink: 0; }
         .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; gap: 8px; }
         .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); }
@@ -484,7 +462,7 @@
         .status-missed { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
         #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.9rem; font-weight: 500; padding: 1.5rem 0; display: none; }
 
-        /* Calendar */
+        /* M3 Condense Calendar */
         #calendar-container { max-height: 400px; }
         #calendar { font-family: 'JetBrains Mono', monospace; padding: 0.5rem; }
         .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.5rem; }
@@ -503,10 +481,10 @@
         .calendar-days .current-day.us-holiday, .calendar-days .current-day.ph-holiday { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         .holiday-marker { font-size: 0.5em; vertical-align: super; margin-left: 2px; opacity: 0.9; line-height: 1; font-family: 'Inter', sans-serif;}
 
-        /* Calculator */
-        #calculator-container { max-height: 440px; overflow: hidden; }
-        .calc-view-switcher { display: flex; justify-content: center; margin-top: -6px; margin-bottom: 16px; background-color: var(--md-sys-color-surface-container-high); border-radius: 999px; padding: 4px; }
-        .calc-view-switcher button { width: 33.33%; padding: 6px 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; border-radius: 999px; background-color: transparent; color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; }
+        /* M3 Condense Calculator */
+        #calculator-container { max-height: 350px; overflow: hidden; padding: 0.75rem; }
+        .calc-view-switcher { display: flex; justify-content: center; margin-top: -4px; margin-bottom: 12px; background-color: var(--md-sys-color-surface-container-high); border-radius: 999px; padding: 4px; }
+        .calc-view-switcher button { width: 33.33%; padding: 4px 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; border-radius: 999px; background-color: transparent; color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease; }
         .calc-view-switcher button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
         .calc-views-wrapper { display: grid; }
@@ -515,35 +493,35 @@
         
         @keyframes result-pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         #calc-display, #formula-input {
-            width: 100%; height: 48px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); border-radius: 16px; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; text-align: right; padding: 0 16px; margin-bottom: 12px; box-sizing: border-box; transition: box-shadow 0.2s; outline: none;
+            width: 100%; height: 38px; border: none; background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; text-align: right; padding: 0 12px; margin-bottom: 8px; box-sizing: border-box; transition: box-shadow 0.2s; outline: none;
         }
         #calc-display:focus, #formula-input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
 
-        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-buttons button { height: 42px; font-size: 1.2rem; border: none; cursor: pointer; background-color: var(--md-sys-color-surface-container-high); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 999px; transition: background-color 0.2s, transform 0.1s; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .calc-buttons button { height: 34px; font-size: 1.1rem; border: none; cursor: pointer; background-color: var(--md-sys-color-surface-container-high); color: var(--text-color); font-family: 'JetBrains Mono', monospace; font-weight: 600; border-radius: 999px; transition: background-color 0.2s, transform 0.1s; }
         .calc-buttons button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calc-buttons button:active { transform: scale(0.95); }
         .calc-buttons .operator { color: var(--focus-color); background-color: var(--md-sys-color-surface-container-low); }
         .calc-buttons .equals { grid-column: span 2; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         
-        #formula-calculate-btn { width: 100%; padding: 12px; font-size: 1.1rem; cursor: pointer; border: none; border-radius: 999px; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); margin-bottom: 12px; transition: background-color 0.2s, transform 0.1s; font-weight: 700; }
+        #formula-calculate-btn { width: 100%; padding: 8px; font-size: 1rem; cursor: pointer; border: none; border-radius: 999px; background-color: var(--focus-color); color: var(--md-sys-color-on-primary); margin-bottom: 8px; transition: background-color 0.2s, transform 0.1s; font-weight: 700; }
         #formula-calculate-btn:active { transform: scale(0.98); }
-        .calc-help-note { font-size: 0.8rem; color: var(--secondary-text-color); text-align: center; margin: 0 0 12px 0; font-weight: 500;}
-        #formula-result { min-height: 40px; width: 100%; text-align: center; font-size: 2rem; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; margin: 0;}
+        .calc-help-note { font-size: 0.75rem; color: var(--secondary-text-color); text-align: center; margin: 0 0 8px 0; font-weight: 500;}
+        #formula-result { min-height: 32px; width: 100%; text-align: center; font-size: 1.6rem; color: var(--text-color); font-weight: 700; font-family: 'JetBrains Mono', monospace; animation: result-pop 0.3s ease; margin: 0;}
         
-        #time-calc-view { display: flex; flex-direction: column; gap: 12px; }
-        #time-entries { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
-        .time-entry-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .time-entry-row input { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 600; text-align: center; padding: 10px; border: none; background-color: var(--md-sys-color-surface-container-highest); border-radius: 12px; width: 65px; outline: none; transition: box-shadow 0.2s;}
+        #time-calc-view { display: flex; flex-direction: column; gap: 8px; }
+        #time-entries { display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto; padding-right: 5px; }
+        .time-entry-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .time-entry-row input { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 600; text-align: center; padding: 6px; border: none; background-color: var(--md-sys-color-surface-container-highest); border-radius: 8px; width: 55px; outline: none; transition: box-shadow 0.2s;}
         .time-entry-row input:focus { box-shadow: 0 0 0 2px var(--focus-color) inset; }
-        .time-entry-row span { font-size: 1.4rem; font-weight: 700; color: var(--text-color); }
-        .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.6rem; cursor: pointer; line-height: 1; padding: 0 8px; transition: color 0.2s;}
+        .time-entry-row span { font-size: 1.2rem; font-weight: 700; color: var(--text-color); }
+        .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0 6px; transition: color 0.2s;}
         .remove-row-btn:hover { color: var(--alarm-color); }
-        #add-time-row-btn, #time-calculate-btn { padding: 12px; font-size: 1rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
+        #add-time-row-btn, #time-calculate-btn { padding: 8px; font-size: 0.9rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
         #add-time-row-btn { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         #add-time-row-btn:active, #time-calculate-btn:active { transform: scale(0.98); }
         #time-calculate-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
-        #time-result { min-height: 36px; text-align: center; font-size: 1.6em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 10px;}
+        #time-result { min-height: 32px; text-align: center; font-size: 1.3em; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-color); margin-top: 4px;}
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);}
