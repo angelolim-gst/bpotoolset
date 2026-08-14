@@ -27,7 +27,8 @@
             --md-sys-color-error-container: #ffdad6;
             --md-sys-color-on-error-container: #410002;
             
-            --md-sys-color-background: #fdfcff;
+            /* Deepened Background for Better Card Contrast */
+            --md-sys-color-background: #e9edf1; 
             --md-sys-color-on-background: #1a1c1e;
             --md-sys-color-surface: #fdfcff;
             --md-sys-color-on-surface: #1a1c1e;
@@ -37,16 +38,17 @@
             --md-sys-color-outline: #73777f;
             --md-sys-color-outline-variant: #c3c7cf;
             
+            /* Pure White Widgets */
             --md-sys-color-surface-container-lowest: #ffffff;
             --md-sys-color-surface-container-low: #f7f6f9;
             --md-sys-color-surface-container: #f1f0f4;
             --md-sys-color-surface-container-high: #ebeaef;
             --md-sys-color-surface-container-highest: #e2e2e6;
 
-            /* M3 Soft Shadows */
-            --shadow-elevation-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-            --shadow-elevation-2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
-            --shadow-elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+            /* M3 Soft, Diffused Shadows */
+            --shadow-elevation-1: 0px 4px 12px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-elevation-2: 0px 8px 24px rgba(0, 0, 0, 0.08), 0px 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-elevation-3: 0px 16px 40px rgba(0, 0, 0, 0.12), 0px 4px 10px rgba(0, 0, 0, 0.08);
 
             /* Mapping to Logic Variables */
             --bg-color: var(--md-sys-color-background);
@@ -87,7 +89,8 @@
             --md-sys-color-error-container: #93000a;
             --md-sys-color-on-error-container: #ffdad6;
             
-            --md-sys-color-background: #1a1c1e;
+            /* Deep Dark Background for Contrast */
+            --md-sys-color-background: #0d0e11; 
             --md-sys-color-on-background: #e2e2e6;
             --md-sys-color-surface: #1a1c1e;
             --md-sys-color-on-surface: #e2e2e6;
@@ -97,15 +100,17 @@
             --md-sys-color-outline: #8d9199;
             --md-sys-color-outline-variant: #43474e;
             
-            --md-sys-color-surface-container-lowest: #0f0f11;
+            /* Lighter Widgets for Separation */
+            --md-sys-color-surface-container-lowest: #1b1d21;
             --md-sys-color-surface-container-low: #1a1c1e;
-            --md-sys-color-surface-container: #1e2022;
+            --md-sys-color-surface-container: #222428;
             --md-sys-color-surface-container-high: #282a2d;
             --md-sys-color-surface-container-highest: #333538;
 
-            --shadow-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
-            --shadow-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
-            --shadow-elevation-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.4), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+            /* M3 Soft Shadows (Darkened for visibility) */
+            --shadow-elevation-1: 0px 4px 12px rgba(0, 0, 0, 0.4), 0px 1px 3px rgba(0, 0, 0, 0.5);
+            --shadow-elevation-2: 0px 8px 24px rgba(0, 0, 0, 0.5), 0px 2px 6px rgba(0, 0, 0, 0.4);
+            --shadow-elevation-3: 0px 16px 40px rgba(0, 0, 0, 0.6), 0px 4px 10px rgba(0, 0, 0, 0.5);
 
             --bg-color: var(--md-sys-color-background);
             --widget-bg-color: var(--md-sys-color-surface-container-lowest);
@@ -132,6 +137,7 @@
         
         html, body { height: 100%; }
         body {
+            zoom: 0.9; /* Internal scaling down to 90% */
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -224,13 +230,23 @@
         .dropdown-header { padding: 8px 12px; font-size: 0.75rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 6px 0; border: none; }
 
-        /* M3 Switch */
+        /* M3 Switch & Tracking Icons */
         .theme-switch, .format-switch { position: relative; display: inline-block; width: 52px; height: 32px; flex-shrink: 0; }
         .theme-switch input, .format-switch input { display: none; }
         .theme-switch .slider, .format-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--md-sys-color-surface-container-highest); border: 2px solid var(--md-sys-color-outline); transition: .4s; border-radius: 32px; box-sizing: border-box;}
-        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; }
+        .theme-switch .slider:before, .format-switch .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: var(--md-sys-color-outline); transition: .4s; border-radius: 50%; z-index: 2;}
         .theme-switch input:checked + .slider, .format-switch input:checked + .slider { background-color: var(--focus-color); border-color: var(--focus-color); }
         .theme-switch input:checked + .slider:before, .format-switch input:checked + .slider:before { transform: translateX(20px); background-color: var(--md-sys-color-on-primary); height: 24px; width: 24px; left: 2px; bottom: 2px;}
+
+        /* Icon tracking animation inside thumb */
+        .switch-icon { position: absolute; width: 14px; height: 14px; top: 9px; pointer-events: none; transition: transform 0.4s ease, opacity 0.2s ease; z-index: 3; }
+        
+        .icon-moon { left: 9px; fill: var(--md-sys-color-surface-container-lowest); opacity: 1; transform: translateX(0); }
+        .theme-switch input:checked ~ .icon-moon { opacity: 0; transform: translateX(20px); }
+        
+        .icon-sun { left: 9px; fill: var(--focus-color); opacity: 0; transform: translateX(0); }
+        .theme-switch input:checked ~ .icon-sun { opacity: 1; transform: translateX(20px); }
+        
         #theme-label { font-size: 0.85rem; font-weight: 600; color: var(--text-color); transition: color 0.4s ease; }
 
         /* M3 Bottom Status Bar */
@@ -591,10 +607,6 @@
         @media (max-width: 400px) {
             #theme-label { display: none; }
             .top-bar-right { gap: 8px; }
-            .theme-switch .slider:before { background-color: var(--md-sys-color-outline) !important; }
-            .theme-switch input:checked + .slider:before { background-color: var(--md-sys-color-on-primary) !important; }
-            .theme-switch input:not(:checked) ~ .icon-moon { opacity: 1; }
-            .theme-switch input:checked ~ .icon-sun { opacity: 1; }
             #alarm-text { font-size: 2.5rem; }
             .alarm-actions { flex-direction: column; width: 85%; align-items: center; gap: 1rem;}
             .alarm-button { width: 100%; text-align: center; }
