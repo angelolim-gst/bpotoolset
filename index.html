@@ -2691,6 +2691,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     alarmDatePHTString = tempDate.toISOString().split('T')[0];
                 }
                 newAlarm.dateTime = new Date(`${alarmDatePHTString}T${newAlarm.time}:00.000+08:00`);
+                
+                // Set tracking flags for advance notifications
+                const diff = (newAlarm.dateTime - now) / 60000;
+                newAlarm.notified10m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified10m || false) : (diff <= 10);
+                newAlarm.notified5m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified5m || false) : (diff <= 5);
             }
 
             alarms = tempAlarms;
@@ -2719,19 +2724,23 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     }
 
                     const dt = new Date(`${alarmDatePHTString}T${member.time}:00.000+08:00`);
+                    const diff = (dt - now) / 60000;
+                    
                     teamAlarms.push({
                         id: member.id, 
                         label: `Coaching: ${member.name}`,
                         time: member.time,
                         dateTime: dt,
                         triggered: dt <= now,
-                        snoozed: false
+                        snoozed: false,
+                        notified10m: diff <= 10,
+                        notified5m: diff <= 5
                     });
                 }
             });
             updateUpcomingView();
         }
-
+        
         function resetVisualAlarmState() {
             snoozedAlarm = null;
             clockWidget.classList.remove('snoozed-indicator');
@@ -2866,11 +2875,37 @@ ${sanitizedCsv.substring(0, 100000)}`;
             if (visualAlarm.classList.contains('show')) return;
 
             const missedAlarms = [];
-            const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
+            // Use direct object references so tracking flags save properly
+            const allAlarms = [ 
+                ...Object.keys(alarms).map(k => { if(alarms[k]) { alarms[k].label = k; return alarms[k]; } }).filter(a => a), 
+                ...teamAlarms 
+            ];
+
+            let nextAlarm = null;
+            let minDiff = Infinity;
 
             for (const alarm of allAlarms) {
                 if (alarm && alarm.dateTime && !alarm.triggered) {
-                    if (alarm.dateTime <= now) missedAlarms.push(alarm.label);
+                    const diff = (alarm.dateTime - now) / 60000;
+                    
+                    // --- ADVANCE DESKTOP NOTIFICATIONS ---
+                    if (diff <= 10 && diff > 5 && !alarm.notified10m) {
+                        alarm.notified10m = true;
+                        if (document.hidden || !document.hasFocus()) {
+                            sendDesktopNotification('⏳ Upcoming Schedule', `${alarm.label.replace('Coaching: ', '')} starts in 10 minutes.`);
+                        }
+                    } else if (diff <= 5 && diff > 0 && !alarm.notified5m) {
+                        alarm.notified5m = true;
+                        if (document.hidden || !document.hasFocus()) {
+                            sendDesktopNotification('⏳ Upcoming Schedule', `${alarm.label.replace('Coaching: ', '')} starts in 5 minutes!`);
+                        }
+                    }
+
+                    if (diff <= 0) {
+                        missedAlarms.push(alarm.label);
+                    } else if (diff > 0 && diff < minDiff) { 
+                        minDiff = diff; nextAlarm = { label: alarm.label, diff: minDiff }; 
+                    }
                 }
             }
 
@@ -2900,16 +2935,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             clockWidget.classList.remove('glow-orange', 'glow-red');
             if(snoozedAlarm) clockWidget.classList.add('snoozed-indicator');
-
-            let nextAlarm = null;
-            let minDiff = Infinity;
-
-            for (const alarm of allAlarms) {
-                if (alarm && alarm.dateTime && !alarm.triggered) {
-                    const diff = (alarm.dateTime - now) / 60000;
-                    if (diff > 0 && diff < minDiff) { minDiff = diff; nextAlarm = { label: alarm.label, diff: minDiff }; }
-                }
-            }
 
             if (nextAlarm) {
                 if (nextAlarm.diff <= 5) clockWidget.classList.add('glow-red');
