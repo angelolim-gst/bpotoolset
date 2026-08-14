@@ -563,7 +563,17 @@
         .modal-overlay.show .modal-content { transform: scale(1); }
         .modal-close-button { position: absolute; top: 12px; right: 12px; background-color: var(--bg-color); border: 1.5px solid var(--border-color); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 1.25rem; line-height: 1; cursor: pointer; color: var(--secondary-text-color); z-index: 10; transition: color 0.2s, border-color 0.2s; }
         .modal-close-button:hover { color: var(--alarm-color); border-color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
-        .modal-title { margin-top: 0; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 35px; }
+        .modal-title { 
+            margin-top: 0; 
+            color: var(--text-color); 
+            padding-right: 35px; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+            line-height: 1.2;
+        }
         .alarm-form-note { font-size: 0.8rem; color: var(--secondary-text-color); margin-bottom: 1rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 5px; }
@@ -827,7 +837,7 @@
         <div class="modal-content" style="max-width: 500px; width: 95%; max-height: 80vh; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
-                <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 0; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Boost Notes</h2>
+                <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 0; flex-grow: 1;">Boost Notes</h2>
                 <button id="boost-ai-format-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 8px; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;">✨ Auto-Format</button>
             </div>
             <div class="todo-nav" style="margin-bottom: 15px;">
@@ -882,7 +892,7 @@
         <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; height: 100%; display: flex; flex-direction: column;">
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
-                <h2 class="modal-title" style="margin-bottom: 0; white-space: nowrap;">WFM Analyzer</h2>
+                <h2 class="modal-title" style="margin-bottom: 0;">WFM Analyzer</h2>
                 <div style="display: flex; gap: 10px;">
                     <button id="copy-wfm-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; white-space: nowrap;">Copy Report</button>
                 </div>
