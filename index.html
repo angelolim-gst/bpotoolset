@@ -516,7 +516,7 @@
         .time-entry-row span { font-size: 1rem; font-weight: 700; color: var(--text-color); }
         .remove-row-btn { background: none; border: none; color: var(--secondary-text-color); font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0 3px; transition: color 0.2s;}
         .remove-row-btn:hover { color: var(--alarm-color); }
-        #add-time-row-btn, #time-calculate-btn { padding: 5px; font-size: 0.8rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
+        #add-time-row-btn, #time-calculate-btn { padding: 5px; font-size: 0.85rem; cursor: pointer; border: none; border-radius: 999px; font-weight: 700; transition: transform 0.1s;}
         #add-time-row-btn { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         #add-time-row-btn:active, #time-calculate-btn:active { transform: scale(0.98); }
         #time-calculate-btn { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
@@ -621,6 +621,7 @@
                     <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
                     <li class="dropdown-divider"></li>
                     <li class="dropdown-header">Data & AI Settings</li>
+                    <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
                     <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
                     <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
                     <li>
@@ -713,7 +714,7 @@
             <div class="card-switcher">
                 <div class="pill-container">
                     <button class="switcher-button active" id="show-calendar-btn">Calendar</button>
-                    <button class="switcher-button" id="show-alarms-btn">Upcoming</button>
+                    <button class="switcher-button" id="show-alarms-btn">Alarms</button>
                     <button class="switcher-button" id="show-calc-btn">Calculator</button>
                 </div>
                 <button id="toggle-cards-btn" title="Toggle Cards View">
@@ -743,6 +744,7 @@
                     
                     <div id="no-alarms-message">No alarms or coaching scheduled.</div>
                 </div>
+
                 <div id="calculator-container" class="widget hidden">
                     <div class="calc-view-switcher">
                         <button id="show-normal-calc-btn" class="active">Normal</button>
@@ -829,6 +831,25 @@
                         <span style="color: var(--secondary-text-color);">Formatted AI output will appear here...</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boost Prompt Modal -->
+    <div id="boost-prompt-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="modal-close-button">&times;</button>
+            <h2 class="modal-title">Configure Boost Prompt</h2>
+            <p class="alarm-form-note">Customize the instruction template sent to Gemini AI when formatting raw coaching notes. Leave empty to use default, or use <code>{rawNotes}</code> as the placeholder for your input notes.</p>
+            
+            <div class="form-group">
+                <label for="boost-prompt-textarea">Prompt Instruction Template</label>
+                <textarea id="boost-prompt-textarea" class="csv-textarea" style="height: 140px; resize: vertical; font-family: 'Inter', sans-serif; font-size: 0.8rem;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button id="reset-boost-prompt-btn" class="modal-button" style="background-color: var(--md-sys-color-surface-container-high); color: var(--focus-color); width: 40%;">Reset Default</button>
+                <button id="save-boost-prompt-btn" class="modal-button" style="width: 60%;">Save Prompt</button>
             </div>
         </div>
     </div>
@@ -1067,6 +1088,14 @@
         const copyWfmBtn = document.getElementById('copy-wfm-btn');
         const tlScheduleInput = document.getElementById('tl-schedule-input');
 
+        // DOM Variables - Boost Prompt Modal
+        const setBoostPromptBtn = document.getElementById('set-boost-prompt-btn');
+        const boostPromptModal = document.getElementById('boost-prompt-modal');
+        const closeBoostPromptModalBtn = boostPromptModal.querySelector('.modal-close-button');
+        const boostPromptTextarea = document.getElementById('boost-prompt-textarea');
+        const resetBoostPromptBtn = document.getElementById('reset-boost-prompt-btn');
+        const saveBoostPromptBtn = document.getElementById('save-boost-prompt-btn');
+
         // DOM Variables - API Key Modal
         const setApiKeyBtn = document.getElementById('set-api-key-btn');
         const apiKeyModal = document.getElementById('api-key-modal');
@@ -1147,7 +1176,7 @@
         const csvOutput = document.getElementById('csv-output');
         const generateCsvButton = document.getElementById('generate-csv-button');
 
-        // NEW DOM Variables - Status Bar
+        // DOM Variables - Status Bar
         const toggleStatusBarClockButton = document.getElementById('toggle-statusbar-clock-button');
         const toggleStatusBarClockText = document.getElementById('toggle-statusbar-clock-text');
         const statusClock = document.getElementById('status-clock');
@@ -1188,17 +1217,54 @@
         let boostNotes = {};
         let geminiApiKey = '';
         let geminiModel = '';
+        let boostCustomPrompt = '';
         
+        const defaultBoostPromptTemplate = `You are a professional BPO coaching assistant. Take these raw input notes and elegantly structure them into a cohesive discussion summary. Group related points under appropriate bolded headers (like **Introduction & Team Dynamics:**, **Performance & Attendance:**, etc.) based on the context.\n\nCRITICAL INSTRUCTIONS:\n- Output ONLY the markdown formatted text.\n- Do NOT include any conversational filler (e.g., do not say "Here is the summary" or "Here are the formatted notes").\n- Keep the tone professional, objective, and concise.\n\nRaw Notes:\n{rawNotes}`;
+
         // Sorting State
         let teamSortCol = null;
         let teamSortAsc = true;
         const dayOrder = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7 };
         
-        let colWidths = { eid: '65px', sfdc: '70px', name: '1fr', day: '80px', time: '110px' };
+        let colWidths = { eid: '55px', sfdc: '60px', name: '1fr', day: '70px', time: '95px' };
         
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
+
+        // DESKTOP NOTIFICATIONS API
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        console.log('Notification permission:', permission);
+                    }).catch(err => {
+                        console.warn('Notification permission prompt failed:', err);
+                    });
+                }
+            }
+        }
+
+        function sendDesktopNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const iconSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"/></svg>`;
+                    
+                    const notif = new Notification(title, {
+                        body: body,
+                        icon: iconSvg,
+                        requireInteraction: true 
+                    });
+
+                    notif.onclick = () => {
+                        window.focus();
+                        if (notif.close) notif.close();
+                    };
+                } catch (e) {
+                    console.warn('Desktop notification failed:', e);
+                }
+            }
+        }
 
         // SHIFT DATE HELPER
         function getShiftDateObj() {
@@ -1252,7 +1318,6 @@
         }
 
         // SPLIT DB SAVING LOGIC
-        // Helper function to safely defer database writes until the browser is idle
         function idleSave(saveFunction) {
             if ('requestIdleCallback' in window) {
                 requestIdleCallback(() => saveFunction());
@@ -1260,6 +1325,7 @@
                 setTimeout(saveFunction, 1);
             }
         }
+
         function showSaveStatus() {
             if (!isAppReady) return;
             isDisplayingSaveStatus = true;
@@ -1304,6 +1370,7 @@
         async function saveApiConfig() { 
             await localforage.setItem('gusto_geminiKey', geminiApiKey); 
             await localforage.setItem('gusto_geminiModel', geminiModel); 
+            await localforage.setItem('gusto_boostPrompt', boostCustomPrompt);
             showSaveStatus(); 
         }
         async function saveSettings() {
@@ -1337,6 +1404,7 @@
                         if (bulkData.alarms !== undefined) await localforage.setItem('gusto_alarms', bulkData.alarms);
                         if (bulkData.boostNotes !== undefined) await localforage.setItem('gusto_boostNotes', bulkData.boostNotes);
                         if (bulkData.apiKey !== undefined) await localforage.setItem('gusto_geminiKey', bulkData.apiKey);
+                        if (bulkData.boostPrompt !== undefined) await localforage.setItem('gusto_boostPrompt', bulkData.boostPrompt);
                         
                         await localforage.setItem('gusto_settings', {
                             theme: bulkData.theme, activeTimezone: bulkData.activeTimezone, 
@@ -1359,6 +1427,7 @@
                 const pSettings = await loadKey('gusto_settings', providedData);
                 const pApiKey = await loadKey('gusto_geminiKey', providedData);
                 const pApiModel = await loadKey('gusto_geminiModel', providedData);
+                const pBoostPrompt = await loadKey('gusto_boostPrompt', providedData);
                 
                 if (pNotes !== null && pNotes !== undefined) textarea.value = pNotes;
                 if (pTodos) todos = pTodos;
@@ -1366,6 +1435,7 @@
                 if (pBoost) boostNotes = pBoost; else boostNotes = {};
                 if (pApiKey) geminiApiKey = pApiKey;
                 if (pApiModel) geminiModel = pApiModel;
+                if (pBoostPrompt) boostCustomPrompt = pBoostPrompt; else boostCustomPrompt = '';
                 if (pCustomAlarms) customAlarmsData = pCustomAlarms; else customAlarmsData = [];
                 
                 if (pSettings) {
@@ -1452,7 +1522,8 @@
                 boostNotes: await localforage.getItem('gusto_boostNotes'),
                 settings: await localforage.getItem('gusto_settings'),
                 geminiKey: await localforage.getItem('gusto_geminiKey'),
-                geminiModel: await localforage.getItem('gusto_geminiModel')
+                geminiModel: await localforage.getItem('gusto_geminiModel'),
+                boostPrompt: await localforage.getItem('gusto_boostPrompt')
             };
             
             const blob = new Blob([JSON.stringify(rawData)], { type: 'application/json' });
@@ -1488,6 +1559,27 @@
             reader.readAsText(file);
             dropdownMenu.classList.remove('show');
             e.target.value = '';
+        });
+
+        // Boost Prompt Modal Logic
+        setBoostPromptBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            dropdownMenu.classList.remove('show');
+            boostPromptTextarea.placeholder = defaultBoostPromptTemplate;
+            boostPromptTextarea.value = boostCustomPrompt || '';
+            boostPromptModal.classList.add('show');
+        });
+
+        closeBoostPromptModalBtn.addEventListener('click', () => boostPromptModal.classList.remove('show'));
+
+        resetBoostPromptBtn.addEventListener('click', () => {
+            boostPromptTextarea.value = '';
+        });
+
+        saveBoostPromptBtn.addEventListener('click', () => {
+            boostCustomPrompt = boostPromptTextarea.value.trim();
+            saveApiConfig();
+            boostPromptModal.classList.remove('show');
         });
 
         // WFM Analyzer Script
@@ -1544,8 +1636,6 @@
 
         async function analyzeWfmData(csvData) {
             try {
-                // --- 1. CSV SANITIZER OPTIMIZATION ---
-                // Strip trailing commas from rows, and remove completely empty rows
                 const sanitizedCsv = csvData
                     .split(/\r?\n/) 
                     .map(row => row.replace(/,+$/, '').trim()) 
@@ -1604,7 +1694,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 wfmAnalysisOutput.innerHTML = `<span style="color: var(--alarm-color);">Failed to analyze schedule: ${error.message}</span>`;
             }
         }
-
 
         // API Key Verify and Setup Logic
         setApiKeyBtn.addEventListener('click', (e) => {
@@ -1750,7 +1839,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             });
         }
 
-        // To-Do Event Delegation
         todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('todo-checkbox')) {
                 const li = e.target.closest('li');
@@ -1906,6 +1994,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
             boostTextareaRaw.disabled = true;
             boostFormattedDisplay.innerHTML = '<span style="color: var(--secondary-text-color);">Formatting...</span>';
 
+            const activeTemplate = boostCustomPrompt || defaultBoostPromptTemplate;
+            let finalPromptText = '';
+            if (activeTemplate.includes('{rawNotes}')) {
+                finalPromptText = activeTemplate.replace('{rawNotes}', rawNotes);
+            } else {
+                finalPromptText = `${activeTemplate}\n\nRaw Notes:\n${rawNotes}`;
+            }
+
             try {
                 const endpoint = geminiModel.includes('/') ? geminiModel : `models/${geminiModel}`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
@@ -1913,7 +2009,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: `You are a professional BPO coaching assistant. Take these raw input notes and elegantly structure them into a cohesive discussion summary. Group related points under appropriate bolded headers (like **Introduction & Team Dynamics:**, **Performance & Attendance:**, etc.) based on the context.\n\nCRITICAL INSTRUCTIONS:\n- Output ONLY the markdown formatted text.\n- Do NOT include any conversational filler (e.g., do not say "Here is the summary" or "Here are the formatted notes").\n- Keep the tone professional, objective, and concise.\n\nRaw Notes:\n${rawNotes}` }]
+                            parts: [{ text: finalPromptText }]
                         }]
                     })
                 });
@@ -1956,7 +2052,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 row.className = 'form-group custom-alarm-row';
                 row.dataset.idx = idx;
                 row.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                    <div style="display:flex; justify-space-between; align-items:center; margin-bottom: 5px;">
                         <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); width: 80%; box-sizing: border-box;" value="${ca.label || ''}">
                         <button type="button" class="remove-custom-alarm-btn" style="background:none; border:none; color:var(--secondary-text-color); font-size:1.2rem; cursor:pointer; line-height:1;">&times;</button>
                     </div>
@@ -2343,6 +2439,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
         themeToggle.addEventListener('change', (e) => { setTheme(e.target.checked ? 'dark' : 'light'); saveSettings(); });
 
         toggleHoldTimerButton.addEventListener('click', () => {
+            requestNotificationPermission();
             showHoldTimer = !showHoldTimer;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
             toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
@@ -2357,8 +2454,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             saveSettings();
         });
 
-        // --- SYSTEM STATUS BAR LOGIC ---
-        // --- SYSTEM STATUS BAR LOGIC ---
+        // SYSTEM STATUS BAR LOGIC
         function initBattery() {
             if ('getBattery' in navigator) {
                 navigator.getBattery().then(battery => {
@@ -2373,7 +2469,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
                             ? `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="#42C948"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zm-2.67 13.5V14h1.5l-4.5-7v3.5H8.5l4.5 7z"/></svg>`
                             : `<svg class="status-svg-icon" viewBox="0 0 24 24" width="22" height="14" preserveAspectRatio="none" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>`;
                         
-                        // Using .status-bold-text for the battery number
                         const newText = `${batteryIcon}<span class="status-bold-text">${level}%</span><span class="status-text"> (${stateText})</span>`;
                         
                         if (lastBatteryText !== newText) {
@@ -2424,7 +2519,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
         
         setInterval(updateNetworkStatus, 5000);
         
-        // --- WAKE LOCK LOGIC ---
+        // WAKE LOCK LOGIC
         let wakeLock = null;
         
         async function requestWakeLock() {
@@ -2588,40 +2683,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             alarmModal.classList.add('show'); 
         });
         closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
-
-        // --- DESKTOP NOTIFICATIONS API ---
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(permission => {
-                        console.log('Notification permission:', permission);
-                    }).catch(err => {
-                        console.warn('Notification permission prompt failed:', err);
-                    });
-                }
-            }
-        }
-
-        function sendDesktopNotification(title, body) {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                try {
-                    const iconSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"/></svg>`;
-                    
-                    const notif = new Notification(title, {
-                        body: body,
-                        icon: iconSvg,
-                        requireInteraction: true // Keeps notification visible until clicked
-                    });
-
-                    notif.onclick = () => {
-                        window.focus();
-                        if (notif.close) notif.close();
-                    };
-                } catch (e) {
-                    console.warn('Desktop notification failed:', e);
-                }
-            }
-        }
         
         function validateAndFormatTime(input) {
             let value = input.value.trim();
@@ -2667,7 +2728,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 }
                 newAlarm.dateTime = new Date(`${alarmDatePHTString}T${newAlarm.time}:00.000+08:00`);
                 
-                // Set tracking flags for advance notifications
                 const diff = (newAlarm.dateTime - now) / 60000;
                 newAlarm.notified10m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified10m || false) : (diff <= 10);
                 newAlarm.notified5m = oldAlarm && oldAlarm.time === newAlarm.time ? (oldAlarm.notified5m || false) : (diff <= 5);
@@ -2700,7 +2760,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
                     const dt = new Date(`${alarmDatePHTString}T${member.time}:00.000+08:00`);
                     const diff = (dt - now) / 60000;
-                    
+
                     teamAlarms.push({
                         id: member.id, 
                         label: `Coaching: ${member.name}`,
@@ -2715,7 +2775,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             });
             updateUpcomingView();
         }
-        
+
         function resetVisualAlarmState() {
             snoozedAlarm = null;
             clockWidget.classList.remove('snoozed-indicator');
@@ -2794,6 +2854,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             processAndSetAlarms(tempAlarms);
             saveAlarms();
+            requestNotificationPermission();
             alarmModal.classList.remove('show');
         });
 
@@ -2802,7 +2863,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             snoozeButton.style.display = isAlarm ? 'inline-block' : 'none';
             visualAlarm.classList.add('show');
 
-            // Send native desktop notification if tab is unfocused or hidden
             if (document.hidden || !document.hasFocus()) {
                 const title = isAlarm ? '🚨 Gusto Toolset Alarm' : '⏱️ Gusto Toolset Timer';
                 sendDesktopNotification(title, message);
@@ -2850,7 +2910,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             if (visualAlarm.classList.contains('show')) return;
 
             const missedAlarms = [];
-            // Use direct object references so tracking flags save properly
             const allAlarms = [ 
                 ...Object.keys(alarms).map(k => { if(alarms[k]) { alarms[k].label = k; return alarms[k]; } }).filter(a => a), 
                 ...teamAlarms 
@@ -2863,7 +2922,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 if (alarm && alarm.dateTime && !alarm.triggered) {
                     const diff = (alarm.dateTime - now) / 60000;
                     
-                    // --- ADVANCE DESKTOP NOTIFICATIONS ---
                     if (diff <= 10 && diff > 5 && !alarm.notified10m) {
                         alarm.notified10m = true;
                         if (document.hidden || !document.hasFocus()) {
@@ -3221,6 +3279,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         // HOLD TIMER
         startHoldTimerBtn.addEventListener('click', () => {
+            requestNotificationPermission();
             if (activeTimers.some(t => t.name === 'Hold Timer')) return;
             activeTimers.push({ id: synchronizedTime.getTime(), name: 'Hold Timer', endTime: synchronizedTime.getTime() + (120 * 1000) });
             checkTimers(); 
@@ -3324,17 +3383,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
             initBattery();
             updateNetworkStatus();
             
-            // Request Wake Lock on load
             requestWakeLock();
-
-            // Request Desktop Notification Permission on site initialization
             requestNotificationPermission();
             
             scheduleNextTick();
             setInterval(syncTime, 300000);
         }
 
-        // --- OFFLINE SCRIPT BOOTLOADER ---
+        // OFFLINE SCRIPT BOOTLOADER
         const externalScripts = [
             "https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js",
             "https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js",
@@ -3346,13 +3402,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
             const fetchScript = async (url) => {
                 let scriptText = localStorage.getItem(url);
                 
-                // If online, fetch fresh code to ensure it's up to date
                 if (navigator.onLine) {
                     try {
                         const response = await fetch(url);
                         if (response.ok) {
                             scriptText = await response.text();
-                            // Update the local cache with the new code
                             try { localStorage.setItem(url, scriptText); } catch(e) { console.warn('Cache quota exceeded'); }
                         }
                     } catch (e) {
@@ -3363,10 +3417,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
             };
 
             try {
-                // 1. Fetch all scripts in parallel for maximum speed
                 const scriptContents = await Promise.all(externalScripts.map(fetchScript));
                 
-                // 2. Inject them into the DOM sequentially so they execute in the correct order
                 scriptContents.forEach((text, index) => {
                     if (text) {
                         const scriptEl = document.createElement('script');
@@ -3377,14 +3429,13 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     }
                 });
 
-                // 3. Once all scripts are injected and compiled, start the app!
                 initialize();
             } catch (error) {
                 console.error("Bootloader failed:", error);
             }
         }
 
-        // --- SERVICE WORKER REGISTRATION (For Offline PWA) ---
+        // SERVICE WORKER REGISTRATION (For Offline PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -3397,7 +3448,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             });
         }
 
-        // Kick off the bootloader instead of calling initialize() directly
         bootloadScripts();
     </script>
 </body>
