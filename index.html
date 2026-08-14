@@ -225,15 +225,29 @@
 
         /* M3 Bottom Status Bar */
         .bottom-status-bar {
-            width: 100%; height: 26px; position: fixed; bottom: 0; left: 0; right: 0; display: flex;
-            align-items: center; justify-content: space-between; padding: 0 14px;
-            background-color: var(--md-sys-color-surface-container); border: none;
-            box-shadow: 0px -1px 3px rgba(0,0,0,0.05); z-index: 4000; box-sizing: border-box;
-            font-size: 0.75rem; font-weight: 500; font-family: 'JetBrains Mono', monospace;
-            color: var(--secondary-text-color); transition: background-color 0.4s ease, color 0.4s ease;
+            width: 100%; 
+            height: 28px; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            display: flex;
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 16px;
+            background-color: var(--md-sys-color-surface-container-highest); 
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            box-shadow: var(--shadow-elevation-2); 
+            z-index: 4000; 
+            box-sizing: border-box;
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-color); 
+            transition: background-color 0.4s ease, color 0.4s ease;
             user-select: none;
         }
-        
+                
         .status-bar-left { display: flex; align-items: center; gap: 12px; }
         .status-bar-right { display: flex; align-items: center; gap: 6px; }
         .status-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; cursor: default; }
@@ -271,9 +285,16 @@
         }
         .workspace-tabs { display: flex; gap: 4px; align-items: center; position: relative; }
         .workspace-tab {
-            background-color: transparent; border: none; color: var(--secondary-text-color);
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
-            padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
+            background-color: transparent; 
+            border: none; 
+            color: var(--secondary-text-color);
+            font-family: 'Inter', sans-serif; 
+            font-weight: 600; 
+            font-size: 0.8rem;
+            padding: 6px 12px; 
+            border-radius: 999px; 
+            cursor: pointer; 
+            transition: all 0.2s;
         }
         .workspace-tab:hover { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .workspace-tab.active { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -306,8 +327,16 @@
 
         /* Notepad */
         textarea#main-content {
-            padding: 1.25rem; font-size: 13px; line-height: 1.65; resize: none; 
-            font-family: 'Inter', sans-serif; outline: none;
+            margin: 0;
+            padding: 1rem; 
+            font-size: 12px; 
+            line-height: 1.65; 
+            resize: none; 
+            font-family: 'Inter', sans-serif; 
+            outline: none;
+            border: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /* To-Do List */
