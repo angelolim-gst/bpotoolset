@@ -470,9 +470,9 @@
         body.compact-mode #clock, body.compact-mode .card-viewer-area { display: none; }
         
         #alarms-view-container { max-height: 400px; padding: 0.75rem 1rem; overflow-y: auto; }
-        #alarms-view-container h4 { margin: 0.5rem 0 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        #alarms-view-container h4 { margin: 1rem 0 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--focus-color); }
         #alarms-view-container h4:first-child { margin-top: 0; }
-        #break-alarms-list, #activity-alarms-list, #custom-alarms-list { list-style: none; padding: 0; margin: 0; }
+        #break-alarms-list, #activity-alarms-list, #custom-alarms-list, #upcoming-list { list-style: none; padding: 0; margin: 0; }
         .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.1rem; font-size: 0.85rem; border-bottom: 1px solid var(--line-color); }
         .alarm-display-item:last-child { border-bottom: none; }
         .alarm-details-container { display: flex; align-items: center; gap: 8px; }
@@ -481,6 +481,7 @@
         .status-triggered { color: var(--secondary-text-color); background-color: var(--bg-color); }
         .status-upcoming { color: var(--warning-color-orange); background-color: var(--warning-bg-orange-current); }
         .status-missed { color: var(--alarm-color); background-color: var(--warning-bg-red-current); }
+        #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0; display: none; }
 
         /* Upcoming (Coaching) */
         #upcoming-view-container { max-height: 400px; padding: 0.75rem 1rem; }
@@ -751,7 +752,6 @@
                 <div class="pill-container">
                     <button class="switcher-button active" id="show-calendar-btn">Calendar</button>
                     <button class="switcher-button" id="show-alarms-btn">Alarms</button>
-                    <button class="switcher-button" id="show-upcoming-btn">Upcoming</button>
                     <button class="switcher-button" id="show-calc-btn">Calculator</button>
                 </div>
                 <button id="toggle-cards-btn" title="Toggle Cards View">
@@ -765,13 +765,21 @@
                         <div class="calendar-body"><div class="calendar-weekdays"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div><div class="calendar-days"></div></div>
                     </div>
                 </div>
+                
                 <div id="alarms-view-container" class="widget hidden">
-                    <h4>Break Schedules</h4><ul id="break-alarms-list"></ul>
-                    <h4>Activity Schedules</h4><ul id="activity-alarms-list"></ul>
-                    <h4 id="custom-alarms-header" style="display:none; margin-top: 0.5rem;">Custom Alarms</h4><ul id="custom-alarms-list"></ul>
-                </div>
-                <div id="upcoming-view-container" class="widget hidden">
-                    <ul id="upcoming-list"></ul>
+                    <h4 id="header-breaks" style="display:none;">Break Schedules</h4>
+                    <ul id="break-alarms-list" style="display:none;"></ul>
+                    
+                    <h4 id="header-activities" style="display:none;">Activity Schedules</h4>
+                    <ul id="activity-alarms-list" style="display:none;"></ul>
+                    
+                    <h4 id="header-custom" style="display:none;">Custom Alarms</h4>
+                    <ul id="custom-alarms-list" style="display:none;"></ul>
+
+                    <h4 id="header-upcoming" style="display:none;">Team Coaching</h4>
+                    <ul id="upcoming-list" style="display:none;"></ul>
+                    
+                    <div id="no-alarms-message">No alarms or coaching scheduled.</div>
                 </div>
                 <div id="calculator-container" class="widget hidden">
                     <div class="calc-view-switcher">
@@ -1138,17 +1146,19 @@
         const cardsWrapper = document.getElementById('cards-wrapper');
         const toggleCardsBtn = document.getElementById('toggle-cards-btn');
         const cardSwitcherBtns = document.querySelectorAll('.switcher-button');
-        const cardContainers = document.querySelectorAll('#calendar-container, #alarms-view-container, #calculator-container, #upcoming-view-container');
+        const cardContainers = document.querySelectorAll('#calendar-container, #alarms-view-container, #calculator-container');
+        
         const showCalendarBtn = document.getElementById('show-calendar-btn');
         const showAlarmsBtn = document.getElementById('show-alarms-btn');
-        const showUpcomingBtn = document.getElementById('show-upcoming-btn');
         const showCalcBtn = document.getElementById('show-calc-btn');
+        
         const calendarContainer = document.getElementById('calendar-container');
         const alarmsViewContainer = document.getElementById('alarms-view-container');
         const breakAlarmsList = document.getElementById('break-alarms-list');
         const activityAlarmsList = document.getElementById('activity-alarms-list');
-        const upcomingViewContainer = document.getElementById('upcoming-view-container');
+        const customAlarmsList = document.getElementById('custom-alarms-list');
         const upcomingList = document.getElementById('upcoming-list');
+        const noAlarmsMessage = document.getElementById('no-alarms-message');
         
         // DOM Variables - Calculators
         const calculatorContainer = document.getElementById('calculator-container');
@@ -2933,68 +2943,101 @@ ${sanitizedCsv.substring(0, 100000)}`; // Lowered substring limit since data is 
             }
         }
 
+        function checkEmptyAlarmsView() {
+            const hasBreaks = document.getElementById('header-breaks').style.display !== 'none';
+            const hasActs = document.getElementById('header-activities').style.display !== 'none';
+            const hasCust = document.getElementById('header-custom').style.display !== 'none';
+            const hasUpc = document.getElementById('header-upcoming').style.display !== 'none';
+            
+            noAlarmsMessage.style.display = (hasBreaks || hasActs || hasCust || hasUpc) ? 'none' : 'block';
+        }
+
         function updateAlarmsView() {
-            const populateList = (listElement, labels) => {
+            const populateList = (listElement, headerElement, labels) => {
                 listElement.innerHTML = '';
+                let hasValidAlarm = false;
+                
                 labels.forEach(label => {
                     const alarm = alarms[label];
+                    if (!alarm || !alarm.time) return; // Skip if no time is set
+                    
+                    hasValidAlarm = true;
                     const listItem = document.createElement('li'); 
                     listItem.className = 'alarm-display-item';
                     listItem.dataset.label = label; 
                     
-                    const timeHTML = `<span class="alarm-display-time">${convertTo12Hour(alarm ? alarm.time : null)}</span>`;
+                    const timeHTML = `<span class="alarm-display-time">${convertTo12Hour(alarm.time)}</span>`;
                     let statusHTML = '';
-                    if (alarm && alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
-                    else if (alarm && alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Triggered</span>`;
-                    else if (alarm && alarm.time) statusHTML = `<span class="alarm-status status-upcoming">Upcoming</span>`;
+                    if (alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
+                    else if (alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Triggered</span>`;
+                    else statusHTML = `<span class="alarm-status status-upcoming">Upcoming</span>`;
+                    
                     listItem.innerHTML = `<span>${label}</span><div class="alarm-details-container">${timeHTML}${statusHTML}</div>`;
                     listElement.appendChild(listItem);
                 });
+
+                headerElement.style.display = hasValidAlarm ? 'block' : 'none';
+                listElement.style.display = hasValidAlarm ? 'block' : 'none';
             };
-            populateList(breakAlarmsList, ['First Break', 'Lunch', 'Last Break']);
-            populateList(activityAlarmsList, ['Training', 'Email', 'Coaching', 'Team Meeting']);
+            
+            populateList(breakAlarmsList, document.getElementById('header-breaks'), ['First Break', 'Lunch', 'Last Break']);
+            populateList(activityAlarmsList, document.getElementById('header-activities'), ['Training', 'Email', 'Coaching', 'Team Meeting']);
             
             const customLabels = Object.keys(alarms).filter(k => alarms[k] && alarms[k].isCustom);
-            const customAlarmsList = document.getElementById('custom-alarms-list');
-            const customHeader = document.getElementById('custom-alarms-header');
-            if (customLabels.length > 0) {
-                if (customHeader) customHeader.style.display = 'block';
-                if (customAlarmsList) populateList(customAlarmsList, customLabels);
-            } else {
-                if (customHeader) customHeader.style.display = 'none';
-                if (customAlarmsList) customAlarmsList.innerHTML = '';
-            }
+            populateList(customAlarmsList, document.getElementById('header-custom'), customLabels);
+            
+            checkEmptyAlarmsView();
         }
         
         function updateUpcomingView() {
             upcomingList.innerHTML = '';
+            const headerUpcoming = document.getElementById('header-upcoming');
+            
             if(teamAlarms.length === 0) {
-                upcomingList.innerHTML = '<li id="no-upcoming-message">No coaching scheduled for today.</li>';
+                headerUpcoming.style.display = 'none';
+                upcomingList.style.display = 'none';
+                checkEmptyAlarmsView();
                 return;
             }
+
+            headerUpcoming.style.display = 'block';
+            upcomingList.style.display = 'block';
+
             const sortedAlarms = [...teamAlarms].sort((a,b) => a.time.localeCompare(b.time));
             sortedAlarms.forEach(alarm => {
                 const li = document.createElement('li'); 
-                li.className = 'upcoming-display-item';
+                li.className = 'alarm-display-item';
                 li.dataset.id = alarm.id; 
                 
                 let statusHTML = '';
                 if (alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
                 else if (alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Done</span>`;
                 else statusHTML = `<span class="alarm-status status-upcoming">Upcoming</span>`;
-                li.innerHTML = `<span class="upcoming-name">${alarm.label.replace('Coaching: ', '')}</span><span class="upcoming-time">${convertTo12Hour(alarm.time)}</span>${statusHTML}`;
+                
+                li.innerHTML = `<span>${alarm.label.replace('Coaching: ', '')}</span><div class="alarm-details-container"><span class="alarm-display-time">${convertTo12Hour(alarm.time)}</span>${statusHTML}</div>`;
                 upcomingList.appendChild(li);
             });
+            checkEmptyAlarmsView();
         }
 
         function switchCardView(activeButton, activeContainer) {
             cardViewerArea.classList.remove('cards-collapsed');
             cardSwitcherBtns.forEach(btn => btn.classList.remove('active'));
             cardContainers.forEach(container => container.classList.add('hidden'));
-            activeButton.classList.add('active'); activeContainer.classList.remove('hidden');
-            if (activeContainer === alarmsViewContainer) updateAlarmsView();
-            else if (activeContainer === upcomingViewContainer) updateUpcomingView();
+            
+            activeButton.classList.add('active'); 
+            activeContainer.classList.remove('hidden');
+            
+            if (activeContainer === alarmsViewContainer) {
+                updateAlarmsView();
+                updateUpcomingView();
+            }
         }
+        
+        showCalendarBtn.addEventListener('click', () => switchCardView(showCalendarBtn, calendarContainer));
+        showAlarmsBtn.addEventListener('click', () => switchCardView(showAlarmsBtn, alarmsViewContainer));
+        showCalcBtn.addEventListener('click', () => switchCardView(showCalcBtn, calculatorContainer));
+        toggleCardsBtn.addEventListener('click', () => cardViewerArea.classList.toggle('cards-collapsed'));
         showCalendarBtn.addEventListener('click', () => switchCardView(showCalendarBtn, calendarContainer));
         showAlarmsBtn.addEventListener('click', () => switchCardView(showAlarmsBtn, alarmsViewContainer));
         showUpcomingBtn.addEventListener('click', () => switchCardView(showUpcomingBtn, upcomingViewContainer));
