@@ -2613,6 +2613,40 @@ ${sanitizedCsv.substring(0, 100000)}`;
             alarmModal.classList.add('show'); 
         });
         closeAlarmModalButton.addEventListener('click', () => alarmModal.classList.remove('show'));
+
+        // --- DESKTOP NOTIFICATIONS API ---
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        console.log('Notification permission:', permission);
+                    }).catch(err => {
+                        console.warn('Notification permission prompt failed:', err);
+                    });
+                }
+            }
+        }
+
+        function sendDesktopNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const iconSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23007aff"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"/></svg>`;
+                    
+                    const notif = new Notification(title, {
+                        body: body,
+                        icon: iconSvg,
+                        requireInteraction: true // Keeps notification visible until clicked
+                    });
+
+                    notif.onclick = () => {
+                        window.focus();
+                        if (notif.close) notif.close();
+                    };
+                } catch (e) {
+                    console.warn('Desktop notification failed:', e);
+                }
+            }
+        }
         
         function validateAndFormatTime(input) {
             let value = input.value.trim();
@@ -2783,6 +2817,12 @@ ${sanitizedCsv.substring(0, 100000)}`;
             alarmText.textContent = message;
             snoozeButton.style.display = isAlarm ? 'inline-block' : 'none';
             visualAlarm.classList.add('show');
+
+            // Send native desktop notification if tab is unfocused or hidden
+            if (document.hidden || !document.hasFocus()) {
+                const title = isAlarm ? '🚨 Gusto Toolset Alarm' : '⏱️ Gusto Toolset Timer';
+                sendDesktopNotification(title, message);
+            }
         }
 
         snoozeButton.addEventListener('click', () => {
@@ -3286,6 +3326,9 @@ ${sanitizedCsv.substring(0, 100000)}`;
             
             // Request Wake Lock on load
             requestWakeLock();
+
+            // Request Desktop Notification Permission on site initialization
+            requestNotificationPermission();
             
             scheduleNextTick();
             setInterval(syncTime, 300000);
