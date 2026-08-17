@@ -1612,17 +1612,20 @@
         setBoostPromptBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
             dropdownMenu.classList.remove('show');
-            boostPromptTextarea.placeholder = defaultBoostPromptTemplate;
-            boostPromptTextarea.value = boostCustomPrompt || '';
+            
+            // Populate the textarea with the custom prompt if it exists, otherwise use the default template directly
+            boostPromptTextarea.value = boostCustomPrompt || defaultBoostPromptTemplate;
+            
             boostPromptModal.classList.add('show');
         });
-
+        
         closeBoostPromptModalBtn.addEventListener('click', () => boostPromptModal.classList.remove('show'));
-
+        
         resetBoostPromptBtn.addEventListener('click', () => {
-            boostPromptTextarea.value = '';
+            // Fill the textarea with the default template instead of clearing it to an empty string
+            boostPromptTextarea.value = defaultBoostPromptTemplate;
         });
-
+        
         saveBoostPromptBtn.addEventListener('click', () => {
             boostCustomPrompt = boostPromptTextarea.value.trim();
             saveApiConfig();
