@@ -982,7 +982,7 @@
         <div class="modal-content">
             <button class="modal-close-button">&times;</button>
             <h2 class="modal-title">List to CSV</h2>
-            <p class="alarm-form-note">Paste a list (space or newline separated) to convert to comma-separated values.</p>
+            <p class="alarm-form-note">Paste a list (newline separated) to convert to comma-separated values.</p>
             <div class="form-group">
                 <label for="csv-input">Input List</label>
                 <textarea id="csv-input" class="csv-textarea" placeholder="item1&#10;item2&#10;item3"></textarea>
@@ -3439,15 +3439,24 @@ ${sanitizedCsv.substring(0, 100000)}`;
         listToCsvButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.remove('show'); csvModal.classList.add('show'); });
         closeCsvModalButton.addEventListener('click', () => csvModal.classList.remove('show'));
         generateCsvButton.addEventListener('click', () => {
-            const items = csvInput.value.split(/[\s\n\r\t]+/).filter(item => item.trim() !== '');
+            // Split ONLY by line breaks, trim whitespace from each line, and remove empty lines
+            const items = csvInput.value
+                .split(/\r?\n/)
+                .map(item => item.trim())
+                .filter(item => item !== '');
+                
             const csvStr = items.join(',');
             csvOutput.value = csvStr;
+            
             if (csvStr) {
                 navigator.clipboard.writeText(csvStr).then(() => {
                     const originalText = generateCsvButton.textContent;
                     generateCsvButton.textContent = 'Copied to Clipboard!';
                     generateCsvButton.style.backgroundColor = 'var(--success-color)';
-                    setTimeout(() => { generateCsvButton.textContent = originalText; generateCsvButton.style.backgroundColor = ''; }, 2000);
+                    setTimeout(() => { 
+                        generateCsvButton.textContent = originalText; 
+                        generateCsvButton.style.backgroundColor = ''; 
+                    }, 2000);
                 }).catch(err => console.error('Could not copy text: ', err));
             }
         });
