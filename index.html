@@ -1896,7 +1896,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             const combinedTasks = [];
             const seenIds = new Set();
         
-            // Collect today's tasks and any incomplete/carried-over tasks from past dates
+            // Collect tasks for the selected date and incomplete tasks from past dates
             Object.keys(todos).sort().forEach(dateKey => {
                 const list = todos[dateKey] || [];
                 list.forEach(task => {
@@ -1906,13 +1906,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     const isPastDate = (dateKey < selectedTodoDateStr);
         
                     if (isCurrentDate) {
+                        // Tasks created on this day ALWAYS remain on the list (done or active)
                         if (!seenIds.has(task.id)) {
                             seenIds.add(task.id);
                             combinedTasks.push(task);
                         }
                     } else if (isPastDate) {
-                        // Carry over if incomplete OR completed specifically on this selected day
-                        if (!task.done || task.completedDate === selectedTodoDateStr) {
+                        // Overdue tasks ONLY carry over while incomplete (!task.done)
+                        if (!task.done) {
                             if (!seenIds.has(task.id)) {
                                 seenIds.add(task.id);
                                 combinedTasks.push(task);
