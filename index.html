@@ -369,6 +369,24 @@
         .todo-delete { background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 0 6px; flex-shrink: 0; transition: color 0.2s;}
         .todo-delete:hover { color: var(--alarm-color); }
 
+        /* Overdue To-Do Item Styles */
+        .todo-item.overdue .todo-text {
+            color: var(--alarm-color);
+            font-weight: 600;
+        }
+
+.todo-orig-date {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--alarm-color);
+    background-color: var(--warning-bg-red-current);
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: 8px;
+    white-space: nowrap;
+    display: inline-block;
+}
+
         /* My Team (Excel Grid Layout) */
         #team-view { 
             display: flex; flex-direction: column; padding: 1.25rem; overflow-x: auto; 
@@ -1805,6 +1823,32 @@ ${sanitizedCsv.substring(0, 100000)}`;
             return new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
         }
 
+        // HELPER: Format YYYY-MM-DD to "Mon DD" (e.g. "Aug 15")
+        function formatShortDate(ymdStr) {
+            if (!ymdStr) return '';
+            const [y, m, d] = ymdStr.split('-').map(Number);
+            return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // HELPER: Find a task by ID across all dates
+        function findTaskById(id) {
+            for (const dateKey in todos) {
+                const task = todos[dateKey].find(t => t.id === id);
+                if (task) return task;
+            }
+            return null;
+        }
+        
+        // HELPER: Delete a task by ID across all dates
+        function deleteTaskById(id) {
+            for (const dateKey in todos) {
+                const initialLen = todos[dateKey].length;
+                todos[dateKey] = todos[dateKey].filter(t => t.id !== id);
+                if (todos[dateKey].length !== initialLen) return true;
+            }
+            return false;
+        }
+        
         function renderTodoWeek() {
             todoDaysContainer.innerHTML = '';
             
@@ -1816,12 +1860,12 @@ ${sanitizedCsv.substring(0, 100000)}`;
             
             const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
             todoWeekLabel.textContent = `${formatter.format(start)} - ${formatter.format(end)}`;
-
+        
             const shiftToday = getShiftDateObj();
             const todayStr = getLocalYMD(shiftToday);
             
-            if(!selectedTodoDateStr) selectedTodoDateStr = todayStr;
-
+            if (!selectedTodoDateStr) selectedTodoDateStr = todayStr;
+        
             for (let i = 0; i < 7; i++) {
                 const current = new Date(start);
                 current.setDate(start.getDate() + i);
@@ -1845,63 +1889,106 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
             renderTodoList();
         }
-
+        
         function renderTodoList() {
             todoList.innerHTML = '';
-            const list = todos[selectedTodoDateStr] || [];
             
-            if(list.length === 0) {
+            const combinedTasks = [];
+            const seenIds = new Set();
+        
+            // Collect today's tasks and any incomplete/carried-over tasks from past dates
+            Object.keys(todos).sort().forEach(dateKey => {
+                const list = todos[dateKey] || [];
+                list.forEach(task => {
+                    if (!task.createdDate) task.createdDate = dateKey; // Migration fallback
+        
+                    const isCurrentDate = (dateKey === selectedTodoDateStr);
+                    const isPastDate = (dateKey < selectedTodoDateStr);
+        
+                    if (isCurrentDate) {
+                        if (!seenIds.has(task.id)) {
+                            seenIds.add(task.id);
+                            combinedTasks.push(task);
+                        }
+                    } else if (isPastDate) {
+                        // Carry over if incomplete OR completed specifically on this selected day
+                        if (!task.done || task.completedDate === selectedTodoDateStr) {
+                            if (!seenIds.has(task.id)) {
+                                seenIds.add(task.id);
+                                combinedTasks.push(task);
+                            }
+                        }
+                    }
+                });
+            });
+        
+            if (combinedTasks.length === 0) {
                 todoList.innerHTML = '<li style="text-align:center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0;">No tasks for this day.</li>';
                 return;
             }
-
-            list.forEach(task => {
+        
+            combinedTasks.forEach(task => {
+                const isOverdue = (task.createdDate < selectedTodoDateStr) && !task.done;
                 const li = document.createElement('li');
-                li.className = `todo-item ${task.done ? 'done' : ''}`;
-                li.dataset.id = task.id; 
+                li.className = `todo-item ${task.done ? 'done' : ''} ${isOverdue ? 'overdue' : ''}`;
+                li.dataset.id = task.id;
+                
+                const dateBadge = (task.createdDate && task.createdDate !== selectedTodoDateStr) 
+                    ? `<span class="todo-orig-date">Added ${formatShortDate(task.createdDate)}</span>` 
+                    : '';
+        
                 li.innerHTML = `
                     <input type="checkbox" class="todo-checkbox" ${task.done ? 'checked' : ''}>
-                    <span class="todo-text">${task.text}</span>
+                    <span class="todo-text">${task.text}${dateBadge}</span>
                     <button class="todo-delete">&times;</button>
                 `;
                 todoList.appendChild(li);
             });
         }
-
+        
         todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('todo-checkbox')) {
                 const li = e.target.closest('li');
                 const id = parseInt(li.dataset.id);
-                const task = todos[selectedTodoDateStr].find(t => t.id === id);
+                const task = findTaskById(id);
                 if (task) {
                     task.done = e.target.checked;
-                    if (task.done) li.classList.add('done'); else li.classList.remove('done');
+                    if (task.done) {
+                        task.completedDate = selectedTodoDateStr;
+                    } else {
+                        delete task.completedDate;
+                    }
                     saveTodos();
+                    renderTodoList();
                 }
             }
         });
-
+        
         todoList.addEventListener('click', (e) => {
             if (e.target.classList.contains('todo-delete')) {
                 const li = e.target.closest('li');
                 const id = parseInt(li.dataset.id);
-                todos[selectedTodoDateStr] = todos[selectedTodoDateStr].filter(t => t.id !== id);
-                li.remove();
-                if(todos[selectedTodoDateStr].length === 0) renderTodoList();
+                deleteTaskById(id);
                 saveTodos();
+                renderTodoList();
             }
         });
-
+        
         todoAddBtn.addEventListener('click', () => {
             const text = todoInput.value.trim();
-            if(!text) return;
-            if(!todos[selectedTodoDateStr]) todos[selectedTodoDateStr] = [];
-            todos[selectedTodoDateStr].push({ id: Date.now(), text, done: false });
+            if (!text) return;
+            if (!todos[selectedTodoDateStr]) todos[selectedTodoDateStr] = [];
+            todos[selectedTodoDateStr].push({ 
+                id: Date.now(), 
+                text: text, 
+                done: false,
+                createdDate: selectedTodoDateStr 
+            });
             todoInput.value = '';
             renderTodoList();
             saveTodos();
         });
-
+        
         todoInput.addEventListener('keydown', (e) => {
             if(e.key === 'Enter') todoAddBtn.click();
         });
