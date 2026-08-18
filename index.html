@@ -195,14 +195,13 @@
         /* Transparent Shade Container */
         .dropdown-menu {
             position: fixed;
-            top: 60px;
+            top: 52px; /* CHANGED: Flush against the 52px title bar */
             left: 50%;
-            transform: translate(-50%, -10px);
-            width: calc(100vw - 32px); /* 100% of screen minus the 16px side paddings */
-            max-width: 408px;          /* Limit to exact textarea width (440px main - 32px padding) */
-            max-height: calc(100vh - 80px);
-            
-            z-index: 1001;
+            transform: translate(-50%, -20px); /* CHANGED: Tucked slightly deeper for the slide animation */
+            width: calc(100vw - 32px);
+            max-width: 408px;
+            max-height: calc(100vh - 72px); /* CHANGED: Re-calculated height */
+            z-index: -1; /* CRITICAL CHANGED: Places the menu behind the title bar's solid background */
             opacity: 0;
             visibility: hidden;
             border: none;
@@ -215,13 +214,14 @@
             gap: 12px;
             transition: max-width 0.4s ease-in-out, opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
         }
+        
          #qs-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            z-index: 1000; /* Just below the dropdown menu (1001) */
+            z-index: 998; /* CHANGED: Lowered to stay behind the top bar */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s;
@@ -246,8 +246,8 @@
         /* Grouped Quick Settings Card (Top Block) */
         .qs-panel-card {
             background-color: var(--md-sys-color-surface-container);
-            border-radius: 28px;
-            padding: 16px;
+            border-radius: 0 0 28px 28px; /* CHANGED: Square at the top, rounded at the bottom */
+            padding: 10px 16px 16px 16px; /* CHANGED: Tightened the top padding */
             box-shadow: var(--shadow-elevation-3);
             flex-shrink: 0;
         }
