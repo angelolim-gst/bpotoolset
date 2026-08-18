@@ -195,13 +195,14 @@
         /* Transparent Shade Container */
         .dropdown-menu {
             position: fixed;
-            top: 52px; /* CHANGED: Flush against the 52px title bar */
+            top: 52px; 
             left: 50%;
-            transform: translate(-50%, -20px); /* CHANGED: Tucked slightly deeper for the slide animation */
-            width: calc(100vw - 32px);
-            max-width: 408px;
-            max-height: calc(100vh - 72px); /* CHANGED: Re-calculated height */
-            z-index: -1; /* CRITICAL CHANGED: Places the menu behind the title bar's solid background */
+            transform: translate(-50%, -20px); 
+            /* NEW: 100% width on mobile, max 440px to match the app's outer container */
+            width: 100%;
+            max-width: 440px; 
+            max-height: calc(100vh - 72px); 
+            z-index: -1; 
             opacity: 0;
             visibility: hidden;
             border: none;
@@ -213,6 +214,11 @@
             flex-direction: column;
             gap: 12px;
             transition: max-width 0.4s ease-in-out, opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
+        }
+
+        /* NEW: Support for Wide Mode */
+        body.wide-mode .dropdown-menu {
+            max-width: 650px; 
         }
         
          #qs-backdrop {
@@ -257,16 +263,30 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            
-            /* NEW: Flexbox constraints for scrolling */
             overflow-y: auto; 
-            flex-grow: 1;     /* Takes up available empty space */
-            flex-shrink: 1;   /* Shrinks when screen height is small */
-            min-height: 0;    /* CRITICAL: Allows Flexbox to trigger overflow */
-            
-            /* Prevents card box-shadows from clipping during scroll */
+            flex-grow: 1;     
+            flex-shrink: 1;   
+            min-height: 0;    
             padding: 4px;
-            margin: -4px;
+            /* NEW: 16px side margins to push it inwards */
+            margin: -4px 16px 0 16px; 
+        }
+
+        .panel-update-footer {
+            background-color: var(--md-sys-color-surface-container-low);
+            border-radius: 999px;
+            padding: 10px 16px;
+            box-shadow: var(--shadow-elevation-1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--secondary-text-color);
+            font-weight: 600;
+            flex-shrink: 0; 
+            /* NEW: 16px side margins to push it inwards */
+            margin: 0 16px;
         }
         
         /* Optional: Clean scrollbar for the notification section */
@@ -945,11 +965,6 @@
             #alarm-text { font-size: 2.2rem; }
             .alarm-actions { flex-direction: column; width: 85%; align-items: center; gap: 0.8rem;}
             .alarm-button { width: 100%; text-align: center; }
-            
-            /* Add this to prevent the Quick Settings panel from overflowing on tiny screens */
-            .dropdown-menu {
-                width: calc(100vw - 32px); 
-            }
         }
     </style>
 </head>
