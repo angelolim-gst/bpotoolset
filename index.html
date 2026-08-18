@@ -192,21 +192,94 @@
             transition: background-color 0.2s, color 0.2s;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
+        /* Android 15 Quick Settings Panel Container */
         .dropdown-menu {
-            position: absolute; top: 120%; right: 0; background-color: var(--md-sys-color-surface-container-high); 
-            border-radius: 16px; box-shadow: var(--shadow-elevation-3); list-style: none; padding: 8px; margin: 0; width: 220px;
-            z-index: 1001; opacity: 0; transform: translateY(-10px); visibility: hidden; border: none;
-            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            position: absolute; 
+            top: 120%; right: 0; 
+            background-color: var(--md-sys-color-surface-container); 
+            border-radius: 28px; /* Large, rounded corners typical of A15 */
+            box-shadow: var(--shadow-elevation-3); 
+            padding: 20px 16px; 
+            margin: 0; 
+            width: 360px; /* Wider to accommodate grid */
+            z-index: 1001; 
+            opacity: 0; 
+            transform: translateY(-10px); 
+            visibility: hidden; 
+            border: none;
+            transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
         .dropdown-menu.show { opacity: 1; transform: translateY(0); visibility: visible; }
-        .minibutton {
-            background: none; border: none; width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem;
-            color: var(--text-color); cursor: pointer; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-weight: 500;
+        
+        /* Grid Layout for Quick Settings Tiles */
+        .qs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
-        .minibutton:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-        .minibutton svg { width: 15px; height: 15px; fill: currentcolor; }
-        .dropdown-header { padding: 6px 10px; font-size: 0.72rem; color: var(--focus-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .dropdown-divider { height: 1px; background-color: var(--line-color); margin: 5px 0; border: none; }
+
+        .qs-tile-wrapper {
+            display: contents; /* Allows hidden inputs to exist without breaking grid */
+        }
+
+        /* Android 15 Style Tiles */
+        .minibutton {
+            background-color: var(--md-sys-color-surface-container-highest); 
+            border: none; 
+            border-radius: 16px; /* Thick pill shape */
+            padding: 16px 14px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+            transition: background-color 0.2s, transform 0.1s, color 0.2s; 
+            text-align: left; 
+            width: 100%;
+            color: var(--text-color);
+        }
+        .minibutton:hover { background-color: var(--md-sys-color-surface-variant); }
+        .minibutton:active { transform: scale(0.96); }
+        
+        /* Tile Icon Container */
+        .minibutton svg { 
+            width: 22px; 
+            height: 22px; 
+            flex-shrink: 0; 
+            fill: currentColor; 
+        }
+
+        /* Tile Text */
+        .minibutton span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Allows 2 lines for longer text like "Analyze WFM Schedule" */
+            -webkit-box-orient: vertical;
+        }
+
+        /* Section Headers mimicking Android settings groups */
+        .dropdown-header { 
+            grid-column: 1 / -1; 
+            font-size: 0.75rem; 
+            color: var(--focus-color); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            margin-top: 8px; 
+            margin-bottom: -2px; 
+            padding-left: 4px;
+            display: flex;
+            align-items: center;
+        }
+        .dropdown-header:first-child { margin-top: 0; }
+        
+        .dropdown-divider { display: none; /* Dividers aren't used in modern Android QS panels */ }
 
         /* M3 Switch & Tracking Icons */
         .theme-switch, .format-switch { position: relative; display: inline-block; width: 46px; height: 28px; flex-shrink: 0; }
@@ -680,6 +753,11 @@
             #alarm-text { font-size: 2.2rem; }
             .alarm-actions { flex-direction: column; width: 85%; align-items: center; gap: 0.8rem;}
             .alarm-button { width: 100%; text-align: center; }
+            
+            /* Add this to prevent the Quick Settings panel from overflowing on tiny screens */
+            .dropdown-menu {
+                width: calc(100vw - 32px); 
+            }
         }
     </style>
 </head>
@@ -692,36 +770,91 @@
         <div class="top-bar-right">
             <div class="dropdown">
                 <button class="dropdown-button">Tools ▼</button>
-                <ul class="dropdown-menu">
-                    <li class="dropdown-header">Utilities</li>
-                    <li><button id="popout-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg><span>Open in Window</span></button></li>
-                    <li><button id="scheduleButton" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg><span>Open Shift Schedule</span></button></li>
-                    <li>
-                        <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
-                        <button id="analyze-wfm-btn" class="minibutton">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
-                            <span>Analyze WFM Schedule</span>
+                <div class="dropdown-menu">
+                    <div class="qs-grid">
+                        <span class="dropdown-header">Utilities</span>
+                        
+                        <button id="popout-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6v2H5v12h12v-6h2zM13 3v2h4.586l-7.293 7.293 1.414 1.414L19 6.414V11h2V3h-8z"></path></svg>
+                            <span>Open Window</span>
                         </button>
-                    </li>
-                    <li><button id="set-alarms-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg><span>Set Alarms</span></button></li>
-                    <li><button id="list-to-csv-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg><span>List to CSV</span></button></li>
-                    <li><button id="about-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg><span>About</span></button></li>
-                    <li class="dropdown-divider"></li>
-                    <li class="dropdown-header">Page Controls</li>
-                    <li><button id="toggle-statusbar-clock-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-statusbar-clock-text">Hide Status Bar Clock</span></button></li>
-                    <li><button id="toggle-width-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg><span id="toggle-width-text">Enable Wide Mode</span></button></li>
-                    <li><button id="toggle-scroll-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg><span id="toggle-scroll-text">Enable Full Page Scroll</span></button></li>
-                    <li><button id="toggle-hold-timer-button" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg><span id="toggle-hold-timer-text">Enable Hold Timer</span></button></li>
-                    <li class="dropdown-divider"></li>
-                    <li class="dropdown-header">Data & AI Settings</li>
-                    <li><button id="set-boost-prompt-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Boost Prompt</span></button></li>
-                    <li><button id="set-api-key-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg><span>Set Gemini API Key</span></button></li>
-                    <li><button id="export-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg><span>Export Data</span></button></li>
-                    <li>
-                        <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
-                        <button id="import-settings-btn" class="minibutton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg><span>Import Data</span></button>
-                    </li>
-                </ul>
+                        
+                        <button id="scheduleButton" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zM5 20V7h14V6l.002 14H5z"></path><path d="M7 9h10v2H7z"></path></svg>
+                            <span>Shift Schedule</span>
+                        </button>
+                        
+                        <div class="qs-tile-wrapper">
+                            <input type="file" id="wfm-upload-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                            <button id="analyze-wfm-btn" class="minibutton">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM9 11V5h6v6H9zm2 2h2v6h-2v-6zM5 5h2v6H5V5zm0 8h2v6H5v-6zm14 6h-2v-6h2v6zm0-8h-2V5h2v6z"></path></svg>
+                                <span>WFM Analyzer</span>
+                            </button>
+                        </div>
+                        
+                        <button id="set-alarms-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22a2.98 2.98 0 0 0 3-3h-6a2.98 2.98 0 0 0 3 3zm7-4.577v-5.52c0-3.414-2.185-6.32-5.464-7.145l.001-.258a1.5 1.5 0 1 0-3.002 0l.001.258C7.185 4.583 5 7.493 5 10.903v5.52L3 18.5V20h18v-1.5l-2-1.077z"></path></svg>
+                            <span>Set Alarms</span>
+                        </button>
+                        
+                        <button id="list-to-csv-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5v-2H8v2h12zm0 5v-2H8v2h12z"></path></svg>
+                            <span>List to CSV</span>
+                        </button>
+                        
+                        <button id="about-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"></path><path d="M11 11H13V17H11zM11 7H13V9H11z"></path></svg>
+                            <span>About</span>
+                        </button>
+
+                        <span class="dropdown-header">Page Controls</span>
+                        
+                        <button id="toggle-statusbar-clock-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg>
+                            <span id="toggle-statusbar-clock-text">Status Clock</span>
+                        </button>
+                        
+                        <button id="toggle-width-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.001 1.999a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v18a1 1 0 0 0 2 0v-18a1 1 0 0 0-1-1zm-8 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-12 6a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm12 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2z"></path></svg>
+                            <span id="toggle-width-text">Wide Mode</span>
+                        </button>
+                        
+                        <button id="toggle-scroll-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="m12 17.414 4.293-4.293a.999.999 0 1 1 1.414 1.414L12 20.243l-5.707-5.708a.999.999 0 1 1 1.414-1.414L12 17.414zM12 6.586 7.707 10.88a.999.999 0 1 1-1.414-1.414L12 3.757l5.707 5.709a.999.999 0 1 1-1.414 1.414L12 6.586z"></path></svg>
+                            <span id="toggle-scroll-text">Page Scroll</span>
+                        </button>
+                        
+                        <button id="toggle-hold-timer-button" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg>
+                            <span id="toggle-hold-timer-text">Hold Timer</span>
+                        </button>
+
+                        <span class="dropdown-header">Data & AI Settings</span>
+                        
+                        <button id="set-boost-prompt-btn" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                            <span>Boost Prompt</span>
+                        </button>
+                        
+                        <button id="set-api-key-btn" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 12.586L12.586 4 11 5.586l6.293 6.293H3v2h14.293L11 20.172 12.586 21.758z"></path></svg>
+                            <span>Gemini API Key</span>
+                        </button>
+                        
+                        <button id="export-settings-btn" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>
+                            <span>Export Data</span>
+                        </button>
+                        
+                        <div class="qs-tile-wrapper">
+                            <input type="file" id="import-settings-input" accept=".gst" style="display: none;">
+                            <button id="import-settings-btn" class="minibutton">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 18h14v2H5zM19 9h-4V3H9v6H5l7 7z"></path></svg>
+                                <span>Import Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <span id="theme-label">Light Mode</span>
             <label class="theme-switch">
