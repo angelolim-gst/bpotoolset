@@ -198,10 +198,10 @@
             top: 60px;
             left: 50%;
             transform: translate(-50%, -10px);
-            width: 380px;
-            max-width: calc(100vw - 32px);
+            width: calc(100vw - 32px); /* 100% of screen minus the 16px side paddings */
+            max-width: 408px;          /* Limit to exact textarea width (440px main - 32px padding) */
             max-height: calc(100vh - 80px);
-            /* REMOVED: overflow-y: auto; */
+            
             z-index: 1001;
             opacity: 0;
             visibility: hidden;
@@ -213,9 +213,8 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
+            transition: max-width 0.4s ease-in-out, opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
         }
-
          #qs-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -238,6 +237,10 @@
             opacity: 1;
             transform: translate(-50%, 0);
             visibility: visible;
+        }
+
+        body.wide-mode .dropdown-menu {
+            max-width: 618px; /* Limit to Wide Mode textarea width (650px main - 32px padding) */
         }
 
         /* Grouped Quick Settings Card (Top Block) */
