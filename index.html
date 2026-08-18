@@ -220,6 +220,98 @@
             transform: translate(-50%, 0); /* Drops down into place while remaining perfectly centered */
             visibility: visible; 
         }
+
+        /* Background Blur Backdrop */
+        #qs-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000; /* Just below the dropdown menu (1001) */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+        #qs-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Update Dropdown Menu to allow scrolling if notifications get long */
+        .dropdown-menu {
+            max-height: 85vh; 
+            overflow-y: auto;
+        }
+
+        /* Notifications Section */
+        .notifications-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        #panel-notifications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Android 15 Style Notification Cards */
+        .notification-card {
+            background-color: var(--md-sys-color-surface-container-highest);
+            border-radius: 20px; /* Standard A15 notification radius */
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: var(--shadow-elevation-1);
+        }
+        
+        .notification-card.urgent {
+            background-color: var(--md-sys-color-error-container);
+            color: var(--md-sys-color-on-error-container);
+        }
+
+        .notif-icon {
+            width: 24px; height: 24px;
+            flex-shrink: 0;
+            fill: var(--focus-color);
+        }
+        .notification-card.urgent .notif-icon { fill: var(--alarm-color); }
+
+        .notif-content { display: flex; flex-direction: column; gap: 2px; flex-grow: 1; }
+        .notif-title { font-size: 0.85rem; font-weight: 700; color: var(--text-color); }
+        .notification-card.urgent .notif-title { color: var(--md-sys-color-on-error-container); }
+        
+        .notif-desc { font-size: 0.75rem; font-weight: 500; color: var(--secondary-text-color); line-height: 1.3; }
+        .notification-card.urgent .notif-desc { color: var(--md-sys-color-on-error-container); opacity: 0.9; }
+
+        /* Update Footer */
+        .panel-update-footer {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--secondary-text-color);
+            font-weight: 600;
+        }
+        
+        #panel-update-btn {
+            background-color: var(--focus-color);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
         
         /* Grid Layout for Quick Settings Tiles */
         .qs-grid {
@@ -814,7 +906,7 @@
     </style>
 </head>
 <body>
-
+    <div id="qs-backdrop"></div>
     <div class="top-bar">
         <div class="top-bar-left">
             <div class="top-bar-title"><span>Gusto Toolset</span></div>
@@ -918,6 +1010,19 @@
                                 <span>Import Data</span>
                             </button>
                         </div>
+                    </div>
+                    <!-- Unified Notifications Section -->
+                    <div class="notifications-section">
+                        <span class="dropdown-header">Notifications</span>
+                        <div id="panel-notifications-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+    
+                    <!-- Update Checker Footer -->
+                    <div class="panel-update-footer">
+                        <span id="update-status-text">Checking for updates...</span>
+                        <button id="panel-update-btn" style="display:none;">Refresh App</button>
                     </div>
                 </div>
             </div>
@@ -2794,8 +2899,122 @@ ${sanitizedCsv.substring(0, 100000)}`;
             window.open(`https://gusto.nicecloudsvc.com/agent/displayMyScheduleAction.mvc?startDay=1${y}${m}${d}&viewFormat=daily`, "_blank");
         });
 
-        dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
-        document.addEventListener('click', () => { if (dropdownMenu.classList.contains('show')) dropdownMenu.classList.remove('show'); });
+        // DOM Variables for Notification Panel
+        const qsBackdrop = document.getElementById('qs-backdrop');
+        const panelNotifList = document.getElementById('panel-notifications-list');
+        const updateStatusText = document.getElementById('update-status-text');
+        const panelUpdateBtn = document.getElementById('panel-update-btn');
+        
+        const CURRENT_APP_VERSION = "1.0.0"; // Update this when you deploy changes
+
+        // Toggle Panel & Backdrop
+        function toggleNotificationPanel(forceClose = false) {
+            const isOpen = dropdownMenu.classList.contains('show');
+            if (isOpen || forceClose) {
+                dropdownMenu.classList.remove('show');
+                qsBackdrop.classList.remove('show');
+            } else {
+                populatePanelNotifications();
+                checkForUpdates(); // Check for updates every time they pull the shade down
+                dropdownMenu.classList.add('show');
+                qsBackdrop.classList.add('show');
+            }
+        }
+
+        dropdownButton.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            toggleNotificationPanel(); 
+        });
+        
+        qsBackdrop.addEventListener('click', () => toggleNotificationPanel(true));
+        // Also close menu if they click outside (safeguard)
+        document.addEventListener('click', (e) => { 
+            if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                toggleNotificationPanel(true);
+            }
+        });
+
+        // Populate Notifications List
+        function populatePanelNotifications() {
+            panelNotifList.innerHTML = '';
+            let hasItems = false;
+            const now = new Date(synchronizedTime);
+            const todayStr = getLocalYMD(getShiftDateObj());
+
+            // 1. Check Alarms & Team Coaching
+            const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
+            allAlarms.forEach(alarm => {
+                if (alarm && alarm.time) {
+                    let status = '';
+                    let isUrgent = false;
+                    
+                    if (alarm.snoozed) { status = 'Missed / Snoozed'; isUrgent = true; }
+                    else if (alarm.triggered) { status = 'Triggered'; isUrgent = true; }
+                    else if (alarm.dateTime) {
+                        const diff = (alarm.dateTime - now) / 60000;
+                        if (diff > 0 && diff <= 120) status = `Upcoming in ${Math.ceil(diff)}m`; // Only show if within 2 hours
+                    }
+
+                    if (status) {
+                        hasItems = true;
+                        panelNotifList.innerHTML += `
+                            <div class="notification-card ${isUrgent ? 'urgent' : ''}">
+                                <svg class="notif-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+                                <div class="notif-content">
+                                    <div class="notif-title">${alarm.label}</div>
+                                    <div class="notif-desc">${convertTo12Hour(alarm.time)} • ${status}</div>
+                                </div>
+                            </div>`;
+                    }
+                }
+            });
+
+            // 2. Check Today's To-Dos
+            const todaysTasks = todos[todayStr] || [];
+            todaysTasks.forEach(task => {
+                if (!task.done) {
+                    hasItems = true;
+                    panelNotifList.innerHTML += `
+                        <div class="notification-card">
+                            <svg class="notif-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+                            <div class="notif-content">
+                                <div class="notif-title">Pending Task</div>
+                                <div class="notif-desc">${task.text}</div>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (!hasItems) {
+                panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
+            }
+        }
+
+        // App Update Checker Logic
+        async function checkForUpdates() {
+            try {
+                updateStatusText.textContent = "Checking for updates...";
+                panelUpdateBtn.style.display = 'none';
+                
+                const response = await fetch(`version.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("File not found");
+                
+                const data = await response.json();
+                
+                if (data.version && data.version !== CURRENT_APP_VERSION) {
+                    updateStatusText.textContent = "✨ Update available!";
+                    updateStatusText.style.color = "var(--focus-color)";
+                    panelUpdateBtn.style.display = 'inline-block';
+                } else {
+                    updateStatusText.textContent = `App is up to date (v${CURRENT_APP_VERSION})`;
+                    updateStatusText.style.color = "var(--secondary-text-color)";
+                }
+            } catch (error) {
+                updateStatusText.textContent = `Offline (v${CURRENT_APP_VERSION})`;
+            }
+        }
+
+        panelUpdateBtn.addEventListener('click', () => window.location.reload(true));
 
         function setTheme(theme) {
             if (theme === 'dark') document.body.classList.add('dark-mode');
