@@ -190,6 +190,7 @@
             z-index: 999; /* Sits cleanly below top-bar */
             opacity: 0;
             visibility: hidden;
+            will-change: opacity, visibility;
             transition: opacity 0.3s ease, visibility 0.3s;
         }
         #qs-backdrop.show {
@@ -233,7 +234,7 @@
             border-radius: 28px;
             padding: 16px;
             box-shadow: var(--shadow-elevation-3);
-            flex-shrink: 0; /* Prevents this block from shrinking */
+            flex-shrink: 0; /* Prevents this block from shrinking or scrolling */
             pointer-events: auto; /* Re-enable clicks */
         }
 
@@ -302,15 +303,15 @@
         .font-size-tile button:active { background-color: var(--md-sys-color-surface-container-high); }
         .font-divider { width: 1px; height: 60%; align-self: center; background-color: var(--border-color); }
 
-        /* Floating Notifications Stream */
+        /* Floating Notifications Stream (Isolated Scroll) */
         .notifications-section {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            overflow-y: auto; /* SCROLLING IS ISOLATED HERE */
-            min-height: 0; /* Critical flex property to allow inner scrolling */
-            flex-shrink: 1; /* Allows it to shrink and scroll */
-            pointer-events: auto; /* Re-enable clicks */
+            overflow-y: auto; /* SCROLLING IS ISOLATED EXCLUSIVELY HERE */
+            min-height: 0; 
+            flex-shrink: 1; 
+            pointer-events: auto;
             padding-right: 4px;
         }
 
@@ -737,14 +738,6 @@
         #snooze-button:hover { background-color: rgba(255,255,255,0.3); }
         #dismiss-button { background-color: var(--md-sys-color-on-error); color: var(--md-sys-color-error); }
         #dismiss-button:hover { background-color: #f1f0f4; }
-        
-        /* HSL Color Picker Controls */
-        .hsl-range-slider { width: 100%; height: 12px; border-radius: 6px; outline: none; cursor: pointer; accent-color: var(--focus-color); margin-top: 6px; }
-        #hue-slider { -webkit-appearance: none; background: linear-gradient(to right, hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%)); }
-        .color-presets { display: flex; gap: 12px; justify-content: center; margin: 18px 0 10px; }
-        .preset-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; box-shadow: var(--shadow-elevation-1); }
-        .preset-dot:hover { transform: scale(1.15); }
-        .preset-dot.active { border-color: var(--text-color); transform: scale(1.1); }
 
         @media (max-width: 400px) {
             #theme-label { display: none; }
@@ -752,6 +745,11 @@
             #alarm-text { font-size: 2.2rem; }
             .alarm-actions { flex-direction: column; width: 85%; align-items: center; gap: 0.8rem;}
             .alarm-button { width: 100%; text-align: center; }
+            
+            /* Prevent Quick Settings panel overflow on tiny screens */
+            .dropdown-menu {
+                width: calc(100vw - 32px); 
+            }
         }
     </style>
 </head>
@@ -1492,7 +1490,7 @@
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
 
-        // MENU NOTIFICATION CONTROLS
+        // NOTIFICATIONS PANEL & DROPDOWN LOGIC
         function toggleNotificationPanel(forceClose = false) {
             const isOpen = dropdownMenu.classList.contains('show');
             if (isOpen || forceClose) {
@@ -1506,32 +1504,29 @@
             }
         }
 
-        dropdownButton.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            toggleNotificationPanel(); 
-        });
-        
+        dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); toggleNotificationPanel(); });
         qsBackdrop.addEventListener('click', () => toggleNotificationPanel(true));
         
+        document.addEventListener('click', (e) => { 
+            if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                toggleNotificationPanel(true);
+            }
+        });
+
         function populatePanelNotifications() {
-            panelNotifList.innerHTML = '';
-            let hasItems = false;
-            const now = new Date(synchronizedTime);
-            const todayStr = getLocalYMD(getShiftDateObj());
+            panelNotifList.innerHTML = ''; let hasItems = false;
+            const now = new Date(synchronizedTime); const todayStr = getLocalYMD(getShiftDateObj());
 
             const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
             allAlarms.forEach(alarm => {
                 if (alarm && alarm.time) {
-                    let status = '';
-                    let isUrgent = false;
-                    
+                    let status = ''; let isUrgent = false;
                     if (alarm.snoozed) { status = 'Missed / Snoozed'; isUrgent = true; }
                     else if (alarm.triggered) { status = 'Triggered'; isUrgent = true; }
                     else if (alarm.dateTime) {
                         const diff = (alarm.dateTime - now) / 60000;
                         if (diff > 0 && diff <= 120) status = `Upcoming in ${Math.ceil(diff)}m`;
                     }
-
                     if (status) {
                         hasItems = true;
                         panelNotifList.innerHTML += `
@@ -1547,16 +1542,11 @@
             });
 
             Object.keys(todos).sort().forEach(dateKey => {
-                const list = todos[dateKey] || [];
-                const isToday = (dateKey === todayStr);
-                const isPast = (dateKey < todayStr);
-
+                const list = todos[dateKey] || []; const isToday = (dateKey === todayStr); const isPast = (dateKey < todayStr);
                 list.forEach(task => {
                     if (!task.done && (isToday || isPast)) {
-                        hasItems = true;
-                        const isOverdue = isPast;
+                        hasItems = true; const isOverdue = isPast;
                         const badgeText = isOverdue ? `Overdue (${formatShortDate(task.createdDate || dateKey)})` : 'Today';
-                        
                         panelNotifList.innerHTML += `
                             <div class="notification-card ${isOverdue ? 'overdue' : ''}">
                                 <svg class="notif-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
@@ -1569,26 +1559,18 @@
                 });
             });
 
-            if (!hasItems) {
-                panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
-            }
+            if (!hasItems) panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
         }
 
         async function checkForUpdates() {
             try {
-                updateStatusText.textContent = "Checking for updates...";
-                panelUpdateBtn.style.display = 'none';
+                updateStatusText.textContent = "Checking for updates..."; panelUpdateBtn.style.display = 'none';
                 const response = await fetch(`version.json?t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error("File not found");
                 const data = await response.json();
                 if (data.version && data.version !== CURRENT_APP_VERSION) {
-                    updateStatusText.textContent = "✨ Update available!";
-                    updateStatusText.style.color = "var(--focus-color)";
-                    panelUpdateBtn.style.display = 'inline-block';
-                } else {
-                    updateStatusText.textContent = `App is up to date (v${CURRENT_APP_VERSION})`;
-                    updateStatusText.style.color = "var(--secondary-text-color)";
-                }
+                    updateStatusText.textContent = "✨ Update available!"; updateStatusText.style.color = "var(--focus-color)"; panelUpdateBtn.style.display = 'inline-block';
+                } else { updateStatusText.textContent = `App is up to date (v${CURRENT_APP_VERSION})`; updateStatusText.style.color = "var(--secondary-text-color)"; }
             } catch (error) { updateStatusText.textContent = `Offline (v${CURRENT_APP_VERSION})`; }
         }
         panelUpdateBtn.addEventListener('click', () => window.location.reload(true));
@@ -2520,111 +2502,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
             addTeamBtn.textContent = `+ Add Team Member (${teamData.length}/20)`; addTeamBtn.disabled = teamData.length >= 20;
             saveTeam();
         });
-
-        // MENU CONTROLS & UTILS
-        function openInNewWindow() {
-            const features = `popup=yes,width=400,height=${screen.availHeight},top=0,left=0,scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no`;
-            const url = 'https://angelolim-gst.github.io/bpotoolset';
-            window.open(url, 'GustoToolsetWindow', features);
-            document.body.innerHTML = `<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif; background-color: #eef0f2; color: #1c1c1e; text-align: center; padding: 20px;"><h2 style="margin-bottom: 1rem;">Opened in a New Window</h2><p style="margin: 0;">The toolset is now running in a separate pop-out window.</p><p style="margin-top: 0.5rem;">You can safely close this tab.</p></div>`;
-        }
-        popoutButton.addEventListener('click', openInNewWindow);
-        resizePopoutButton.addEventListener('click', openInNewWindow);
-
-        scheduleButton.addEventListener("click", function() {
-            const now = new Date();
-            const formatter = new Intl.DateTimeFormat('en-US', { timeZone: "America/Denver", year: 'numeric', month: '2-digit', day: '2-digit' });
-            const parts = formatter.formatToParts(now);
-            const y = parts.find(p => p.type === 'year').value.slice(2);
-            const m = parts.find(p => p.type === 'month').value;
-            const d = parts.find(p => p.type === 'day').value;
-            window.open(`https://gusto.nicecloudsvc.com/agent/displayMyScheduleAction.mvc?startDay=1${y}${m}${d}&viewFormat=daily`, "_blank");
-        });
-
-        // NOTIFICATIONS PANEL & DROPDOWN LOGIC
-        function toggleNotificationPanel(forceClose = false) {
-            const isOpen = dropdownMenu.classList.contains('show');
-            if (isOpen || forceClose) {
-                dropdownMenu.classList.remove('show');
-                qsBackdrop.classList.remove('show');
-            } else {
-                populatePanelNotifications();
-                checkForUpdates(); 
-                dropdownMenu.classList.add('show');
-                qsBackdrop.classList.add('show');
-            }
-        }
-
-        dropdownButton.addEventListener('click', (e) => { e.stopPropagation(); toggleNotificationPanel(); });
-        qsBackdrop.addEventListener('click', () => toggleNotificationPanel(true));
-        
-        document.addEventListener('click', (e) => { 
-            if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                toggleNotificationPanel(true);
-            }
-        });
-
-        function populatePanelNotifications() {
-            panelNotifList.innerHTML = ''; let hasItems = false;
-            const now = new Date(synchronizedTime); const todayStr = getLocalYMD(getShiftDateObj());
-
-            const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
-            allAlarms.forEach(alarm => {
-                if (alarm && alarm.time) {
-                    let status = ''; let isUrgent = false;
-                    if (alarm.snoozed) { status = 'Missed / Snoozed'; isUrgent = true; }
-                    else if (alarm.triggered) { status = 'Triggered'; isUrgent = true; }
-                    else if (alarm.dateTime) {
-                        const diff = (alarm.dateTime - now) / 60000;
-                        if (diff > 0 && diff <= 120) status = `Upcoming in ${Math.ceil(diff)}m`;
-                    }
-                    if (status) {
-                        hasItems = true;
-                        panelNotifList.innerHTML += `
-                            <div class="notification-card ${isUrgent ? 'urgent' : ''}">
-                                <svg class="notif-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
-                                <div class="notif-content">
-                                    <div class="notif-title">${alarm.label}</div>
-                                    <div class="notif-desc">${convertTo12Hour(alarm.time)} • ${status}</div>
-                                </div>
-                            </div>`;
-                    }
-                }
-            });
-
-            Object.keys(todos).sort().forEach(dateKey => {
-                const list = todos[dateKey] || []; const isToday = (dateKey === todayStr); const isPast = (dateKey < todayStr);
-                list.forEach(task => {
-                    if (!task.done && (isToday || isPast)) {
-                        hasItems = true; const isOverdue = isPast;
-                        const badgeText = isOverdue ? `Overdue (${formatShortDate(task.createdDate || dateKey)})` : 'Today';
-                        panelNotifList.innerHTML += `
-                            <div class="notification-card ${isOverdue ? 'overdue' : ''}">
-                                <svg class="notif-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
-                                <div class="notif-content">
-                                    <div class="notif-title">${task.text}</div>
-                                    <div class="notif-desc">${badgeText}</div>
-                                </div>
-                            </div>`;
-                    }
-                });
-            });
-
-            if (!hasItems) panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
-        }
-
-        async function checkForUpdates() {
-            try {
-                updateStatusText.textContent = "Checking for updates..."; panelUpdateBtn.style.display = 'none';
-                const response = await fetch(`version.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("File not found");
-                const data = await response.json();
-                if (data.version && data.version !== CURRENT_APP_VERSION) {
-                    updateStatusText.textContent = "✨ Update available!"; updateStatusText.style.color = "var(--focus-color)"; panelUpdateBtn.style.display = 'inline-block';
-                } else { updateStatusText.textContent = `App is up to date (v${CURRENT_APP_VERSION})`; updateStatusText.style.color = "var(--secondary-text-color)"; }
-            } catch (error) { updateStatusText.textContent = `Offline (v${CURRENT_APP_VERSION})`; }
-        }
-        panelUpdateBtn.addEventListener('click', () => window.location.reload(true));
 
         function setTheme(theme) {
             if (theme === 'dark') document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
