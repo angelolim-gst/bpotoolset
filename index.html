@@ -359,81 +359,43 @@
             position: relative; /* ADDED: Anchors the floating pill */
         }
 
-        /* Modern Android 15 Floating Action Pill */
-        .font-controls { 
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            background-color: var(--md-sys-color-surface-container-highest);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-elevation-2);
-            padding: 6px;
-            border-radius: 999px;
+        /* Custom Split-Tile for Font Resizing */
+        .font-size-tile {
+            padding: 0 !important; 
             display: flex; 
-            gap: 4px; 
-            align-items: center; 
-            z-index: 50;
-            transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
-        }
-        
-        /* Magic CSS to animate based on your existing JS visibility toggles */
-        .font-controls[style*="hidden"] {
-            opacity: 0 !important;
-            transform: translateY(15px) scale(0.95);
-            pointer-events: none;
-        }
-        
-        .font-controls[style*="visible"], .font-controls:not([style*="hidden"]) {
-            opacity: 1 !important;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-        }
-
-        /* Themed Segmented Buttons inside the Pill */
-        .font-controls .control-button {
-            background-color: transparent;
-            color: var(--text-color);
-            height: 36px;
-            border-radius: 999px;
-            padding: 0 16px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        
-        .font-controls .control-button:hover {
-            background-color: var(--md-sys-color-surface-variant);
-            color: var(--text-color); /* Overrides the global blue focus color */
-        }
-        
-        .font-controls .control-button:active {
-            transform: scale(0.92);
+            overflow: hidden;
             background-color: var(--md-sys-color-surface-container-highest);
         }
         
-        .font-controls .control-button.resize {
-            width: 36px;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.95rem;
+        .font-size-tile button {
+            flex: 1; 
+            height: 100%; 
+            border: none; 
+            background: transparent; 
+            cursor: pointer; 
+            color: var(--text-color); 
+            font-weight: 700; 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.2s;
+        }
+        
+        #decrease-font { font-size: 1rem; border-radius: 16px 0 0 16px; }
+        #increase-font { font-size: 1.15rem; border-radius: 0 16px 16px 0; }
+        
+        .font-size-tile button:hover { background-color: var(--md-sys-color-surface-variant); }
+        .font-size-tile button:active { background-color: var(--md-sys-color-surface-container-high); }
+        
+        .font-divider {
+            width: 1px; 
+            height: 60%; 
+            align-self: center; 
+            background-color: var(--border-color);
         }
 
         /* Adds a subtle divider line after the Reset button */
         #reset-notes {
             position: relative;
             margin-right: 6px;
-        }
-        #reset-notes::after {
-            content: '';
-            position: absolute;
-            right: -5px;
-            top: 15%;
-            height: 70%;
-            width: 1px;
-            background-color: var(--md-sys-color-outline-variant);
         }
         
         /* Android 15 Workspace Tab Tiles */
@@ -893,6 +855,19 @@
                             <span>About</span>
                         </button>
 
+                        <span class="dropdown-header">Notepad Settings</span>
+
+                        <button id="reset-notes" class="minibutton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                            <span>Reset Notes</span>
+                        </button>
+                        
+                        <div class="minibutton font-size-tile">
+                            <button id="decrease-font">A-</button>
+                            <div class="font-divider"></div>
+                            <button id="increase-font">A+</button>
+                        </div>
+
                         <span class="dropdown-header">Page Controls</span>
                         
                         <button id="toggle-statusbar-clock-button" class="minibutton">
@@ -968,12 +943,7 @@
                     <span>My Team</span>
                 </button>
             </div>
-                <div class="font-controls" id="font-controls">
-                    <button class="control-button" id="reset-notes">Reset</button>
-                    <button class="control-button resize" id="decrease-font">A-</button>
-                    <button class="control-button resize" id="increase-font">A+</button>
-                </div>
-            </div>
+        </div>
             
             <textarea id="main-content" class="workspace-content"></textarea>
             
@@ -1370,7 +1340,6 @@
         const tabNotepad = document.getElementById('tab-notepad');
         const tabTodo = document.getElementById('tab-todo');
         const tabTeam = document.getElementById('tab-team');
-        const fontControls = document.getElementById('font-controls');
         
         // DOM Variables - To Do List
         const todoView = document.getElementById('todo-view');
@@ -3047,26 +3016,27 @@ ${sanitizedCsv.substring(0, 100000)}`;
         tabNotepad.addEventListener('click', () => {
             tabNotepad.classList.add('active'); tabTodo.classList.remove('active'); tabTeam.classList.remove('active');
             textarea.classList.remove('hidden-view'); todoView.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            fontControls.style.visibility = 'visible';
         });
         tabTodo.addEventListener('click', () => {
             tabTodo.classList.add('active'); tabNotepad.classList.remove('active'); tabTeam.classList.remove('active');
             todoView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); teamView.classList.add('hidden-view');
-            fontControls.style.visibility = 'hidden';
             renderTodoWeek();
         });
         tabTeam.addEventListener('click', () => {
             tabTeam.classList.add('active'); tabNotepad.classList.remove('active'); tabTodo.classList.remove('active');
             teamView.classList.remove('hidden-view'); textarea.classList.add('hidden-view'); todoView.classList.add('hidden-view');
-            fontControls.style.visibility = 'hidden';
             renderTeamList();
         });
 
         const updateFontSize = () => textarea.style.fontSize = `${currentFontSize}px`;
         increaseFontBtn.addEventListener('click', () => { currentFontSize++; updateFontSize(); });
         decreaseFontBtn.addEventListener('click', () => { if (currentFontSize > 8) { currentFontSize--; updateFontSize(); } });
-        
-        resetNotesBtn.addEventListener('click', () => { textarea.value = defaultNotesTemplate; saveNotes(); });
+
+        resetNotesBtn.addEventListener('click', () => { 
+            textarea.value = defaultNotesTemplate; 
+            saveNotes(); 
+            dropdownMenu.classList.remove('show'); // Closes the Quick Settings menu
+        });
         textarea.addEventListener('input', () => { clearTimeout(saveTimeout); saveTimeout = setTimeout(() => idleSave(saveNotes), 1000); });
         
         // ALARMS
