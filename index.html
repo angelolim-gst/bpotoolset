@@ -192,19 +192,21 @@
             transition: background-color 0.2s, color 0.2s;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
-        /* Android 15 Quick Settings Panel Container */
+        /* Android 15 Quick Settings Panel Container (Centered) */
         .dropdown-menu {
-            position: absolute; 
-            top: 120%; right: 0; 
+            position: fixed; /* Detaches from the button, anchors to the screen */
+            top: 60px; /* Sits cleanly just below your 52px top bar */
+            left: 50%; /* Pushes the left edge to the center of the screen */
             background-color: var(--md-sys-color-surface-container); 
-            border-radius: 28px; /* Large, rounded corners typical of A15 */
+            border-radius: 28px; 
             box-shadow: var(--shadow-elevation-3); 
             padding: 20px 16px; 
             margin: 0; 
-            width: 360px; /* Wider to accommodate grid */
+            width: 360px; 
+            max-width: calc(100vw - 32px); /* Ensures 16px padding on edge of tiny mobile screens */
             z-index: 1001; 
             opacity: 0; 
-            transform: translateY(-10px); 
+            transform: translate(-50%, -10px); /* Pulls it back by 50% of its own width to perfectly center it, and shifts Y up for the animation */
             visibility: hidden; 
             border: none;
             transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
@@ -212,7 +214,12 @@
             flex-direction: column;
             gap: 16px;
         }
-        .dropdown-menu.show { opacity: 1; transform: translateY(0); visibility: visible; }
+        
+        .dropdown-menu.show { 
+            opacity: 1; 
+            transform: translate(-50%, 0); /* Drops down into place while remaining perfectly centered */
+            visibility: visible; 
+        }
         
         /* Grid Layout for Quick Settings Tiles */
         .qs-grid {
