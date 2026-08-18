@@ -351,10 +351,89 @@
             transition: background-color 0.4s ease, color 0.4s ease; padding: 12px;
         }
         
+        /* Ensure the main container can hold the floating pill */
         .textarea-container {
             flex-grow: 1; flex-shrink: 1; min-height: 230px;
             display: flex; flex-direction: column; margin-bottom: 16px;
             opacity: 0; animation: fadeInUp 0.5s ease-out 0.1s forwards;
+            position: relative; /* ADDED: Anchors the floating pill */
+        }
+
+        /* Modern Android 15 Floating Action Pill */
+        .font-controls { 
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background-color: var(--md-sys-color-surface-container-highest);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-elevation-2);
+            padding: 6px;
+            border-radius: 999px;
+            display: flex; 
+            gap: 4px; 
+            align-items: center; 
+            z-index: 50;
+            transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1), visibility 0.3s;
+        }
+        
+        /* Magic CSS to animate based on your existing JS visibility toggles */
+        .font-controls[style*="hidden"] {
+            opacity: 0 !important;
+            transform: translateY(15px) scale(0.95);
+            pointer-events: none;
+        }
+        
+        .font-controls[style*="visible"], .font-controls:not([style*="hidden"]) {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Themed Segmented Buttons inside the Pill */
+        .font-controls .control-button {
+            background-color: transparent;
+            color: var(--text-color);
+            height: 36px;
+            border-radius: 999px;
+            padding: 0 16px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        
+        .font-controls .control-button:hover {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--text-color); /* Overrides the global blue focus color */
+        }
+        
+        .font-controls .control-button:active {
+            transform: scale(0.92);
+            background-color: var(--md-sys-color-surface-container-highest);
+        }
+        
+        .font-controls .control-button.resize {
+            width: 36px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        /* Adds a subtle divider line after the Reset button */
+        #reset-notes {
+            position: relative;
+            margin-right: 6px;
+        }
+        #reset-notes::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 15%;
+            height: 70%;
+            width: 1px;
+            background-color: var(--md-sys-color-outline-variant);
         }
         
         /* Android 15 Workspace Tab Tiles */
