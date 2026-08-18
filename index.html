@@ -417,21 +417,24 @@
         }
         
         .workspace-tab {
-            background-color: var(--md-sys-color-surface-container-high); 
+            /* Changed to pure white in light mode for crisp contrast against the gray background */
+            background-color: var(--md-sys-color-surface-container-lowest); 
             border: none; 
-            color: var(--text-color);
+            color: var(--secondary-text-color); /* Muted text for unselected state */
             font-family: 'Inter', sans-serif; 
             font-weight: 600; 
             font-size: 0.8rem;
-            height: 56px; /* Chunky touch target */
+            height: 56px; 
             padding: 0 14px; 
-            border-radius: 28px; /* Stadium pill shape */
+            border-radius: 28px; 
             cursor: pointer; 
             display: flex;
             align-items: center;
             justify-content: flex-start;
             gap: 8px;
-            transition: background-color 0.2s, color 0.2s, transform 0.1s cubic-bezier(0.2, 0, 0, 1);
+            /* A micro-shadow that naturally defines the edges without a hard border */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s cubic-bezier(0.2, 0, 0, 1);
         }
         
         .workspace-tab svg {
@@ -439,7 +442,7 @@
             height: 20px; 
             fill: currentColor; 
             flex-shrink: 0; 
-            opacity: 0.7;
+            opacity: 0.8;
         }
         
         .workspace-tab span {
@@ -449,17 +452,18 @@
         }
         
         .workspace-tab:hover { 
-            background-color: var(--md-sys-color-surface-container-highest); 
+            color: var(--text-color); /* Darken text to show it's interactive */
+            box-shadow: var(--shadow-elevation-1); /* Lifts up slightly on hover */
         }
         
         .workspace-tab:active {
-            transform: scale(0.94); /* Authentic Android 15 press squish */
+            transform: scale(0.94); 
         }
         
         .workspace-tab.active { 
             background-color: var(--focus-color); 
             color: var(--md-sys-color-on-primary); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for the active state */
         }
         
         .workspace-tab.active svg {
