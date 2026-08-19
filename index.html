@@ -396,7 +396,7 @@
         .minibutton {
             background-color: var(--md-sys-color-surface-container-highest); 
             border: none; 
-            border-radius: 16px; /* Thick pill shape */
+            border-radius: 28px; /* CHANGED: From 16px to 28px for full pill shape */
             padding: 16px 14px; 
             display: flex; 
             align-items: center; 
@@ -407,6 +407,7 @@
             width: 100%;
             color: var(--text-color);
         }
+        
         .minibutton:hover { background-color: var(--md-sys-color-surface-variant); }
         .minibutton:active { transform: scale(0.96); }
         
@@ -539,8 +540,8 @@
             transition: background-color 0.2s;
         }
         
-        #decrease-font { font-size: 1rem; border-radius: 16px 0 0 16px; }
-        #increase-font { font-size: 1.15rem; border-radius: 0 16px 16px 0; }
+        #decrease-font { font-size: 1rem; border-radius: 28px 0 0 28px; } /* CHANGED: 16px to 28px */
+        #increase-font { font-size: 1.15rem; border-radius: 0 28px 28px 0; } /* CHANGED: 16px to 28px */
         
         .font-size-tile button:hover { background-color: var(--md-sys-color-surface-variant); }
         .font-size-tile button:active { background-color: var(--md-sys-color-surface-container-high); }
@@ -577,10 +578,9 @@
         }
         
         .workspace-tab {
-            /* Changed to pure white in light mode for crisp contrast against the gray background */
             background-color: var(--md-sys-color-surface-container-lowest); 
             border: none; 
-            color: var(--secondary-text-color); /* Muted text for unselected state */
+            color: var(--secondary-text-color); 
             font-family: 'Inter', sans-serif; 
             font-weight: 600; 
             font-size: 0.8rem;
@@ -590,9 +590,8 @@
             cursor: pointer; 
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center; /* CHANGED: From flex-start to center */
             gap: 8px;
-            /* A micro-shadow that naturally defines the edges without a hard border */
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
             transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s cubic-bezier(0.2, 0, 0, 1);
         }
