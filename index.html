@@ -777,7 +777,7 @@
         }
         .boost-btn:hover { background: var(--focus-color); color: var(--md-sys-color-on-primary); }
 
-        #add-team-btn { padding: 10px; font-size: 0.88rem; cursor: pointer; border: 2px dashed var(--md-sys-color-outline-variant); border-radius: 12px; background-color: transparent; color: var(--text-color); font-weight: 600; transition: all 0.2s; width: 100%; flex-shrink: 0;}
+        #add-team-btn { padding: 10px; font-size: 0.88rem; cursor: pointer; border: 2px dashed var(--md-sys-color-outline-variant); border-radius: 12px; background-color: transparent; color: var(--text-color); font-weight: 600; transition: all 0.2s;}
         #add-team-btn:hover:not(:disabled) { border-color: var(--focus-color); background-color: var(--focus-bg); color: var(--md-sys-color-on-primary-container); }
         #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -1170,9 +1170,9 @@
                 
                 <!-- 2. The fixed buttons anchored to the container width -->
                 <div style="display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0; width: 100%;">
-                    <button id="add-team-btn" style="flex-grow: 1;">+ Add Team Member (0/20)</button>
-                    <button id="save-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--focus-color); background: transparent; color: var(--focus-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Save current schedule as your default">💾 Save Base</button>
-                    <button id="restore-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Restore back to your default schedule">🔄 Restore</button>
+                    <button id="add-team-btn" style="flex-grow: 1; min-width: 0;">+ Add Team Member (0/20)</button>
+                    <button id="save-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--focus-color); background: transparent; color: var(--focus-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s; white-space: nowrap; flex-shrink: 0;" title="Save current schedule as your default">💾 Save Base</button>
+                    <button id="restore-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s; white-space: nowrap; flex-shrink: 0;" title="Restore back to your default schedule">🔄 Restore</button>
                 </div>
                 
             </div>
