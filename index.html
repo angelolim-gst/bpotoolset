@@ -1150,7 +1150,11 @@
                         <span></span>
                     </div>
                     <div id="team-list-container"></div>
-                    <button id="add-team-btn">+ Add Team Member (0/20)</button>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0;">
+                        <button id="add-team-btn" style="flex-grow: 1;">+ Add Team Member (0/20)</button>
+                        <button id="save-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--focus-color); background: transparent; color: var(--focus-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Save current schedule as your default">💾 Save Base</button>
+                        <button id="restore-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Restore back to your default schedule">🔄 Restore</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1527,6 +1531,8 @@
         const todoWeekLabel = document.getElementById('todo-week-label');
 
         // DOM Variables - Team List
+        const saveBaselineBtn = document.getElementById('save-baseline-btn');
+        const restoreBaselineBtn = document.getElementById('restore-baseline-btn');
         const teamView = document.getElementById('team-view');
         const teamListContainer = document.getElementById('team-list-container');
         const addTeamBtn = document.getElementById('add-team-btn');
@@ -1886,6 +1892,7 @@
                 const pNotes = await loadKey('gusto_notes', providedData);
                 const pTodos = await loadKey('gusto_todos', providedData);
                 const pTeam = await loadKey('gusto_team', providedData);
+                const pTeamBaseline = await loadKey('gusto_team_baseline', providedData);
                 const pAlarms = await loadKey('gusto_alarms', providedData);
                 const pCustomAlarms = await loadKey('gusto_custom_alarms', providedData);
                 const pBoost = await loadKey('gusto_boostNotes', providedData);
@@ -1897,6 +1904,9 @@
                 if (pNotes !== null && pNotes !== undefined) textarea.value = pNotes;
                 if (pTodos) todos = pTodos;
                 if (pTeam) teamData = pTeam;
+                if (pTeamBaseline !== null && pTeamBaseline !== undefined) {
+                    await localforage.setItem('gusto_team_baseline', pTeamBaseline);
+                }
                 if (pBoost) boostNotes = pBoost; else boostNotes = {};
                 if (pApiKey) geminiApiKey = pApiKey;
                 if (pApiModel) geminiModel = pApiModel;
@@ -1982,6 +1992,7 @@
                 notes: await localforage.getItem('gusto_notes'),
                 todos: await localforage.getItem('gusto_todos'),
                 team: await localforage.getItem('gusto_team'),
+                teamBaseline: await localforage.getItem('gusto_team_baseline'),
                 alarms: await localforage.getItem('gusto_alarms'),
                 customAlarms: await localforage.getItem('gusto_custom_alarms'),
                 boostNotes: await localforage.getItem('gusto_boostNotes'),
@@ -2425,6 +2436,53 @@ ${sanitizedCsv.substring(0, 100000)}`;
         });
 
         // MY TEAM & BOOST MODAL LOGIC
+        
+        // --- BASELINE SCHEDULE LOGIC ---
+        saveBaselineBtn.addEventListener('click', async () => {
+            if (confirm('Save the current schedule as your default weekly Baseline?')) {
+                // We use JSON parse/stringify to create a deep clone, completely disconnecting it from active teamData
+                const snapshot = JSON.parse(JSON.stringify(teamData));
+                await localforage.setItem('gusto_team_baseline', snapshot);
+                
+                // Visual feedback
+                const originalText = saveBaselineBtn.innerHTML;
+                saveBaselineBtn.innerHTML = '✅ Saved';
+                saveBaselineBtn.style.backgroundColor = 'var(--focus-bg)';
+                setTimeout(() => {
+                    saveBaselineBtn.innerHTML = originalText;
+                    saveBaselineBtn.style.backgroundColor = 'transparent';
+                }, 2000);
+            }
+        });
+        
+        restoreBaselineBtn.addEventListener('click', async () => {
+            const baseline = await localforage.getItem('gusto_team_baseline');
+            
+            if (!baseline || baseline.length === 0) {
+                alert('No baseline saved yet! Set up your normal schedule and click "Save Base" first.');
+                return;
+            }
+        
+            if (confirm('Overwrite current schedules and restore your saved Baseline?')) {
+                // Deep clone the baseline back into the active teamData
+                teamData = JSON.parse(JSON.stringify(baseline));
+                
+                // Re-render and save the active state
+                renderTeamList();
+                updateTeamAlarms();
+                saveTeam();
+        
+                // Visual feedback
+                const originalText = restoreBaselineBtn.innerHTML;
+                restoreBaselineBtn.innerHTML = '✅ Restored';
+                restoreBaselineBtn.style.backgroundColor = 'var(--md-sys-color-surface-variant)';
+                setTimeout(() => {
+                    restoreBaselineBtn.innerHTML = originalText;
+                    restoreBaselineBtn.style.backgroundColor = 'transparent';
+                }, 2000);
+            }
+        });
+        
         const boostModal = document.getElementById('boost-modal');
         const closeBoostModalBtn = boostModal.querySelector('.modal-close-button');
         const boostPrevWeekBtn = document.getElementById('boost-prev-week');
