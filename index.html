@@ -782,19 +782,61 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 0 16px;
-            height: 38px;
+            gap: 8px;
+            padding: 10px 16px; /* Fluid padding instead of fixed height */
+            min-height: 48px; /* Taller, tap-friendly height matching workspace tabs */
             font-family: 'Inter', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 700;
-            border-radius: 999px; /* M3 Pill Shape */
+            font-size: 0.85rem;
+            font-weight: 600; /* Matched to workspace tabs */
+            border-radius: 28px; /* Fully rounded pill */
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s cubic-bezier(0.2, 0, 0, 1);
             box-sizing: border-box;
             letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.2;
         }
-        .team-action-btn:active:not(:disabled) { transform: scale(0.97); }
+        .team-action-btn:active:not(:disabled) { transform: scale(0.96); }
+
+        /* Add Member: M3 Tonal */
+        #add-team-btn {
+            flex-grow: 1;
+            min-width: 0;
+            border: none;
+            background-color: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+        }
+        #add-team-btn:hover:not(:disabled) { 
+            background-color: var(--focus-bg); 
+            color: var(--focus-color); 
+        }
+        #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Save Base: M3 Primary Tonal */
+        #save-baseline-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+            border: none;
+            background-color: var(--focus-bg);
+            color: var(--focus-color);
+        }
+        #save-baseline-btn:hover { 
+            background-color: var(--focus-color); 
+            color: var(--md-sys-color-on-primary); 
+        }
+
+        /* Restore: M3 Outlined */
+        #restore-baseline-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+            border: 1.5px solid var(--border-color);
+            background-color: transparent;
+            color: var(--secondary-text-color);
+        }
+        #restore-baseline-btn:hover { 
+            background-color: var(--md-sys-color-surface-container-highest); 
+            color: var(--text-color); 
+        }
 
         /* Add Member: M3 Tonal */
         #add-team-btn {
@@ -1226,8 +1268,8 @@
                 <!-- 2. The fixed buttons anchored to the container width -->
                 <div style="display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0; width: 100%;">
                     <button id="add-team-btn" class="team-action-btn">+ Add Team Member (0/20)</button>
-                    <button id="save-baseline-btn" class="team-action-btn" title="Save current schedule as your default">💾 Save Base</button>
-                    <button id="restore-baseline-btn" class="team-action-btn" title="Restore back to your default schedule">🔄 Restore</button>
+                    <button id="save-baseline-btn" class="team-action-btn" title="Save current schedule as your default">Save Base</button>
+                    <button id="restore-baseline-btn" class="team-action-btn" title="Restore back to your default schedule">Restore</button>
                 </div>
                 
             </div>
