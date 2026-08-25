@@ -719,7 +719,7 @@
 
         /* My Team (Excel Grid Layout) */
         #team-view { 
-            display: flex; flex-direction: column; padding: 1.25rem; overflow-x: auto; 
+            display: flex; flex-direction: column; padding: 1.25rem; overflow-x: hidden; 
             --col-eid: 60px;
             --col-sfdc: 65px;
             --col-name: 1fr;
@@ -728,6 +728,18 @@
             --col-boost: 40px;
             --col-del: 25px;
         }
+        
+        /* New Wrapper Class for Horizontal Scrolling */
+        .team-table-scroll {
+            overflow-x: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .team-table-scroll::-webkit-scrollbar { height: 8px; }
+        .team-table-scroll::-webkit-scrollbar-track { background: transparent; }
+        .team-table-scroll::-webkit-scrollbar-thumb { background-color: var(--md-sys-color-outline-variant); border-radius: 10px; border: 2px solid var(--widget-bg-color); }
+        
         .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 500px; height: 100%; }
         
         .team-header-row { display: grid; grid-template-columns: var(--col-eid) var(--col-sfdc) var(--col-name) var(--col-day) var(--col-time) var(--col-boost) var(--col-del); font-size: 0.75rem; font-weight: 700; color: var(--focus-color); margin-bottom: 5px; padding: 0; text-transform: uppercase;}
@@ -1139,23 +1151,30 @@
 
             <!-- Team View -->
             <div id="team-view" class="workspace-content hidden-view">
-                <div class="team-grid-wrapper">
-                    <div class="team-header-row" id="team-header-row">
-                        <span>EID<div class="col-resizer" data-col="eid"></div></span>
-                        <span>SFDC<div class="col-resizer" data-col="sfdc"></div></span>
-                        <span class="sortable-header" data-sort="name" title="Sort by Name">Name<span class="sort-icon"></span><div class="col-resizer" data-col="name"></div></span>
-                        <span class="sortable-header" data-sort="day" title="Sort by Day">Day<span class="sort-icon"></span><div class="col-resizer" data-col="day"></div></span>
-                        <span class="sortable-header" data-sort="time" title="Sort by Time">Time<span class="sort-icon"></span><div class="col-resizer" data-col="time"></div></span>
-                        <span>Boost</span>
-                        <span></span>
-                    </div>
-                    <div id="team-list-container"></div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0;">
-                        <button id="add-team-btn" style="flex-grow: 1;">+ Add Team Member (0/20)</button>
-                        <button id="save-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--focus-color); background: transparent; color: var(--focus-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Save current schedule as your default">💾 Save Base</button>
-                        <button id="restore-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Restore back to your default schedule">🔄 Restore</button>
+                
+                <!-- 1. The horizontally scrollable table area -->
+                <div class="team-table-scroll">
+                    <div class="team-grid-wrapper">
+                        <div class="team-header-row" id="team-header-row">
+                            <span>EID<div class="col-resizer" data-col="eid"></div></span>
+                            <span>SFDC<div class="col-resizer" data-col="sfdc"></div></span>
+                            <span class="sortable-header" data-sort="name" title="Sort by Name">Name<span class="sort-icon"></span><div class="col-resizer" data-col="name"></div></span>
+                            <span class="sortable-header" data-sort="day" title="Sort by Day">Day<span class="sort-icon"></span><div class="col-resizer" data-col="day"></div></span>
+                            <span class="sortable-header" data-sort="time" title="Sort by Time">Time<span class="sort-icon"></span><div class="col-resizer" data-col="time"></div></span>
+                            <span>Boost</span>
+                            <span></span>
+                        </div>
+                        <div id="team-list-container"></div>
                     </div>
                 </div>
+                
+                <!-- 2. The fixed buttons anchored to the container width -->
+                <div style="display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0; width: 100%;">
+                    <button id="add-team-btn" style="flex-grow: 1;">+ Add Team Member (0/20)</button>
+                    <button id="save-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--focus-color); background: transparent; color: var(--focus-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Save current schedule as your default">💾 Save Base</button>
+                    <button id="restore-baseline-btn" style="padding: 0 12px; border-radius: 12px; border: 1.5px solid var(--secondary-text-color); background: transparent; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background-color 0.2s;" title="Restore back to your default schedule">🔄 Restore</button>
+                </div>
+                
             </div>
         </div>
         
