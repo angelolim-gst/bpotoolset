@@ -768,7 +768,6 @@
         }
         .team-action-btn:active:not(:disabled) { transform: scale(0.96); }
 
-        /* Add Member: M3 Tonal */
         #add-team-btn {
             flex-grow: 1;
             min-width: 0;
@@ -782,7 +781,6 @@
         }
         #add-team-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Save Base: M3 Primary Tonal */
         #save-baseline-btn {
             flex-shrink: 0;
             white-space: nowrap;
@@ -795,7 +793,6 @@
             color: var(--md-sys-color-on-primary); 
         }
 
-        /* Restore: M3 Outlined */
         #restore-baseline-btn {
             flex-shrink: 0;
             white-space: nowrap;
@@ -867,15 +864,60 @@
         #alarms-view-container h4 { margin: 0.6rem 0 0.3rem; font-weight: 700; font-size: 0.78rem; color: var(--focus-color); text-transform: uppercase; letter-spacing: 0.5px;}
         #alarms-view-container h4:first-child { margin-top: 0; }
         #break-alarms-list, #activity-alarms-list, #custom-alarms-list, #upcoming-list { list-style: none; padding: 0; margin: 0; }
-        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.25rem; font-size: 0.88rem; border-bottom: 1px solid var(--line-color); font-weight: 500;}
+        .alarm-display-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.25rem; font-size: 0.88rem; border-bottom: 1px solid var(--line-color); font-weight: 500; gap: 8px;}
         .alarm-display-item:last-child { border-bottom: none; }
-        .alarm-details-container { display: flex; align-items: center; gap: 6px; }
+        .alarm-label-group { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .alarm-days-badge { font-size: 0.68rem; font-weight: 600; color: var(--secondary-text-color); }
+        .alarm-details-container { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .alarm-display-time { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.88rem;}
         .alarm-status { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.7rem; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;}
         .status-triggered { color: var(--md-sys-color-secondary); background-color: var(--md-sys-color-surface-container-highest); }
         .status-upcoming { color: var(--md-sys-color-on-primary-container); background-color: var(--md-sys-color-primary-container); }
         .status-missed { color: var(--md-sys-color-on-error-container); background-color: var(--md-sys-color-error-container); }
         #no-alarms-message { text-align: center; color: var(--secondary-text-color); font-size: 0.88rem; font-weight: 500; padding: 1.25rem 0; display: none; }
+
+        /* Custom Alarm Modal Rows & Day Selector Pills */
+        .custom-alarm-row {
+            background-color: var(--md-sys-color-surface-container-low);
+            padding: 10px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+        }
+        .custom-alarm-days {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .custom-day-btn {
+            flex: 1;
+            height: 28px;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--secondary-text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .custom-day-btn:hover {
+            background-color: var(--md-sys-color-surface-container-highest);
+            color: var(--text-color);
+        }
+        .custom-day-btn:active {
+            transform: scale(0.92);
+        }
+        .custom-day-btn.active {
+            background-color: var(--focus-color);
+            color: var(--md-sys-color-on-primary);
+            border-color: var(--focus-color);
+        }
 
         /* M3 Condense Calendar */
         #calendar-container { max-height: 380px; }
@@ -1134,7 +1176,7 @@
             <span id="theme-label">Light Mode</span>
             <label class="theme-switch">
                 <input type="checkbox" id="theme-toggle" /><div class="slider"></div>
-                <svg class="switch-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.807A9.002 9.002 0 0 1 10.049 2.5a9.948 9.948 0 0 0-5.12 3.935A9.996 9.996 0 0 0 12 22a9.94 9.948 0 0 0 7.07-2.93A9.996 9.996 0 0 0 12 11.807z"></path></svg>
+                <svg class="switch-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.807A9.002 9.002 0 0 1 10.049 2.5a9.948 9.948 0 0 0-5.12 3.935A9.996 9.996 0 0 0 12 22a9.948 9.948 0 0 0 7.07-2.93A9.996 9.996 0 0 0 12 11.807z"></path></svg>
                 <svg class="switch-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6zm0-10a4 4 0 1 0 4 4 4.005 4.005 0 0 0-4-4zm0-4a1 1 0 0 1-1-1V1a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm0 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zM5.636 6.636a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zm14.142 14.142a1 1 0 0 1-.707-.293l-1.414-1.414a1 1 0 0 1 1.414-1.414l1.414 1.414a1 1 0 0 1-.707 1.707zM22 13h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zM4 13H2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm15.364-6.364a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293zM4.222 20.778a1 1 0 0 1-.707-1.707l1.414-1.414a1 1 0 1 1 1.414 1.414l-1.414 1.414a1 1 0 0 1-.707.293z"></path></svg>
             </label>
         </div>
@@ -1424,7 +1466,7 @@
         <div class="modal-content" style="max-width: 360px;">
             <button class="modal-close-button">&times;</button>
             <h2 class="modal-title">Set Visual Alarms</h2>
-            <p class="alarm-form-note">Enter times in 12-hour format (e.g., 01:30). Alarms operate on PHT.</p>
+            <p class="alarm-form-note">Enter times in 12-hour format (e.g., 01:30). Alarms operate on PHT and align with your shift day.</p>
             <div class="form-group"><label for="first-break-time">First Break</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="first-break-time" placeholder="HH:MM" maxlength="5"><select id="first-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="lunch-break-time">Lunch</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="lunch-break-time" placeholder="HH:MM" maxlength="5"><select id="lunch-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
             <div class="form-group"><label for="last-break-time">Last Break</label><div class="alarm-input-group"><input type="text" class="alarm-time-input" id="last-break-time" placeholder="HH:MM" maxlength="5"><select id="last-break-ampm"><option value="AM">AM</option><option value="PM">PM</option></select></div></div>
@@ -1436,7 +1478,7 @@
             <hr/>
             <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem;">Custom Alarms</h4>
             <div id="custom-alarms-form-container"></div>
-            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 32px; color: var(--focus-color); border-color: var(--focus-color); background: transparent;">+ Add Custom Alarm</button>
+            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 34px; border-radius: 999px; border: 1.5px solid var(--focus-color); color: var(--focus-color); background: transparent; font-weight: 600; cursor: pointer;">+ Add Custom Alarm</button>
 
             <button id="save-alarms-button" class="modal-button">Set Alarms</button>
         </div>
@@ -1496,7 +1538,7 @@
             <ul>
                 <li><strong>Dynamic Clock:</strong> Real-time clock sync with multiple timezones.</li>
                 <li><strong>To-Do & Team Management:</strong> Integrated task list and automated coaching alarms.</li>
-                <li><strong>Visual Alarms:</strong> Set full-screen alerts for breaks, activities, and custom events.</li>
+                <li><strong>Visual Alarms:</strong> Set full-screen alerts for breaks, activities, and repeating custom events.</li>
                 <li><strong>Calculator:</strong> With normal, formula, and time-summing modes.</li>
                 <li><strong>Calendar View:</strong> A quick-glance monthly calendar with US & PH holidays.</li>
                 <li><strong>WFM Analyzer:</strong> Upload Excel schedules for automated PHT conversion and optimal coaching slot analysis via Gemini AI.</li>
@@ -1742,6 +1784,14 @@
         
         const defaultNotesTemplate = `SME Template : \nContact Name and Role: EE/ER/IC/CTR\nConcern: \nAction Taken: \nAssistance Needed: \nRelevant Panda: \n\nRouting Template :\n- Did we help the admin self-serve?: Y/N\n- Action or correction needed:\n- Name of admin who needs to be contacted:\n- Impacted EE names:\n- Summary of Issue:\n- Effective date of the change/correction (if applicable):`;
 
+        function escapeAttr(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
         // DESKTOP NOTIFICATIONS API
         function requestNotificationPermission() {
             if ('Notification' in window) {
@@ -1897,6 +1947,20 @@
             showSaveStatus();
         }
 
+        function buildCombinedAlarmsMap(standardAlarmsMap) {
+            const combined = { ...standardAlarmsMap };
+            customAlarmsData.forEach(ca => {
+                if (ca.label && ca.time24) {
+                    combined[ca.label] = {
+                        time: ca.time24,
+                        isCustom: true,
+                        days: Array.isArray(ca.days) ? [...ca.days] : [...DAYS_OF_WEEK]
+                    };
+                }
+            });
+            return combined;
+        }
+
         async function loadData(providedData = null, isImport = false) {
             try {
                 if (!isImport) {
@@ -1950,7 +2014,15 @@
                 if (pApiKey) geminiApiKey = pApiKey;
                 if (pApiModel) geminiModel = pApiModel;
                 if (pBoostPrompt) boostCustomPrompt = pBoostPrompt; else boostCustomPrompt = '';
-                if (pCustomAlarms) customAlarmsData = pCustomAlarms; else customAlarmsData = [];
+                
+                if (pCustomAlarms) {
+                    customAlarmsData = pCustomAlarms.map(ca => ({
+                        ...ca,
+                        days: Array.isArray(ca.days) ? ca.days : [...DAYS_OF_WEEK]
+                    }));
+                } else {
+                    customAlarmsData = [];
+                }
                 
                 if (pSettings) {
                     if (pSettings.theme) setTheme(pSettings.theme);
@@ -2003,13 +2075,7 @@
                     }
                 }
 
-                customAlarmsData.forEach(ca => {
-                    if (ca.label && ca.time24) {
-                        loadedAlarms[ca.label] = { time: ca.time24, isCustom: true };
-                    }
-                });
-
-                processAndSetAlarms(loadedAlarms);
+                processAndSetAlarms(buildCombinedAlarmsMap(loadedAlarms));
                 
                 if(isImport) {
                     await saveNotes(); await saveTodos(); await saveTeam();
@@ -2660,23 +2726,48 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
         });
 
+        function syncCustomAlarmsFromDOM() {
+            const rows = customAlarmsFormContainer.querySelectorAll('.custom-alarm-row');
+            rows.forEach((row, idx) => {
+                if (!customAlarmsData[idx]) return;
+                const labelVal = row.querySelector('.custom-alarm-label-input').value;
+                const timeVal = row.querySelector('.custom-alarm-time-input').value;
+                const ampmVal = row.querySelector('.custom-alarm-ampm').value;
+                const activeDays = Array.from(row.querySelectorAll('.custom-day-btn.active')).map(btn => btn.dataset.day);
+
+                customAlarmsData[idx].label = labelVal;
+                customAlarmsData[idx].time12 = timeVal;
+                customAlarmsData[idx].ampm = ampmVal;
+                customAlarmsData[idx].days = activeDays;
+            });
+        }
+
         function renderCustomAlarmFormRows() {
             customAlarmsFormContainer.innerHTML = '';
             customAlarmsData.forEach((ca, idx) => {
+                const selectedDays = Array.isArray(ca.days) ? ca.days : [...DAYS_OF_WEEK];
+                const dayButtonsHTML = DAYS_OF_WEEK.map(day => {
+                    const isActive = selectedDays.includes(day) ? 'active' : '';
+                    return `<button type="button" class="custom-day-btn ${isActive}" data-day="${day}" title="${day}">${day.charAt(0)}</button>`;
+                }).join('');
+
                 const row = document.createElement('div');
                 row.className = 'form-group custom-alarm-row';
                 row.dataset.idx = idx;
                 row.innerHTML = `
-                    <div style="display:flex; justify-space-between; align-items:center; margin-bottom: 5px;">
-                        <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); width: 80%; box-sizing: border-box;" value="${ca.label || ''}">
-                        <button type="button" class="remove-custom-alarm-btn" style="background:none; border:none; color:var(--secondary-text-color); font-size:1.2rem; cursor:pointer; line-height:1;">&times;</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px; gap: 6px;">
+                        <input type="text" class="custom-alarm-label-input" placeholder="Event Name" style="padding: 8px 10px; font-size: 0.85rem; border-radius: 8px; border: none; background: var(--md-sys-color-surface-container-highest); color: var(--text-color); flex-grow: 1; box-sizing: border-box; outline: none;" value="${escapeAttr(ca.label || '')}">
+                        <button type="button" class="remove-custom-alarm-btn" title="Remove Alarm" style="background:none; border:none; color:var(--secondary-text-color); font-size:1.3rem; cursor:pointer; line-height:1; padding: 0 4px;">&times;</button>
                     </div>
                     <div class="alarm-input-group">
-                        <input type="text" class="alarm-time-input custom-alarm-time-input" placeholder="HH:MM" maxlength="5" value="${ca.time12 || ''}">
+                        <input type="text" class="alarm-time-input custom-alarm-time-input" placeholder="HH:MM" maxlength="5" value="${escapeAttr(ca.time12 || '')}">
                         <select class="custom-alarm-ampm">
                             <option value="AM" ${ca.ampm === 'AM' ? 'selected' : ''}>AM</option>
                             <option value="PM" ${ca.ampm === 'PM' ? 'selected' : ''}>PM</option>
                         </select>
+                    </div>
+                    <div class="custom-alarm-days" aria-label="Repeat Days">
+                        ${dayButtonsHTML}
                     </div>
                 `;
                 const timeInput = row.querySelector('.custom-alarm-time-input');
@@ -2686,7 +2777,13 @@ ${sanitizedCsv.substring(0, 100000)}`;
         }
 
         customAlarmsFormContainer.addEventListener('click', (e) => {
+            const dayBtn = e.target.closest('.custom-day-btn');
+            if (dayBtn) {
+                dayBtn.classList.toggle('active');
+                return;
+            }
             if (e.target.classList.contains('remove-custom-alarm-btn')) {
+                syncCustomAlarmsFromDOM();
                 const row = e.target.closest('.custom-alarm-row');
                 const idx = parseInt(row.dataset.idx);
                 customAlarmsData.splice(idx, 1);
@@ -2695,7 +2792,15 @@ ${sanitizedCsv.substring(0, 100000)}`;
         });
 
         addCustomAlarmBtn.addEventListener('click', () => {
-            customAlarmsData.push({ id: Date.now() + Math.random(), label: '', time12: '', ampm: 'AM', time24: '' });
+            syncCustomAlarmsFromDOM();
+            customAlarmsData.push({
+                id: Date.now() + Math.random(),
+                label: '',
+                time12: '',
+                ampm: 'AM',
+                time24: '',
+                days: [...DAYS_OF_WEEK]
+            });
             renderCustomAlarmFormRows();
         });
 
@@ -2968,11 +3073,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 const dayOptions = DAYS_OF_WEEK.map(d => `<option value="${d}" ${member.day === d ? 'selected' : ''}>${d.substring(0,3)}</option>`).join('');
                 
                 row.innerHTML = `
-                    <input type="text" class="selectable-cell" data-field="eid" data-row="${index}" data-col="0" placeholder="EID" value="${member.eid}">
-                    <input type="text" class="selectable-cell" data-field="sfdc" data-row="${index}" data-col="1" placeholder="SFDC" value="${member.sfdc || ''}">
-                    <input type="text" class="selectable-cell" data-field="name" data-row="${index}" data-col="2" placeholder="Name" value="${member.name || ''}">
+                    <input type="text" class="selectable-cell" data-field="eid" data-row="${index}" data-col="0" placeholder="EID" value="${escapeAttr(member.eid)}">
+                    <input type="text" class="selectable-cell" data-field="sfdc" data-row="${index}" data-col="1" placeholder="SFDC" value="${escapeAttr(member.sfdc || '')}">
+                    <input type="text" class="selectable-cell" data-field="name" data-row="${index}" data-col="2" placeholder="Name" value="${escapeAttr(member.name || '')}">
                     <select data-field="day">${dayOptions}</select>
-                    <input type="time" data-field="time" value="${member.time}">
+                    <input type="time" data-field="time" value="${escapeAttr(member.time)}">
                     <div style="display:flex;"><button class="boost-btn" title="Open Boost Notes">+</button></div>
                     <button class="team-delete">&times;</button>
                 `;
@@ -3085,7 +3190,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
             allAlarms.forEach(alarm => {
-                if (alarm && alarm.time) {
+                if (alarm && alarm.time && !alarm.inactiveToday) {
                     let status = '';
                     let isUrgent = false;
                     
@@ -3310,7 +3415,9 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 const alarm = alarms[label];
                 if (alarm) {
                     const statusSpan = item.querySelector('.alarm-status');
-                    if (alarm.snoozed) {
+                    if (alarm.inactiveToday) {
+                        statusSpan.className = 'alarm-status status-triggered'; statusSpan.textContent = 'Scheduled';
+                    } else if (alarm.snoozed) {
                         statusSpan.className = 'alarm-status status-missed'; statusSpan.textContent = 'Missed';
                     } else if (alarm.dateTime && alarm.dateTime <= now) {
                         statusSpan.className = 'alarm-status status-triggered'; statusSpan.textContent = 'Triggered';
@@ -3347,6 +3454,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
             if (currentMSTDateStr !== shiftDateMST) {
                 currentMSTDateStr = shiftDateMST;
                 if (isAppReady) {
+                    const standardOnly = {};
+                    for (const [k, v] of Object.entries(alarms)) {
+                        if (v && !v.isCustom) standardOnly[k] = { time: v.time };
+                    }
+                    processAndSetAlarms(buildCombinedAlarmsMap(standardOnly));
                     updateTeamAlarms();
                     updateAlarmsView();
                 }
@@ -3456,8 +3568,17 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 newAlarm.triggered = oldAlarm && oldAlarm.time === newAlarm.time ? oldAlarm.triggered : false;
                 newAlarm.snoozed = oldAlarm && oldAlarm.time === newAlarm.time ? oldAlarm.snoozed : false;
                 newAlarm.dateTime = null; 
+                newAlarm.inactiveToday = false;
 
                 if (!newAlarm.time) continue;
+
+                // For custom alarms, check if today's shift weekday is selected
+                if (newAlarm.isCustom && Array.isArray(newAlarm.days)) {
+                    if (!newAlarm.days.includes(mstInfo.weekday)) {
+                        newAlarm.inactiveToday = true;
+                        continue;
+                    }
+                }
 
                 let alarmDatePHTString = shiftDateMST;
                 const [alarmHours] = newAlarm.time.split(':');
@@ -3540,6 +3661,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 const labelInput = row.querySelector('.custom-alarm-label-input');
                 const timeInput = row.querySelector('.custom-alarm-time-input');
                 const ampmSelect = row.querySelector('.custom-alarm-ampm');
+                const selectedDays = Array.from(row.querySelectorAll('.custom-day-btn.active')).map(btn => btn.dataset.day);
 
                 const labelVal = labelInput.value.trim();
                 const timeVal = timeInput.value.trim();
@@ -3566,7 +3688,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
                             label: labelVal,
                             time12: timeInput.value,
                             ampm: ampmSelect.value,
-                            time24: time24
+                            time24: time24,
+                            days: selectedDays
                         });
                     }
                 }
@@ -3589,11 +3712,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 'Team Meeting': { time: convertTo24Hour(document.getElementById('meeting-time').value, document.getElementById('meeting-ampm').value) }
             };
 
-            customAlarmsData.forEach(ca => {
-                tempAlarms[ca.label] = { time: ca.time24, isCustom: true };
-            });
-
-            processAndSetAlarms(tempAlarms);
+            processAndSetAlarms(buildCombinedAlarmsMap(tempAlarms));
             saveAlarms();
             requestNotificationPermission();
             alarmModal.classList.remove('show');
@@ -3652,7 +3771,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             const missedAlarms = [];
             const allAlarms = [ 
-                ...Object.keys(alarms).map(k => { if(alarms[k]) { alarms[k].label = k; return alarms[k]; } }).filter(a => a), 
+                ...Object.keys(alarms).map(k => { if(alarms[k]) { alarms[k].label = k; return alarms[k]; } }).filter(a => a && !a.inactiveToday), 
                 ...teamAlarms 
             ];
 
@@ -3736,7 +3855,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             const allAlarms = [ ...Object.entries(alarms).map(([k,v]) => ({label: k, ...v})), ...teamAlarms ];
 
             for (const alarm of allAlarms) {
-                if (alarm && alarm.dateTime && !alarm.triggered) {
+                if (alarm && alarm.dateTime && !alarm.triggered && !alarm.inactiveToday) {
                     const diffMinutes = (alarm.dateTime - now) / 60000;
                     if (diffMinutes > 0 && diffMinutes < minDiff) { minDiff = diffMinutes; nextUpcomingAlarm = { label: alarm.label, diffMinutes }; }
                 }
@@ -3751,6 +3870,16 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     topBarTitleSpan.textContent = 'Gusto Toolset'; topBarTitleContainer.classList.remove('marquee');
                 }
             }
+        }
+
+        function formatRepeatDaysLabel(days) {
+            if (!Array.isArray(days) || days.length === 7) return '';
+            if (days.length === 0) return 'Paused (No days selected)';
+            const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            const weekends = ['Saturday', 'Sunday'];
+            if (days.length === 5 && weekdays.every(d => days.includes(d))) return 'Mon–Fri';
+            if (days.length === 2 && weekends.every(d => days.includes(d))) return 'Sat–Sun';
+            return DAYS_OF_WEEK.filter(d => days.includes(d)).map(d => d.slice(0, 3)).join(', ');
         }
 
         function checkEmptyAlarmsView() {
@@ -3778,11 +3907,17 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     
                     const timeHTML = `<span class="alarm-display-time">${convertTo12Hour(alarm.time)}</span>`;
                     let statusHTML = '';
-                    if (alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
+                    if (alarm.inactiveToday) statusHTML = `<span class="alarm-status status-triggered">Scheduled</span>`;
+                    else if (alarm.snoozed) statusHTML = `<span class="alarm-status status-missed">Missed</span>`;
                     else if (alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Triggered</span>`;
                     else statusHTML = `<span class="alarm-status status-upcoming">Upcoming</span>`;
+
+                    const repeatText = alarm.isCustom ? formatRepeatDaysLabel(alarm.days) : '';
+                    const labelHTML = repeatText
+                        ? `<div class="alarm-label-group"><span>${escapeAttr(label)}</span><span class="alarm-days-badge">${repeatText}</span></div>`
+                        : `<span>${escapeAttr(label)}</span>`;
                     
-                    listItem.innerHTML = `<span>${label}</span><div class="alarm-details-container">${timeHTML}${statusHTML}</div>`;
+                    listItem.innerHTML = `${labelHTML}<div class="alarm-details-container">${timeHTML}${statusHTML}</div>`;
                     listElement.appendChild(listItem);
                 });
 
@@ -3824,7 +3959,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 else if (alarm.triggered) statusHTML = `<span class="alarm-status status-triggered">Done</span>`;
                 else statusHTML = `<span class="alarm-status status-upcoming">Upcoming</span>`;
                 
-                li.innerHTML = `<span>${alarm.label.replace('Coaching: ', '')}</span><div class="alarm-details-container"><span class="alarm-display-time">${convertTo12Hour(alarm.time)}</span>${statusHTML}</div>`;
+                li.innerHTML = `<span>${escapeAttr(alarm.label.replace('Coaching: ', ''))}</span><div class="alarm-details-container"><span class="alarm-display-time">${convertTo12Hour(alarm.time)}</span>${statusHTML}</div>`;
                 upcomingList.appendChild(li);
             });
             checkEmptyAlarmsView();
