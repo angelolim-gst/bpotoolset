@@ -57,6 +57,7 @@
             --text-color: var(--md-sys-color-on-surface);
             --secondary-text-color: var(--md-sys-color-on-surface-variant);
             --border-color: var(--md-sys-color-outline-variant);
+            --card-hairline: transparent;
             
             --focus-color: var(--md-sys-color-primary);
             --focus-bg: var(--md-sys-color-primary-container);
@@ -70,6 +71,7 @@
             --us-holiday-bg-current: var(--md-sys-color-secondary-container);
             --ph-holiday-bg-current: #ffeed9;
             --success-color: #146c2e;
+            --success-bg: #d7f5dc;
         }
 
         body.dark-mode {
@@ -115,6 +117,7 @@
             --text-color: var(--md-sys-color-on-surface);
             --secondary-text-color: var(--md-sys-color-on-surface-variant);
             --border-color: var(--md-sys-color-outline-variant);
+            --card-hairline: rgba(255, 255, 255, 0.08);
             
             --focus-color: var(--md-sys-color-primary);
             --focus-bg: var(--md-sys-color-primary-container);
@@ -126,9 +129,27 @@
             --us-holiday-bg-current: var(--md-sys-color-secondary-container);
             --ph-holiday-bg-current: #4d2e13;
             --success-color: #79d28a;
+            --success-bg: #173d21;
         }
         
         body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+        /* Global Custom Scrollbars */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+        }
+        *::-webkit-scrollbar { width: 7px; height: 7px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--md-sys-color-outline-variant);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        *::-webkit-scrollbar-thumb:hover {
+            background-color: var(--md-sys-color-outline);
+        }
         
         html, body { height: 100%; }
         
@@ -166,6 +187,7 @@
             width: 100%; height: 52px; position: fixed; top: 0; left: 0; right: 0; display: flex;
             align-items: center; justify-content: space-between; padding: 0 16px; 
             background-color: var(--md-sys-color-surface-container);
+            border-bottom: 1px solid var(--card-hairline);
             box-shadow: var(--shadow-elevation-1); z-index: 1000; box-sizing: border-box;
             transition: background-color 0.4s ease;
         }
@@ -189,9 +211,27 @@
         .dropdown-button {
             background-color: var(--md-sys-color-surface-container-highest); border: none; color: var(--text-color);
             padding: 6px 14px; font-size: 0.85rem; font-weight: 600; border-radius: 999px; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px; position: relative;
             transition: background-color 0.2s, color 0.2s;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
+
+        /* Notification Indicator Dot on Tools Button */
+        .tools-notif-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--alarm-color);
+            box-shadow: 0 0 0 2px var(--md-sys-color-surface-container-highest);
+            display: none;
+            flex-shrink: 0;
+            animation: notif-dot-pulse 2s infinite;
+        }
+        .tools-notif-dot.visible { display: inline-block; }
+        @keyframes notif-dot-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.75; }
+        }
         
         /* Transparent Shade Container */
         .dropdown-menu {
@@ -241,6 +281,8 @@
         /* Grouped Quick Settings Card (Top Block) */
         .qs-panel-card {
             background-color: var(--md-sys-color-surface-container);
+            border: 1px solid var(--card-hairline);
+            border-top: none;
             border-radius: 0 0 28px 28px;
             padding: 10px 16px 16px 16px;
             box-shadow: var(--shadow-elevation-3);
@@ -258,13 +300,6 @@
             min-height: 0;    
             padding: 4px;
             margin: -4px 16px 0 16px; 
-        }
-
-        .notifications-section::-webkit-scrollbar { width: 6px; }
-        .notifications-section::-webkit-scrollbar-track { background: transparent; }
-        .notifications-section::-webkit-scrollbar-thumb {
-            background-color: var(--md-sys-color-outline-variant); 
-            border-radius: 10px; 
         }
 
         .notif-section-header {
@@ -327,6 +362,7 @@
         /* Floating Update Footer */
         .panel-update-footer {
             background-color: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--card-hairline);
             border-radius: 999px;
             padding: 10px 16px;
             box-shadow: var(--shadow-elevation-1);
@@ -379,6 +415,13 @@
         
         .minibutton:hover { background-color: var(--md-sys-color-surface-variant); }
         .minibutton:active { transform: scale(0.96); }
+        .minibutton.active {
+            background-color: var(--focus-bg);
+            color: var(--focus-color);
+        }
+        .minibutton.active:hover {
+            filter: brightness(0.97);
+        }
         .minibutton svg { width: 22px; height: 22px; flex-shrink: 0; fill: currentColor; }
 
         .minibutton span {
@@ -391,6 +434,32 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
+
+        /* M3 Tonal Control Buttons (Modal Header Actions) */
+        .control-button {
+            background-color: var(--focus-bg);
+            color: var(--focus-color);
+            border: none;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        }
+        .control-button:hover:not(:disabled) {
+            background-color: var(--focus-color);
+            color: var(--md-sys-color-on-primary);
+        }
+        .control-button:active:not(:disabled) { transform: scale(0.95); }
+        .control-button:disabled { opacity: 0.55; cursor: not-allowed; }
 
         .dropdown-header { 
             grid-column: 1 / -1; 
@@ -465,9 +534,10 @@
         
         /* M3 Widget Cards */
         .widget {
-            background-color: var(--widget-bg-color); color: var(--text-color); border: none;
+            background-color: var(--widget-bg-color); color: var(--text-color);
+            border: 1px solid var(--card-hairline);
             border-radius: 20px; box-shadow: var(--shadow-elevation-1); box-sizing: border-box; opacity: 1;
-            transition: background-color 0.4s ease, color 0.4s ease; padding: 12px;
+            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; padding: 12px;
         }
         
         .textarea-container {
@@ -535,7 +605,7 @@
         
         .workspace-tab {
             background-color: var(--md-sys-color-surface-container-lowest); 
-            border: none; 
+            border: 1px solid var(--card-hairline); 
             color: var(--secondary-text-color); 
             font-family: 'Inter', sans-serif; 
             font-weight: 600; 
@@ -556,7 +626,7 @@
         .workspace-tab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .workspace-tab:hover { color: var(--text-color); box-shadow: var(--shadow-elevation-1); }
         .workspace-tab:active { transform: scale(0.94); }
-        .workspace-tab.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .workspace-tab.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); border-color: transparent; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
         .workspace-tab.active svg { opacity: 1; }
         
         .hidden-view { display: none !important; }
@@ -564,39 +634,133 @@
         /* Detached Main Content Card */
         .workspace-content {
             flex-grow: 1; width: 100%; box-sizing: border-box;
-            background-color: var(--widget-bg-color); color: var(--text-color); border: none;
+            background-color: var(--widget-bg-color); color: var(--text-color);
+            border: 1px solid var(--card-hairline);
             border-radius: 24px;
             box-shadow: var(--shadow-elevation-1);
-            transition: background-color 0.4s ease, color 0.4s ease;
+            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
             overflow-y: auto; overflow-x: hidden;
         }
 
-        .workspace-content::-webkit-scrollbar, textarea#main-content::-webkit-scrollbar, .csv-textarea::-webkit-scrollbar, .formatted-display-box::-webkit-scrollbar { width: 8px; }
-        .workspace-content::-webkit-scrollbar-track, textarea#main-content::-webkit-scrollbar-track, .csv-textarea::-webkit-scrollbar-track, .formatted-display-box::-webkit-scrollbar-track { background: transparent; }
-        .workspace-content::-webkit-scrollbar-thumb, textarea#main-content::-webkit-scrollbar-thumb, .csv-textarea::-webkit-scrollbar-thumb, .formatted-display-box::-webkit-scrollbar-thumb {
-            background-color: var(--md-sys-color-outline-variant); border-radius: 10px; border: 2px solid var(--widget-bg-color);
+        /* Notepad Wrapper & Floating Copy Pill */
+        .notepad-wrapper {
+            flex-grow: 1;
+            width: 100%;
+            min-height: 0;
+            display: flex;
+            position: relative;
         }
 
-        /* Notepad */
         textarea#main-content {
             margin: 0;
             padding: 1rem; 
+            padding-bottom: 2.8rem;
             font-size: 12px; 
             line-height: 1.65; 
             resize: none; 
             font-family: 'Inter', sans-serif; 
             outline: none;
-            border: 0;
             width: 100%;
+            height: 100%;
             box-sizing: border-box;
+        }
+
+        .floating-copy-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(4px);
+            pointer-events: none;
+            box-shadow: var(--shadow-elevation-1);
+            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            z-index: 15;
+        }
+        .notepad-wrapper:hover .floating-copy-btn,
+        .notepad-wrapper:focus-within .floating-copy-btn,
+        .floating-copy-btn.copied {
+            opacity: 0.94;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .floating-copy-btn:hover {
+            opacity: 1;
+            background-color: var(--focus-bg);
+            color: var(--focus-color);
+            border-color: var(--focus-color);
+        }
+        .floating-copy-btn.copied {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        .floating-copy-btn svg {
+            width: 13px;
+            height: 13px;
+            fill: currentColor;
+        }
+
+        /* Compact Mini Pill Button (Today Jumps) */
+        .mini-pill-btn {
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--focus-color);
+            border: none;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .mini-pill-btn:hover {
+            background-color: var(--focus-bg);
+        }
+        .mini-pill-btn:active { transform: scale(0.94); }
+        .mini-pill-btn.is-current {
+            opacity: 0.45;
+            cursor: default;
+        }
+        .mini-pill-btn.is-current:hover {
+            background-color: var(--md-sys-color-surface-container-high);
         }
 
         /* To-Do List */
         #todo-view { display: flex; flex-direction: column; padding: 1.25rem; }
-        .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .todo-nav button { background: none; border: none; border-radius: 999px; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.95rem;}
-        .todo-nav button:hover { background-color: var(--md-sys-color-surface-container-highest); }
-        #todo-week-label { font-weight: 700; font-size: 0.9rem; }
+        .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 6px; }
+        .todo-nav > button { background: none; border: none; border-radius: 999px; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; }
+        .todo-nav > button:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        .todo-nav-center { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        #todo-week-label { font-weight: 700; font-size: 0.88rem; }
+        .todo-progress-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--secondary-text-color);
+            display: none;
+        }
+        .todo-progress-pill.visible { display: inline-block; }
+        .todo-progress-pill.all-done {
+            background-color: var(--success-bg);
+            color: var(--success-color);
+        }
+
         .todo-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 16px; text-align: center; }
         .todo-day { padding: 6px 0; border-radius: 12px; border: none; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; color: var(--secondary-text-color); background-color: var(--md-sys-color-surface-container-high);}
         .todo-day span { display: block; font-size: 1rem; font-weight: 700; color: var(--text-color); margin-top: 2px; }
@@ -653,9 +817,6 @@
             display: flex;
             flex-direction: column;
         }
-        .team-table-scroll::-webkit-scrollbar { height: 8px; }
-        .team-table-scroll::-webkit-scrollbar-track { background: transparent; }
-        .team-table-scroll::-webkit-scrollbar-thumb { background-color: var(--md-sys-color-outline-variant); border-radius: 10px; border: 2px solid var(--widget-bg-color); }
         
         .team-grid-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 500px; height: 100%; }
         
@@ -782,11 +943,11 @@
         /* M3 Condense Card Switcher */
         .card-viewer-area { flex-shrink: 0; }
         .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; gap: 8px; }
-        .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); }
+        .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); border: 1px solid var(--card-hairline); }
         .switcher-button { background: transparent; border: none; padding: 6px 14px; border-radius: 999px; color: var(--text-color); font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
         .switcher-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
-        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
+        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: 1px solid var(--card-hairline); border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
         #toggle-cards-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
         #toggle-cards-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.4s ease; }
 
@@ -853,23 +1014,58 @@
         }
 
         /* M3 Condense Calendar */
-        #calendar-container { max-height: 380px; }
+        #calendar-container { max-height: 430px; }
         #calendar { font-family: 'JetBrains Mono', monospace; padding: 0.4rem; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.4rem; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.4rem; gap: 6px; }
+        .calendar-header-center { display: flex; align-items: center; gap: 6px; }
         .calendar-header h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; margin: 0; color: var(--text-color);}
-        .calendar-header button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
-        .calendar-header button:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        .calendar-header > button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-weight: bold; flex-shrink: 0;}
+        .calendar-header > button:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .calendar-body { text-align: center; }
         .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
         .calendar-weekdays div { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--secondary-text-color); padding-bottom: 0.3rem; text-transform: uppercase;}
-        .calendar-days div { padding: 0; font-size: 0.82rem; font-weight: 600; transition: background-color 0.2s, color 0.2s; border-radius: 999px; cursor: pointer; display: flex; justify-content: center; align-items: center; height: 28px; width: 28px; margin: auto;}
+        .calendar-days div { padding: 0; font-size: 0.82rem; font-weight: 600; transition: background-color 0.2s, color 0.2s, box-shadow 0.2s; border-radius: 999px; cursor: pointer; display: flex; justify-content: center; align-items: center; height: 28px; width: 28px; margin: auto;}
         .calendar-days div:hover:not(.current-day):not(.us-holiday):not(.ph-holiday) { background-color: var(--md-sys-color-surface-container-highest); color: var(--text-color); }
         .calendar-days .prev-date, .calendar-days .next-date { color: var(--secondary-text-color); opacity: 0.3; }
         .calendar-days .current-day { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
         .calendar-days .us-holiday { background-color: var(--us-holiday-bg-current); color: var(--text-color); }
         .calendar-days .ph-holiday { background-color: var(--ph-holiday-bg-current); color: var(--text-color); }
         .calendar-days .current-day.us-holiday, .calendar-days .current-day.ph-holiday { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); }
+        .calendar-days .selected-holiday { box-shadow: 0 0 0 2px var(--focus-color); }
         .holiday-marker { font-size: 0.5em; vertical-align: super; margin-left: 1px; opacity: 0.9; line-height: 1; font-family: 'Inter', sans-serif;}
+
+        .calendar-holiday-banner {
+            margin-top: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .calendar-holiday-banner.visible { display: flex; }
+        .holiday-country-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .holiday-country-tag.us {
+            background-color: var(--us-holiday-bg-current);
+            color: var(--text-color);
+        }
+        .holiday-country-tag.ph {
+            background-color: var(--ph-holiday-bg-current);
+            color: var(--text-color);
+        }
 
         /* M3 Condense Calculator */
         #calculator-container { max-height: 320px; overflow: hidden; padding: 0.65rem; }
@@ -922,7 +1118,7 @@
         .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1.2rem; }
         .resize-warning-content p { margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;}
 
-        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: none;}
+        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: 1px solid var(--card-hairline);}
         .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 16px 0; }
         .modal-overlay.show .modal-content { transform: scale(1); }
         
@@ -988,7 +1184,7 @@
         </div>
         <div class="top-bar-right">
             <div class="dropdown">
-                <button class="dropdown-button">Tools ▼</button>
+                <button class="dropdown-button">Tools <span id="tools-notif-dot" class="tools-notif-dot" aria-hidden="true"></span>▼</button>
                 <div class="dropdown-menu">
                     <!-- Grouped Quick Settings Top Tile Card -->
                     <div class="qs-panel-card">
@@ -1043,7 +1239,7 @@
                 
                             <span class="dropdown-header">Page Controls</span>
                             
-                            <button id="toggle-statusbar-clock-button" class="minibutton">
+                            <button id="toggle-statusbar-clock-button" class="minibutton active">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg>
                                 <span id="toggle-statusbar-clock-text">Status Clock</span>
                             </button>
@@ -1131,14 +1327,24 @@
                 </div>
             </div>
             
-            <textarea id="main-content" class="workspace-content"></textarea>
+            <div id="notepad-wrapper" class="notepad-wrapper">
+                <textarea id="main-content" class="workspace-content"></textarea>
+                <button type="button" id="copy-notes-btn" class="floating-copy-btn" title="Copy selected text (or entire note if nothing is selected)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    <span id="copy-notes-label">Copy</span>
+                </button>
+            </div>
             
             <!-- To-Do View -->
             <div id="todo-view" class="workspace-content hidden-view">
                 <div class="todo-nav">
-                    <button id="todo-prev-week">&lt;</button>
-                    <span id="todo-week-label"></span>
-                    <button id="todo-next-week">&gt;</button>
+                    <button id="todo-prev-week" title="Previous Week">&lt;</button>
+                    <div class="todo-nav-center">
+                        <span id="todo-week-label"></span>
+                        <span id="todo-progress-pill" class="todo-progress-pill"></span>
+                        <button type="button" id="todo-today-btn" class="mini-pill-btn">Today</button>
+                    </div>
+                    <button id="todo-next-week" title="Next Week">&gt;</button>
                 </div>
                 <div class="todo-days" id="todo-days-container"></div>
                 <div class="todo-input-group">
@@ -1208,8 +1414,16 @@
             <div id="cards-wrapper">
                 <div id="calendar-container" class="widget">
                     <div id="calendar">
-                        <div class="calendar-header"><button id="prev-month">&lt;</button><h3 id="month-year"></h3><button id="next-month">&gt;</button></div>
+                        <div class="calendar-header">
+                            <button id="prev-month" title="Previous Month">&lt;</button>
+                            <div class="calendar-header-center">
+                                <h3 id="month-year"></h3>
+                                <button type="button" id="calendar-today-btn" class="mini-pill-btn">Today</button>
+                            </div>
+                            <button id="next-month" title="Next Month">&gt;</button>
+                        </div>
                         <div class="calendar-body"><div class="calendar-weekdays"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div><div class="calendar-days"></div></div>
+                        <div id="calendar-holiday-banner" class="calendar-holiday-banner"></div>
                     </div>
                 </div>
                 
@@ -1294,7 +1508,7 @@
             <button class="modal-close-button">&times;</button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" id="boost-modal-title" style="margin-bottom: 0; flex-grow: 1;">Boost Notes</h2>
-                <button id="boost-ai-format-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; padding: 4px 8px; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0;">✨ Auto-Format</button>
+                <button id="boost-ai-format-btn" class="control-button">✨ Auto-Format</button>
             </div>
             <div class="todo-nav" style="margin-bottom: 15px;">
                 <button id="boost-prev-week">&lt;</button>
@@ -1369,7 +1583,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; padding-right: 35px;">
                 <h2 class="modal-title" style="margin-bottom: 0;">WFM Analyzer</h2>
                 <div style="display: flex; gap: 10px;">
-                    <button id="copy-wfm-btn" class="control-button" style="color: var(--focus-color); border-color: var(--focus-color); background: transparent; white-space: nowrap;">Copy Report</button>
+                    <button id="copy-wfm-btn" class="control-button">Copy Report</button>
                 </div>
             </div>
             
@@ -1408,7 +1622,7 @@
             <hr/>
             <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem;">Custom Alarms</h4>
             <div id="custom-alarms-form-container"></div>
-            <button id="add-custom-alarm-btn" type="button" class="control-button" style="width: 100%; margin-bottom: 1.2rem; height: 34px; border-radius: 999px; border: 1.5px solid var(--focus-color); color: var(--focus-color); background: transparent; font-weight: 600; cursor: pointer;">+ Add Custom Alarm</button>
+            <button id="add-custom-alarm-btn" type="button" style="width: 100%; margin-bottom: 1.2rem; height: 34px; border-radius: 999px; border: 1.5px solid var(--focus-color); color: var(--focus-color); background: transparent; font-weight: 600; cursor: pointer;">+ Add Custom Alarm</button>
 
             <button id="save-alarms-button" class="modal-button">Set Alarms</button>
         </div>
@@ -1508,6 +1722,7 @@
         const scheduleButton = document.getElementById('scheduleButton');
         const popoutButton = document.getElementById('popout-button');
         const dropdownButton = document.querySelector('.dropdown-button');
+        const toolsNotifDot = document.getElementById('tools-notif-dot');
         const dropdownMenu = document.querySelector('.dropdown-menu');
         const qsBackdrop = document.getElementById('qs-backdrop');
         const panelNotifList = document.getElementById('panel-notifications-list');
@@ -1527,7 +1742,10 @@
         const formatToggle = document.getElementById('format-toggle');
         
         // Main Workspace
+        const notepadWrapper = document.getElementById('notepad-wrapper');
         const textarea = document.getElementById('main-content');
+        const copyNotesBtn = document.getElementById('copy-notes-btn');
+        const copyNotesLabel = document.getElementById('copy-notes-label');
         const increaseFontBtn = document.getElementById('increase-font');
         const decreaseFontBtn = document.getElementById('decrease-font');
         const resetNotesBtn = document.getElementById('reset-notes');
@@ -1543,6 +1761,8 @@
         const todoAddBtn = document.getElementById('todo-add-btn');
         const todoPrevWeekBtn = document.getElementById('todo-prev-week');
         const todoNextWeekBtn = document.getElementById('todo-next-week');
+        const todoTodayBtn = document.getElementById('todo-today-btn');
+        const todoProgressPill = document.getElementById('todo-progress-pill');
         const todoWeekLabel = document.getElementById('todo-week-label');
 
         // Team List
@@ -1616,6 +1836,8 @@
         const daysEl = document.querySelector('.calendar-days');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
+        const calendarTodayBtn = document.getElementById('calendar-today-btn');
+        const calendarHolidayBanner = document.getElementById('calendar-holiday-banner');
         
         const cardViewerArea = document.querySelector('.card-viewer-area');
         const toggleCardsBtn = document.getElementById('toggle-cards-btn');
@@ -1686,6 +1908,7 @@
         
         let saveTimeout;
         let saveDisplayTimeout;
+        let copyNotesFeedbackTimeout;
         let isDisplayingSaveStatus = false;
         
         let alarms = {};
@@ -1696,6 +1919,7 @@
         let snoozedAlarm = null;
         let currentlyTriggeredAlarmLabel = null;
         let calendarDate = new Date();
+        let selectedHolidayDay = null;
         let warningInterval = null;
         let currentWarningAlarm = null;
         let currentMSTDateStr = null;
@@ -1716,7 +1940,7 @@
         let teamSortAsc = true;
         let colWidths = { eid: '55px', sfdc: '60px', name: '1fr', day: '70px', time: '95px' };
 
-        // Cached DateTimeFormatters (avoids per-second allocations)
+        // Cached DateTimeFormatters
         const mstPartsFormatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'America/Denver',
             year: 'numeric',
@@ -1795,6 +2019,23 @@
             });
         }
 
+        function syncQuickSettingsTileStates() {
+            const isWide = document.body.classList.contains('wide-mode');
+            const isScroll = document.body.classList.contains('scroll-enabled');
+
+            toggleStatusBarClockButton.classList.toggle('active', showStatusBarClock);
+            toggleStatusBarClockText.textContent = showStatusBarClock ? 'Status Clock: On' : 'Status Clock: Off';
+
+            toggleWidthButton.classList.toggle('active', isWide);
+            toggleWidthText.textContent = isWide ? 'Wide Mode: On' : 'Wide Mode: Off';
+
+            toggleScrollButton.classList.toggle('active', isScroll);
+            toggleScrollText.textContent = isScroll ? 'Page Scroll: On' : 'Page Scroll: Off';
+
+            toggleHoldTimerButton.classList.toggle('active', showHoldTimer);
+            toggleHoldTimerText.textContent = showHoldTimer ? 'Hold Timer: On' : 'Hold Timer: Off';
+        }
+
         function escapeHTML(str) {
             return String(str || '')
                 .replace(/&/g, '&amp;')
@@ -1802,6 +2043,31 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        function copyTextSafely(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text).catch(() => fallbackCopyText(text));
+            }
+            return fallbackCopyText(text);
+        }
+
+        function fallbackCopyText(text) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const temp = document.createElement('textarea');
+                    temp.value = text;
+                    temp.style.position = 'fixed';
+                    temp.style.opacity = '0';
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            });
         }
 
         // DESKTOP NOTIFICATIONS API
@@ -1923,7 +2189,7 @@
         }
 
         async function saveNotes() { await localforage.setItem('gusto_notes', textarea.value); showSaveStatus(); }
-        async function saveTodos() { await localforage.setItem('gusto_todos', todos); showSaveStatus(); }
+        async function saveTodos() { await localforage.setItem('gusto_todos', todos); showSaveStatus(); updateToolsNotificationDot(); }
         async function saveTeam() { await localforage.setItem('gusto_team', teamData); showSaveStatus(); }
         async function saveAlarms() {
             const serializableAlarms = {};
@@ -1937,6 +2203,7 @@
                 localforage.setItem('gusto_custom_alarms', customAlarmsData)
             ]);
             showSaveStatus();
+            updateToolsNotificationDot();
         }
         async function saveBoostNotes() { await localforage.setItem('gusto_boostNotes', boostNotes); showSaveStatus(); }
         async function saveApiConfig() {
@@ -2043,23 +2310,15 @@
                         use24HourFormat = pSettings.use24HourFormat;
                         formatToggle.checked = use24HourFormat;
                     }
-                    if (pSettings.isWideMode) {
-                        document.body.classList.add('wide-mode');
-                        toggleWidthText.textContent = 'Disable Wide Mode';
-                    }
-                    if (pSettings.isScrollEnabled) {
-                        document.body.classList.add('scroll-enabled');
-                        toggleScrollText.textContent = 'Disable Full Page Scroll';
-                    }
+                    document.body.classList.toggle('wide-mode', Boolean(pSettings.isWideMode));
+                    document.body.classList.toggle('scroll-enabled', Boolean(pSettings.isScrollEnabled));
                     if (pSettings.showHoldTimer !== undefined) {
                         showHoldTimer = pSettings.showHoldTimer;
                         holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
-                        toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
                     }
                     if (pSettings.showStatusBarClock !== undefined) {
                         showStatusBarClock = pSettings.showStatusBarClock;
                         statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
-                        toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
                     }
                     if (pSettings.colWidths) {
                         colWidths = pSettings.colWidths;
@@ -2069,6 +2328,7 @@
                     }
                 }
 
+                syncQuickSettingsTileStates();
                 updateActiveTimezoneButtons();
 
                 const loadedAlarms = pAlarms || {};
@@ -2101,6 +2361,7 @@
                 renderTodoWeek();
                 renderTeamList();
                 updateTeamAlarms();
+                updateToolsNotificationDot();
             } catch (error) {
                 console.warn('Database load failed:', error);
             }
@@ -2193,7 +2454,7 @@
         copyWfmBtn.addEventListener('click', () => {
             const content = wfmAnalysisOutput.innerText;
             if (content) {
-                navigator.clipboard.writeText(content).then(() => {
+                copyTextSafely(content).then(() => {
                     copyWfmBtn.textContent = 'Copied!';
                     setTimeout(() => { copyWfmBtn.textContent = 'Copy Report'; }, 2000);
                 });
@@ -2404,6 +2665,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
         
             const todayStr = getLocalYMD(getShiftDateObj());
             if (!selectedTodoDateStr) selectedTodoDateStr = todayStr;
+
+            todoTodayBtn.classList.toggle('is-current', selectedTodoDateStr === todayStr);
         
             const frag = document.createDocumentFragment();
             for (let i = 0; i < 7; i++) {
@@ -2432,6 +2695,13 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 renderTodoWeek();
             }
         });
+
+        todoTodayBtn.addEventListener('click', () => {
+            const shiftToday = getShiftDateObj();
+            currentTodoWeekStart = shiftToday;
+            selectedTodoDateStr = getLocalYMD(shiftToday);
+            renderTodoWeek();
+        });
         
         function renderTodoList() {
             todoList.innerHTML = '';
@@ -2451,11 +2721,17 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     }
                 });
             });
-        
+
             if (combinedTasks.length === 0) {
+                todoProgressPill.classList.remove('visible', 'all-done');
                 todoList.innerHTML = '<li style="text-align:center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0;">No tasks for this day.</li>';
                 return;
             }
+
+            const completedCount = combinedTasks.filter(t => t.done).length;
+            todoProgressPill.textContent = `${completedCount}/${combinedTasks.length}`;
+            todoProgressPill.classList.add('visible');
+            todoProgressPill.classList.toggle('all-done', completedCount === combinedTasks.length);
         
             const frag = document.createDocumentFragment();
             combinedTasks.forEach(task => {
@@ -2531,7 +2807,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 saveBaselineBtn.style.backgroundColor = 'var(--focus-bg)';
                 setTimeout(() => {
                     saveBaselineBtn.innerHTML = originalText;
-                    saveBaselineBtn.style.backgroundColor = 'transparent';
+                    saveBaselineBtn.style.backgroundColor = '';
                 }, 2000);
             }
         });
@@ -2554,7 +2830,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 restoreBaselineBtn.style.backgroundColor = 'var(--md-sys-color-surface-variant)';
                 setTimeout(() => {
                     restoreBaselineBtn.innerHTML = originalText;
-                    restoreBaselineBtn.style.backgroundColor = 'transparent';
+                    restoreBaselineBtn.style.backgroundColor = '';
                 }, 2000);
             }
         });
@@ -2907,8 +3183,15 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
         });
 
+        // Guarded copy handler: only intercepts when My Team tab is visible and focus is not in Notepad/text input
         document.addEventListener('copy', (e) => {
-            const selected = document.querySelectorAll('.cell-selected');
+            if (teamView.classList.contains('hidden-view')) return;
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'TEXTAREA' || (activeEl.tagName === 'INPUT' && !activeEl.classList.contains('selectable-cell')))) {
+                return;
+            }
+
+            const selected = teamListContainer.querySelectorAll('.cell-selected');
             if (selected.length > 1) {
                 e.preventDefault();
                 const matrix = [];
@@ -3113,9 +3396,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
         });
 
-        // Populate Notifications List (Today + Overdue Tasks)
-        function populatePanelNotifications() {
-            const cards = [];
+        function collectPendingNotifications() {
+            const items = [];
             const now = new Date(synchronizedTime);
             const todayStr = getLocalYMD(getShiftDateObj());
 
@@ -3133,14 +3415,12 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     }
 
                     if (status) {
-                        cards.push(`
-                            <div class="notification-card ${isUrgent ? 'urgent' : ''}">
-                                <svg class="notif-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
-                                <div class="notif-content">
-                                    <div class="notif-title">${escapeHTML(alarm.label)}</div>
-                                    <div class="notif-desc">${convertTo12Hour(alarm.time)} • ${status}</div>
-                                </div>
-                            </div>`);
+                        items.push({
+                            type: 'alarm',
+                            isUrgent,
+                            title: alarm.label,
+                            desc: `${convertTo12Hour(alarm.time)} • ${status}`
+                        });
                     }
                 }
             });
@@ -3153,28 +3433,56 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
                 list.forEach(task => {
                     if (!task.done) {
-                        const isOverdue = isPast;
-                        const badgeText = isOverdue
-                            ? `Overdue (${formatShortDate(task.createdDate || dateKey)})`
-                            : 'Today';
-                        
-                        cards.push(`
-                            <div class="notification-card ${isOverdue ? 'overdue' : ''}">
-                                <svg class="notif-icon" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
-                                </svg>
-                                <div class="notif-content">
-                                    <div class="notif-title">${escapeHTML(task.text)}</div>
-                                    <div class="notif-desc">${badgeText}</div>
-                                </div>
-                            </div>`);
+                        items.push({
+                            type: 'todo',
+                            isOverdue: isPast,
+                            title: task.text,
+                            desc: isPast ? `Overdue (${formatShortDate(task.createdDate || dateKey)})` : 'Today'
+                        });
                     }
                 });
             });
 
-            panelNotifList.innerHTML = cards.length > 0
-                ? cards.join('')
-                : '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
+            return items;
+        }
+
+        function updateToolsNotificationDot() {
+            const hasNotifs = collectPendingNotifications().length > 0;
+            toolsNotifDot.classList.toggle('visible', hasNotifs);
+        }
+
+        // Populate Notifications List (Today + Overdue Tasks)
+        function populatePanelNotifications() {
+            const items = collectPendingNotifications();
+            toolsNotifDot.classList.toggle('visible', items.length > 0);
+
+            if (items.length === 0) {
+                panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
+                return;
+            }
+
+            panelNotifList.innerHTML = items.map(item => {
+                if (item.type === 'alarm') {
+                    return `
+                        <div class="notification-card ${item.isUrgent ? 'urgent' : ''}">
+                            <svg class="notif-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+                            <div class="notif-content">
+                                <div class="notif-title">${escapeHTML(item.title)}</div>
+                                <div class="notif-desc">${escapeHTML(item.desc)}</div>
+                            </div>
+                        </div>`;
+                }
+                return `
+                    <div class="notification-card ${item.isOverdue ? 'overdue' : ''}">
+                        <svg class="notif-icon" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
+                        </svg>
+                        <div class="notif-content">
+                            <div class="notif-title">${escapeHTML(item.title)}</div>
+                            <div class="notif-desc">${escapeHTML(item.desc)}</div>
+                        </div>
+                    </div>`;
+            }).join('');
         }
 
         // App Update Checker Logic
@@ -3213,14 +3521,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
             requestNotificationPermission();
             showHoldTimer = !showHoldTimer;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
-            toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
+            syncQuickSettingsTileStates();
             saveSettings();
         });
         
         toggleStatusBarClockButton.addEventListener('click', () => {
             showStatusBarClock = !showStatusBarClock;
             statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
-            toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
+            syncQuickSettingsTileStates();
             if (showStatusBarClock) updateClock();
             saveSettings();
         });
@@ -3363,6 +3671,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     statusSpan.className = 'alarm-status status-upcoming'; statusSpan.textContent = 'Upcoming';
                 }
             });
+
+            updateToolsNotificationDot();
         }
 
         function updateClock() {
@@ -3380,6 +3690,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     processAndSetAlarms(buildCombinedAlarmsMap(standardOnly));
                     updateTeamAlarms();
                     updateAlarmsView();
+                    updateToolsNotificationDot();
                 }
             }
 
@@ -3416,6 +3727,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         tzButtons.forEach(button => button.addEventListener('click', () => {
             activeTimezone = button.dataset.tz;
+            selectedHolidayDay = null;
             updateActiveTimezoneButtons();
             updateClock();
             saveSettings();
@@ -3428,10 +3740,13 @@ ${sanitizedCsv.substring(0, 100000)}`;
         
         // TABS
         function switchWorkspaceTab(target) {
+            if (target !== 'team') {
+                clearCellSelection();
+            }
             tabNotepad.classList.toggle('active', target === 'notepad');
             tabTodo.classList.toggle('active', target === 'todo');
             tabTeam.classList.toggle('active', target === 'team');
-            textarea.classList.toggle('hidden-view', target !== 'notepad');
+            notepadWrapper.classList.toggle('hidden-view', target !== 'notepad');
             todoView.classList.toggle('hidden-view', target !== 'todo');
             teamView.classList.toggle('hidden-view', target !== 'team');
             if (target === 'todo') renderTodoWeek();
@@ -3440,6 +3755,28 @@ ${sanitizedCsv.substring(0, 100000)}`;
         tabNotepad.addEventListener('click', () => switchWorkspaceTab('notepad'));
         tabTodo.addEventListener('click', () => switchWorkspaceTab('todo'));
         tabTeam.addEventListener('click', () => switchWorkspaceTab('team'));
+
+        // Floating Notepad Copy Pill (preserves exact selection range without blurring textarea)
+        copyNotesBtn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+        copyNotesBtn.addEventListener('click', () => {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const hasSelection = typeof start === 'number' && typeof end === 'number' && start !== end;
+            const textToCopy = hasSelection ? textarea.value.slice(start, end) : textarea.value;
+            if (!textToCopy) return;
+
+            copyTextSafely(textToCopy).then(() => {
+                copyNotesBtn.classList.add('copied');
+                copyNotesLabel.textContent = hasSelection ? 'Copied Selection' : 'Copied All';
+                clearTimeout(copyNotesFeedbackTimeout);
+                copyNotesFeedbackTimeout = setTimeout(() => {
+                    copyNotesBtn.classList.remove('copied');
+                    copyNotesLabel.textContent = 'Copy';
+                }, 1800);
+            }).catch(err => console.error('Failed to copy notepad text:', err));
+        });
 
         const updateFontSize = () => { textarea.style.fontSize = `${currentFontSize}px`; };
         increaseFontBtn.addEventListener('click', () => { currentFontSize++; updateFontSize(); });
@@ -3526,6 +3863,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
             updateAlarmsView();
             resetVisualAlarmState();
+            updateToolsNotificationDot();
         }
 
         function updateTeamAlarms() {
@@ -3561,6 +3899,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 }
             });
             updateUpcomingView();
+            updateToolsNotificationDot();
         }
 
         function resetVisualAlarmState() {
@@ -3667,6 +4006,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             updateAlarmsView();
             updateUpcomingView();
+            updateToolsNotificationDot();
             
             const now = new Date(synchronizedTime);
             now.setMinutes(now.getMinutes() + 1);
@@ -3689,6 +4029,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 updateAlarmsView();
                 updateUpcomingView();
                 updateTopBarTitle(synchronizedTime);
+                updateToolsNotificationDot();
             }
             currentlyTriggeredAlarmLabel = null;
         });
@@ -3745,6 +4086,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 });
                 updateAlarmsView();
                 updateUpcomingView();
+                updateToolsNotificationDot();
                 return;
             }
             
@@ -3928,7 +4270,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
         showCalcBtn.addEventListener('click', () => switchCardView(showCalcBtn, calculatorContainer));
         toggleCardsBtn.addEventListener('click', () => cardViewerArea.classList.toggle('cards-collapsed'));
 
-        // CALENDAR (With Holiday & Render Caching)
+        // CALENDAR (With Holiday & Render Caching + Interactive Holiday Banner)
         const holidaysCache = {};
 
         function getNthWeekdayOfMonth(year, month, dayOfWeek, n) {
@@ -4020,6 +4362,18 @@ ${sanitizedCsv.substring(0, 100000)}`;
             return holidays;
         }
 
+        function renderHolidayBanner(holidayList) {
+            if (!holidayList || holidayList.length === 0) {
+                calendarHolidayBanner.classList.remove('visible');
+                calendarHolidayBanner.innerHTML = '';
+                return;
+            }
+            calendarHolidayBanner.innerHTML = holidayList.map(h =>
+                `<span class="holiday-country-tag ${h.country.toLowerCase()}">${escapeHTML(h.country)}</span><span>${escapeHTML(h.name)}</span>`
+            ).join('<span style="opacity:0.4;">•</span>');
+            calendarHolidayBanner.classList.add('visible');
+        }
+
         function generateCalendar(now, force = false) {
             const { tzPartsFmt } = getActiveFormatters();
             const tzParts = tzPartsFmt.formatToParts(now);
@@ -4029,7 +4383,10 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
-            const renderKey = `${year}-${month}|${activeYear}-${activeMonth}-${activeDay}`;
+            const isViewingCurrentMonth = (year === activeYear && month === activeMonth);
+            calendarTodayBtn.classList.toggle('is-current', isViewingCurrentMonth);
+
+            const renderKey = `${year}-${month}|${activeYear}-${activeMonth}-${activeDay}|${selectedHolidayDay}`;
             if (!force && renderKey === lastCalendarRenderKey) return;
             lastCalendarRenderKey = renderKey;
 
@@ -4046,21 +4403,59 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
             for (let i = 1; i <= lastDate; i++) {
                 const classes = [];
-                let title = '', content = i;
-                if (i === activeDay && month === activeMonth && year === activeYear) classes.push('current-day');
+                let title = '', content = i, dayAttr = '';
+                if (i === activeDay && isViewingCurrentMonth) classes.push('current-day');
                 if (holidaysInMonth[i]) {
                     const info = holidaysInMonth[i];
                     classes.push(info[0].country === 'US' ? 'us-holiday' : 'ph-holiday');
+                    if (selectedHolidayDay === i) classes.push('selected-holiday');
                     title = info.map(h => `[${h.country}] - ${h.name}`).join('\n');
                     content = `${i}<sup class="holiday-marker">H</sup>`;
+                    dayAttr = ` data-holiday-day="${i}"`;
                 }
-                cells.push(`<div class="${classes.join(' ')}" title="${title}">${content}</div>`);
+                cells.push(`<div class="${classes.join(' ')}" title="${title}"${dayAttr}>${content}</div>`);
             }
             daysEl.innerHTML = cells.join('');
+
+            if (selectedHolidayDay && holidaysInMonth[selectedHolidayDay]) {
+                renderHolidayBanner(holidaysInMonth[selectedHolidayDay]);
+            } else if (isViewingCurrentMonth && holidaysInMonth[activeDay]) {
+                renderHolidayBanner(holidaysInMonth[activeDay]);
+            } else {
+                renderHolidayBanner(null);
+            }
         }
 
-        prevMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); generateCalendar(synchronizedTime, true); });
-        nextMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); generateCalendar(synchronizedTime, true); });
+        daysEl.addEventListener('click', (e) => {
+            const holidayCell = e.target.closest('[data-holiday-day]');
+            if (holidayCell) {
+                const clickedDay = parseInt(holidayCell.dataset.holidayDay, 10);
+                selectedHolidayDay = (selectedHolidayDay === clickedDay) ? null : clickedDay;
+            } else {
+                selectedHolidayDay = null;
+            }
+            generateCalendar(synchronizedTime, true);
+        });
+
+        prevMonthBtn.addEventListener('click', () => {
+            selectedHolidayDay = null;
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            generateCalendar(synchronizedTime, true);
+        });
+        nextMonthBtn.addEventListener('click', () => {
+            selectedHolidayDay = null;
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            generateCalendar(synchronizedTime, true);
+        });
+        calendarTodayBtn.addEventListener('click', () => {
+            const { tzPartsFmt } = getActiveFormatters();
+            const tzParts = tzPartsFmt.formatToParts(synchronizedTime);
+            const activeYear = parseInt(tzParts.find(p => p.type === 'year').value, 10);
+            const activeMonth = parseInt(tzParts.find(p => p.type === 'month').value, 10) - 1;
+            selectedHolidayDay = null;
+            calendarDate = new Date(activeYear, activeMonth, 1);
+            generateCalendar(synchronizedTime, true);
+        });
 
         // CALCULATOR 
         function switchCalcView(activeButton, activeView) {
@@ -4172,7 +4567,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             csvOutput.value = csvStr;
             
             if (csvStr) {
-                navigator.clipboard.writeText(csvStr).then(() => {
+                copyTextSafely(csvStr).then(() => {
                     const originalText = generateCsvButton.textContent;
                     generateCsvButton.textContent = 'Copied to Clipboard!';
                     generateCsvButton.style.backgroundColor = 'var(--success-color)';
@@ -4190,13 +4585,13 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         toggleWidthButton.addEventListener('click', () => {
             document.body.classList.toggle('wide-mode');
-            toggleWidthText.textContent = document.body.classList.contains('wide-mode') ? 'Disable Wide Mode' : 'Enable Wide Mode';
+            syncQuickSettingsTileStates();
             saveSettings();
         });
         
         toggleScrollButton.addEventListener('click', () => {
             document.body.classList.toggle('scroll-enabled');
-            toggleScrollText.textContent = document.body.classList.contains('scroll-enabled') ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
+            syncQuickSettingsTileStates();
             saveSettings();
         });
 
@@ -4226,6 +4621,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             updateTeamAlarms();
             updateAlarmsView();
             renderCustomAlarmFormRows();
+            updateToolsNotificationDot();
             
             initBattery();
             updateNetworkStatus();
