@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gusto-offline-v6'; // Bumped version to trigger the update
+const CACHE_NAME = 'gusto-offline-v7'; // Bumped version to trigger the update
 const FONT_CACHE = 'gusto-fonts-v1';
 
 self.addEventListener('install', (event) => {
