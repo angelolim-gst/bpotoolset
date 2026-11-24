@@ -57,7 +57,6 @@
             --text-color: var(--md-sys-color-on-surface);
             --secondary-text-color: var(--md-sys-color-on-surface-variant);
             --border-color: var(--md-sys-color-outline-variant);
-            --card-hairline: transparent;
             
             --focus-color: var(--md-sys-color-primary);
             --focus-bg: var(--md-sys-color-primary-container);
@@ -71,7 +70,7 @@
             --us-holiday-bg-current: var(--md-sys-color-secondary-container);
             --ph-holiday-bg-current: #ffeed9;
             --success-color: #146c2e;
-            --success-bg: #d7f5dc;
+            --success-bg: #dcf5e2;
         }
 
         body.dark-mode {
@@ -117,7 +116,6 @@
             --text-color: var(--md-sys-color-on-surface);
             --secondary-text-color: var(--md-sys-color-on-surface-variant);
             --border-color: var(--md-sys-color-outline-variant);
-            --card-hairline: rgba(255, 255, 255, 0.08);
             
             --focus-color: var(--md-sys-color-primary);
             --focus-bg: var(--md-sys-color-primary-container);
@@ -129,7 +127,7 @@
             --us-holiday-bg-current: var(--md-sys-color-secondary-container);
             --ph-holiday-bg-current: #4d2e13;
             --success-color: #79d28a;
-            --success-bg: #173d21;
+            --success-bg: #173820;
         }
         
         body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
@@ -143,7 +141,7 @@
         *::-webkit-scrollbar-track { background: transparent; }
         *::-webkit-scrollbar-thumb {
             background-color: var(--md-sys-color-outline-variant);
-            border-radius: 999px;
+            border-radius: 10px;
             border: 2px solid transparent;
             background-clip: content-box;
         }
@@ -187,7 +185,6 @@
             width: 100%; height: 52px; position: fixed; top: 0; left: 0; right: 0; display: flex;
             align-items: center; justify-content: space-between; padding: 0 16px; 
             background-color: var(--md-sys-color-surface-container);
-            border-bottom: 1px solid var(--card-hairline);
             box-shadow: var(--shadow-elevation-1); z-index: 1000; box-sizing: border-box;
             transition: background-color 0.4s ease;
         }
@@ -211,27 +208,20 @@
         .dropdown-button {
             background-color: var(--md-sys-color-surface-container-highest); border: none; color: var(--text-color);
             padding: 6px 14px; font-size: 0.85rem; font-weight: 600; border-radius: 999px; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 6px; position: relative;
             transition: background-color 0.2s, color 0.2s;
+            display: inline-flex; align-items: center; gap: 6px; position: relative;
         }
         .dropdown-button:hover { background-color: var(--focus-bg); color: var(--focus-color); }
 
-        /* Notification Indicator Dot on Tools Button */
         .tools-notif-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
+            width: 7px; height: 7px; border-radius: 50%;
             background-color: var(--alarm-color);
-            box-shadow: 0 0 0 2px var(--md-sys-color-surface-container-highest);
             display: none;
+            box-shadow: 0 0 0 2px var(--md-sys-color-surface-container-highest);
             flex-shrink: 0;
-            animation: notif-dot-pulse 2s infinite;
         }
-        .tools-notif-dot.visible { display: inline-block; }
-        @keyframes notif-dot-pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.25); opacity: 0.75; }
-        }
+        .tools-notif-dot.show { display: inline-block; }
+        .top-bar.snoozed .tools-notif-dot { background-color: var(--md-sys-color-on-error); box-shadow: none; }
         
         /* Transparent Shade Container */
         .dropdown-menu {
@@ -281,8 +271,6 @@
         /* Grouped Quick Settings Card (Top Block) */
         .qs-panel-card {
             background-color: var(--md-sys-color-surface-container);
-            border: 1px solid var(--card-hairline);
-            border-top: none;
             border-radius: 0 0 28px 28px;
             padding: 10px 16px 16px 16px;
             box-shadow: var(--shadow-elevation-3);
@@ -362,7 +350,6 @@
         /* Floating Update Footer */
         .panel-update-footer {
             background-color: var(--md-sys-color-surface-container-low);
-            border: 1px solid var(--card-hairline);
             border-radius: 999px;
             padding: 10px 16px;
             box-shadow: var(--shadow-elevation-1);
@@ -419,9 +406,7 @@
             background-color: var(--focus-bg);
             color: var(--focus-color);
         }
-        .minibutton.active:hover {
-            filter: brightness(0.97);
-        }
+        .minibutton.active:hover { filter: brightness(0.97); }
         .minibutton svg { width: 22px; height: 22px; flex-shrink: 0; fill: currentColor; }
 
         .minibutton span {
@@ -434,32 +419,6 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
-
-        /* M3 Tonal Control Buttons (Modal Header Actions) */
-        .control-button {
-            background-color: var(--focus-bg);
-            color: var(--focus-color);
-            border: none;
-            border-radius: 999px;
-            padding: 6px 14px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: background-color 0.2s, color 0.2s, transform 0.1s;
-        }
-        .control-button:hover:not(:disabled) {
-            background-color: var(--focus-color);
-            color: var(--md-sys-color-on-primary);
-        }
-        .control-button:active:not(:disabled) { transform: scale(0.95); }
-        .control-button:disabled { opacity: 0.55; cursor: not-allowed; }
 
         .dropdown-header { 
             grid-column: 1 / -1; 
@@ -475,6 +434,37 @@
             align-items: center;
         }
         .dropdown-header:first-child { margin-top: 0; }
+
+        /* M3 Tonal Control Buttons */
+        .control-button {
+            background-color: var(--focus-bg);
+            color: var(--focus-color);
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        .control-button:hover:not(:disabled) {
+            background-color: var(--focus-color);
+            color: var(--md-sys-color-on-primary);
+            box-shadow: var(--shadow-elevation-1);
+        }
+        .control-button:active:not(:disabled) { transform: scale(0.96); }
+        .control-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .control-button.outlined {
+            background-color: transparent;
+            border-color: var(--focus-color);
+        }
 
         /* M3 Switch & Tracking Icons */
         .theme-switch, .format-switch { position: relative; display: inline-block; width: 46px; height: 28px; flex-shrink: 0; }
@@ -534,10 +524,19 @@
         
         /* M3 Widget Cards */
         .widget {
-            background-color: var(--widget-bg-color); color: var(--text-color);
-            border: 1px solid var(--card-hairline);
+            background-color: var(--widget-bg-color); color: var(--text-color); border: 1px solid transparent;
             border-radius: 20px; box-shadow: var(--shadow-elevation-1); box-sizing: border-box; opacity: 1;
             transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; padding: 12px;
+        }
+
+        /* Dark Mode Hairline Card Borders */
+        body.dark-mode .widget,
+        body.dark-mode .modal-content,
+        body.dark-mode .workspace-tab:not(.active),
+        body.dark-mode .qs-panel-card,
+        body.dark-mode .panel-update-footer,
+        body.dark-mode .workspace-content {
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         .textarea-container {
@@ -605,7 +604,7 @@
         
         .workspace-tab {
             background-color: var(--md-sys-color-surface-container-lowest); 
-            border: 1px solid var(--card-hairline); 
+            border: 1px solid transparent; 
             color: var(--secondary-text-color); 
             font-family: 'Inter', sans-serif; 
             font-weight: 600; 
@@ -626,7 +625,7 @@
         .workspace-tab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .workspace-tab:hover { color: var(--text-color); box-shadow: var(--shadow-elevation-1); }
         .workspace-tab:active { transform: scale(0.94); }
-        .workspace-tab.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); border-color: transparent; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .workspace-tab.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border-color: transparent; }
         .workspace-tab.active svg { opacity: 1; }
         
         .hidden-view { display: none !important; }
@@ -634,128 +633,102 @@
         /* Detached Main Content Card */
         .workspace-content {
             flex-grow: 1; width: 100%; box-sizing: border-box;
-            background-color: var(--widget-bg-color); color: var(--text-color);
-            border: 1px solid var(--card-hairline);
+            background-color: var(--widget-bg-color); color: var(--text-color); border: 1px solid transparent;
             border-radius: 24px;
             box-shadow: var(--shadow-elevation-1);
             transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
             overflow-y: auto; overflow-x: hidden;
         }
 
-        /* Notepad Wrapper & Floating Copy Pill */
-        .notepad-wrapper {
-            flex-grow: 1;
-            width: 100%;
-            min-height: 0;
-            display: flex;
-            position: relative;
-        }
-
+        /* Notepad & Floating Copy Pill */
         textarea#main-content {
             margin: 0;
-            padding: 1rem; 
-            padding-bottom: 2.8rem;
+            padding: 1rem 1rem 2.6rem 1rem; 
             font-size: 12px; 
             line-height: 1.65; 
             resize: none; 
             font-family: 'Inter', sans-serif; 
             outline: none;
             width: 100%;
-            height: 100%;
             box-sizing: border-box;
         }
 
-        .floating-copy-btn {
+        .notepad-copy-pill {
             position: absolute;
             bottom: 12px;
             right: 14px;
             background-color: var(--md-sys-color-surface-container-high);
-            color: var(--text-color);
+            color: var(--secondary-text-color);
             border: 1px solid var(--border-color);
             border-radius: 999px;
             padding: 5px 12px;
             font-family: 'Inter', sans-serif;
             font-size: 0.74rem;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 5px;
             cursor: pointer;
-            opacity: 0;
-            transform: translateY(4px);
-            pointer-events: none;
+            opacity: 0.55;
             box-shadow: var(--shadow-elevation-1);
-            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
             z-index: 15;
         }
-        .notepad-wrapper:hover .floating-copy-btn,
-        .notepad-wrapper:focus-within .floating-copy-btn,
-        .floating-copy-btn.copied {
-            opacity: 0.94;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .floating-copy-btn:hover {
+        .textarea-container:hover .notepad-copy-pill,
+        .notepad-copy-pill:focus,
+        .notepad-copy-pill.copied {
             opacity: 1;
+        }
+        .notepad-copy-pill:hover {
             background-color: var(--focus-bg);
             color: var(--focus-color);
-            border-color: var(--focus-color);
+            border-color: transparent;
         }
-        .floating-copy-btn.copied {
+        .notepad-copy-pill:active { transform: scale(0.95); }
+        .notepad-copy-pill.copied {
             background-color: var(--success-bg);
             color: var(--success-color);
-            border-color: var(--success-color);
+            border-color: transparent;
         }
-        .floating-copy-btn svg {
+        .notepad-copy-pill svg {
             width: 13px;
             height: 13px;
             fill: currentColor;
         }
 
-        /* Compact Mini Pill Button (Today Jumps) */
-        .mini-pill-btn {
-            background-color: var(--md-sys-color-surface-container-high);
-            color: var(--focus-color);
-            border: none;
-            border-radius: 999px;
-            padding: 3px 9px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.68rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s, transform 0.1s;
-            white-space: nowrap;
-        }
-        .mini-pill-btn:hover {
-            background-color: var(--focus-bg);
-        }
-        .mini-pill-btn:active { transform: scale(0.94); }
-        .mini-pill-btn.is-current {
-            opacity: 0.45;
-            cursor: default;
-        }
-        .mini-pill-btn.is-current:hover {
-            background-color: var(--md-sys-color-surface-container-high);
-        }
-
         /* To-Do List */
         #todo-view { display: flex; flex-direction: column; padding: 1.25rem; }
         .todo-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 6px; }
-        .todo-nav > button { background: none; border: none; border-radius: 999px; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; }
-        .todo-nav > button:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        .todo-nav-btn { background: none; border: none; border-radius: 999px; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: all 0.2s; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; }
+        .todo-nav-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
         .todo-nav-center { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
         #todo-week-label { font-weight: 700; font-size: 0.88rem; }
+        
+        .todo-mini-pill {
+            background-color: var(--md-sys-color-surface-container-highest);
+            color: var(--focus-color);
+            border: none;
+            border-radius: 999px;
+            padding: 2px 9px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        }
+        .todo-mini-pill:hover { background-color: var(--focus-bg); }
+        .todo-mini-pill:active { transform: scale(0.94); }
+
         .todo-progress-pill {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 999px;
             background-color: var(--md-sys-color-surface-container-high);
             color: var(--secondary-text-color);
-            display: none;
+            transition: background-color 0.2s, color 0.2s;
         }
-        .todo-progress-pill.visible { display: inline-block; }
         .todo-progress-pill.all-done {
             background-color: var(--success-bg);
             color: var(--success-color);
@@ -943,11 +916,11 @@
         /* M3 Condense Card Switcher */
         .card-viewer-area { flex-shrink: 0; }
         .card-switcher { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; gap: 8px; }
-        .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); border: 1px solid var(--card-hairline); }
+        .pill-container { display: inline-flex; border-radius: 999px; padding: 3px; background-color: var(--md-sys-color-surface-container-high); }
         .switcher-button { background: transparent; border: none; padding: 6px 14px; border-radius: 999px; color: var(--text-color); font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
         .switcher-button.active { background-color: var(--focus-color); color: var(--md-sys-color-on-primary); box-shadow: var(--shadow-elevation-1); }
 
-        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: 1px solid var(--card-hairline); border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
+        #toggle-cards-btn { background: var(--md-sys-color-surface-container-high); border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; }
         #toggle-cards-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
         #toggle-cards-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.4s ease; }
 
@@ -1014,13 +987,28 @@
         }
 
         /* M3 Condense Calendar */
-        #calendar-container { max-height: 430px; }
+        #calendar-container { max-height: 410px; }
         #calendar { font-family: 'JetBrains Mono', monospace; padding: 0.4rem; }
         .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 0 0.25rem 0.4rem; gap: 6px; }
         .calendar-header-center { display: flex; align-items: center; gap: 6px; }
         .calendar-header h3 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; margin: 0; color: var(--text-color);}
-        .calendar-header > button { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-weight: bold; flex-shrink: 0;}
-        .calendar-header > button:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        .calendar-nav-btn { background: var(--md-sys-color-surface-container-high); border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-color); transition: background-color 0.2s; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; font-weight: bold;}
+        .calendar-nav-btn:hover { background-color: var(--md-sys-color-surface-container-highest); }
+        .calendar-today-btn {
+            background-color: var(--md-sys-color-surface-container-high);
+            color: var(--focus-color);
+            border: none;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .calendar-today-btn:hover { background-color: var(--focus-bg); }
+        .calendar-today-btn:active { transform: scale(0.94); }
+
         .calendar-body { text-align: center; }
         .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
         .calendar-weekdays div { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--secondary-text-color); padding-bottom: 0.3rem; text-transform: uppercase;}
@@ -1035,37 +1023,21 @@
         .holiday-marker { font-size: 0.5em; vertical-align: super; margin-left: 1px; opacity: 0.9; line-height: 1; font-family: 'Inter', sans-serif;}
 
         .calendar-holiday-banner {
+            display: none;
             margin-top: 8px;
             padding: 6px 12px;
-            border-radius: 999px;
+            border-radius: 12px;
             background-color: var(--md-sys-color-surface-container-high);
             color: var(--text-color);
             font-family: 'Inter', sans-serif;
-            font-size: 0.74rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-align: center;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
+            line-height: 1.35;
         }
-        .calendar-holiday-banner.visible { display: flex; }
-        .holiday-country-tag {
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 1px 6px;
-            border-radius: 999px;
-            text-transform: uppercase;
-        }
-        .holiday-country-tag.us {
-            background-color: var(--us-holiday-bg-current);
-            color: var(--text-color);
-        }
-        .holiday-country-tag.ph {
-            background-color: var(--ph-holiday-bg-current);
-            color: var(--text-color);
-        }
+        .calendar-holiday-banner.show { display: block; animation: fadeInUp 0.2s ease-out; }
+        .calendar-holiday-banner.us { background-color: var(--us-holiday-bg-current); }
+        .calendar-holiday-banner.ph { background-color: var(--ph-holiday-bg-current); }
 
         /* M3 Condense Calculator */
         #calculator-container { max-height: 320px; overflow: hidden; padding: 0.65rem; }
@@ -1118,7 +1090,7 @@
         .resize-warning-content svg { width: 48px; height: 48px; fill: var(--focus-color); margin-bottom: 1.2rem; }
         .resize-warning-content p { margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;}
 
-        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: 1px solid var(--card-hairline);}
+        .modal-content { background-color: var(--md-sys-color-surface-container-lowest); padding: 20px; border-radius: 24px; box-shadow: var(--shadow-elevation-3); position: relative; width: 90%; max-width: 320px; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); max-height: 80vh; overflow-y: auto; border: 1px solid transparent;}
         .modal-content hr { border: none; height: 1px; background-color: var(--line-color); margin: 16px 0; }
         .modal-overlay.show .modal-content { transform: scale(1); }
         
@@ -1184,7 +1156,10 @@
         </div>
         <div class="top-bar-right">
             <div class="dropdown">
-                <button class="dropdown-button">Tools <span id="tools-notif-dot" class="tools-notif-dot" aria-hidden="true"></span>▼</button>
+                <button class="dropdown-button">
+                    <span>Tools ▼</span>
+                    <span id="tools-notif-dot" class="tools-notif-dot" title="Pending Notifications"></span>
+                </button>
                 <div class="dropdown-menu">
                     <!-- Grouped Quick Settings Top Tile Card -->
                     <div class="qs-panel-card">
@@ -1327,24 +1302,22 @@
                 </div>
             </div>
             
-            <div id="notepad-wrapper" class="notepad-wrapper">
-                <textarea id="main-content" class="workspace-content"></textarea>
-                <button type="button" id="copy-notes-btn" class="floating-copy-btn" title="Copy selected text (or entire note if nothing is selected)">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    <span id="copy-notes-label">Copy</span>
-                </button>
-            </div>
+            <textarea id="main-content" class="workspace-content"></textarea>
+            <button id="notepad-copy-btn" class="notepad-copy-pill" type="button" title="Copy selected text (or full note)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy</span>
+            </button>
             
             <!-- To-Do View -->
             <div id="todo-view" class="workspace-content hidden-view">
                 <div class="todo-nav">
-                    <button id="todo-prev-week" title="Previous Week">&lt;</button>
+                    <button id="todo-prev-week" class="todo-nav-btn">&lt;</button>
                     <div class="todo-nav-center">
                         <span id="todo-week-label"></span>
-                        <span id="todo-progress-pill" class="todo-progress-pill"></span>
-                        <button type="button" id="todo-today-btn" class="mini-pill-btn">Today</button>
+                        <button id="todo-today-btn" type="button" class="todo-mini-pill" title="Jump to Current Shift Day">Today</button>
+                        <span id="todo-progress-pill" class="todo-progress-pill" title="Completed Tasks">0/0</span>
                     </div>
-                    <button id="todo-next-week" title="Next Week">&gt;</button>
+                    <button id="todo-next-week" class="todo-nav-btn">&gt;</button>
                 </div>
                 <div class="todo-days" id="todo-days-container"></div>
                 <div class="todo-input-group">
@@ -1415,14 +1388,17 @@
                 <div id="calendar-container" class="widget">
                     <div id="calendar">
                         <div class="calendar-header">
-                            <button id="prev-month" title="Previous Month">&lt;</button>
+                            <button id="prev-month" class="calendar-nav-btn">&lt;</button>
                             <div class="calendar-header-center">
                                 <h3 id="month-year"></h3>
-                                <button type="button" id="calendar-today-btn" class="mini-pill-btn">Today</button>
+                                <button id="calendar-today-btn" type="button" class="calendar-today-btn" title="Jump to Current Month">Today</button>
                             </div>
-                            <button id="next-month" title="Next Month">&gt;</button>
+                            <button id="next-month" class="calendar-nav-btn">&gt;</button>
                         </div>
-                        <div class="calendar-body"><div class="calendar-weekdays"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div><div class="calendar-days"></div></div>
+                        <div class="calendar-body">
+                            <div class="calendar-weekdays"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
+                            <div class="calendar-days"></div>
+                        </div>
                         <div id="calendar-holiday-banner" class="calendar-holiday-banner"></div>
                     </div>
                 </div>
@@ -1511,9 +1487,9 @@
                 <button id="boost-ai-format-btn" class="control-button">✨ Auto-Format</button>
             </div>
             <div class="todo-nav" style="margin-bottom: 15px;">
-                <button id="boost-prev-week">&lt;</button>
-                <span id="boost-week-label"></span>
-                <button id="boost-next-week">&gt;</button>
+                <button id="boost-prev-week" class="todo-nav-btn">&lt;</button>
+                <span id="boost-week-label" style="font-weight: 700; font-size: 0.9rem;"></span>
+                <button id="boost-next-week" class="todo-nav-btn">&gt;</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1; min-height: 350px;">
                 <div style="display: flex; flex-direction: column; flex: 1; gap: 5px;">
@@ -1556,12 +1532,12 @@
     <div id="api-key-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 400px;">
             <button class="modal-close-button">&times;</button>
-            <h2 class="modal-title">Gemini API Key</h2>
+            <h2 class="modal-title">Gemini API Configuration</h2>
             <p class="alarm-form-note">Get a free API key from <a href="https://aistudio.google.com" target="_blank" style="color: var(--focus-color);">Google AI Studio</a> to use the AI features.</p>
             
             <div class="form-group">
                 <label for="gemini-api-key-input">API Key</label>
-                <input type="password" id="gemini-api-key-input" placeholder="Paste your API key here..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;">
+                <input type="password" id="gemini-api-key-input" placeholder="Paste your API key here..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;">
             </div>
 
             <button id="verify-api-key-btn" class="modal-button" style="background-color: var(--widget-bg-color); color: var(--focus-color); border: 1.5px solid var(--focus-color); margin-bottom: 10px;">Verify Key & Load Models</button>
@@ -1569,7 +1545,22 @@
 
             <div class="form-group" id="model-select-group" style="display: none;">
                 <label for="gemini-model-select">Select Model</label>
-                <select id="gemini-model-select" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;"></select>
+                <select id="gemini-model-select" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="gemini-thinking-select">Thinking Level</label>
+                <select id="gemini-thinking-select" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif;">
+                    <option value="default">Model Default (Auto)</option>
+                    <option value="off">Off (Fastest / Lowest Token Cost)</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High (Deepest Reasoning)</option>
+                </select>
+                <div style="font-size: 0.72rem; color: var(--secondary-text-color); margin-top: 5px; line-height: 1.35;">
+                    Lower levels respond faster and save TPM quota; higher levels improve WFM scheduling accuracy. Automatically adapts to Gemini 2.5 and 3+ models.
+                </div>
             </div>
 
             <button id="save-api-key-btn" class="modal-button" style="margin-top: 5px;">Save Configuration</button>
@@ -1622,7 +1613,7 @@
             <hr/>
             <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem;">Custom Alarms</h4>
             <div id="custom-alarms-form-container"></div>
-            <button id="add-custom-alarm-btn" type="button" style="width: 100%; margin-bottom: 1.2rem; height: 34px; border-radius: 999px; border: 1.5px solid var(--focus-color); color: var(--focus-color); background: transparent; font-weight: 600; cursor: pointer;">+ Add Custom Alarm</button>
+            <button id="add-custom-alarm-btn" type="button" class="control-button outlined" style="width: 100%; margin-bottom: 1.2rem; height: 34px;">+ Add Custom Alarm</button>
 
             <button id="save-alarms-button" class="modal-button">Set Alarms</button>
         </div>
@@ -1742,10 +1733,9 @@
         const formatToggle = document.getElementById('format-toggle');
         
         // Main Workspace
-        const notepadWrapper = document.getElementById('notepad-wrapper');
         const textarea = document.getElementById('main-content');
-        const copyNotesBtn = document.getElementById('copy-notes-btn');
-        const copyNotesLabel = document.getElementById('copy-notes-label');
+        const notepadCopyBtn = document.getElementById('notepad-copy-btn');
+        const notepadCopySpan = notepadCopyBtn.querySelector('span');
         const increaseFontBtn = document.getElementById('increase-font');
         const decreaseFontBtn = document.getElementById('decrease-font');
         const resetNotesBtn = document.getElementById('reset-notes');
@@ -1808,6 +1798,7 @@
         const apiKeyStatus = document.getElementById('api-key-status');
         const modelSelectGroup = document.getElementById('model-select-group');
         const modelSelect = document.getElementById('gemini-model-select');
+        const thinkingSelect = document.getElementById('gemini-thinking-select');
         const saveApiKeyBtn = document.getElementById('save-api-key-btn');
         const apiKeyInput = document.getElementById('gemini-api-key-input');
         
@@ -1908,7 +1899,6 @@
         
         let saveTimeout;
         let saveDisplayTimeout;
-        let copyNotesFeedbackTimeout;
         let isDisplayingSaveStatus = false;
         
         let alarms = {};
@@ -1934,6 +1924,7 @@
         let boostNotes = {};
         let geminiApiKey = '';
         let geminiModel = '';
+        let geminiThinkingLevel = 'default';
         let boostCustomPrompt = '';
 
         let teamSortCol = null;
@@ -2019,21 +2010,11 @@
             });
         }
 
-        function syncQuickSettingsTileStates() {
-            const isWide = document.body.classList.contains('wide-mode');
-            const isScroll = document.body.classList.contains('scroll-enabled');
-
+        function syncQuickSettingTileStates() {
             toggleStatusBarClockButton.classList.toggle('active', showStatusBarClock);
-            toggleStatusBarClockText.textContent = showStatusBarClock ? 'Status Clock: On' : 'Status Clock: Off';
-
-            toggleWidthButton.classList.toggle('active', isWide);
-            toggleWidthText.textContent = isWide ? 'Wide Mode: On' : 'Wide Mode: Off';
-
-            toggleScrollButton.classList.toggle('active', isScroll);
-            toggleScrollText.textContent = isScroll ? 'Page Scroll: On' : 'Page Scroll: Off';
-
+            toggleWidthButton.classList.toggle('active', document.body.classList.contains('wide-mode'));
+            toggleScrollButton.classList.toggle('active', document.body.classList.contains('scroll-enabled'));
             toggleHoldTimerButton.classList.toggle('active', showHoldTimer);
-            toggleHoldTimerText.textContent = showHoldTimer ? 'Hold Timer: On' : 'Hold Timer: Off';
         }
 
         function escapeHTML(str) {
@@ -2045,29 +2026,46 @@
                 .replace(/'/g, '&#39;');
         }
 
-        function copyTextSafely(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                return navigator.clipboard.writeText(text).catch(() => fallbackCopyText(text));
-            }
-            return fallbackCopyText(text);
-        }
+        // GEMINI REQUEST PAYLOAD BUILDER (Adapts Thinking Config per Model Family)
+        function buildGeminiRequestBody(promptText) {
+            const body = {
+                contents: [{ parts: [{ text: promptText }] }]
+            };
 
-        function fallbackCopyText(text) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const temp = document.createElement('textarea');
-                    temp.value = text;
-                    temp.style.position = 'fixed';
-                    temp.style.opacity = '0';
-                    document.body.appendChild(temp);
-                    temp.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(temp);
-                    resolve();
-                } catch (err) {
-                    reject(err);
+            if (!geminiThinkingLevel || geminiThinkingLevel === 'default') {
+                return body;
+            }
+
+            const modelLower = (geminiModel || '').toLowerCase();
+            const isGemini3Plus = /gemini-(3|4|5)/.test(modelLower);
+            const isGemini25 = /gemini-2\.5/.test(modelLower);
+            const isProModel = modelLower.includes('-pro');
+
+            if (isGemini3Plus) {
+                // Gemini 3+ uses thinkingLevel strings ("MINIMAL", "LOW", "MEDIUM", "HIGH")
+                // Note: Pro models require at least LOW when thinking is configured
+                let level = geminiThinkingLevel === 'off' ? 'MINIMAL' : geminiThinkingLevel.toUpperCase();
+                if (isProModel && level === 'MINIMAL') level = 'LOW';
+                body.generationConfig = {
+                    thinkingConfig: { thinkingLevel: level }
+                };
+            } else if (isGemini25) {
+                // Gemini 2.5 uses numeric thinkingBudget tokens
+                const budgetMap = {
+                    off: isProModel ? 128 : 0,
+                    minimal: isProModel ? 512 : 512,
+                    low: 1024,
+                    medium: 8192,
+                    high: 24576
+                };
+                if (budgetMap[geminiThinkingLevel] !== undefined) {
+                    body.generationConfig = {
+                        thinkingConfig: { thinkingBudget: budgetMap[geminiThinkingLevel] }
+                    };
                 }
-            });
+            }
+
+            return body;
         }
 
         // DESKTOP NOTIFICATIONS API
@@ -2189,7 +2187,7 @@
         }
 
         async function saveNotes() { await localforage.setItem('gusto_notes', textarea.value); showSaveStatus(); }
-        async function saveTodos() { await localforage.setItem('gusto_todos', todos); showSaveStatus(); updateToolsNotificationDot(); }
+        async function saveTodos() { await localforage.setItem('gusto_todos', todos); showSaveStatus(); }
         async function saveTeam() { await localforage.setItem('gusto_team', teamData); showSaveStatus(); }
         async function saveAlarms() {
             const serializableAlarms = {};
@@ -2203,13 +2201,13 @@
                 localforage.setItem('gusto_custom_alarms', customAlarmsData)
             ]);
             showSaveStatus();
-            updateToolsNotificationDot();
         }
         async function saveBoostNotes() { await localforage.setItem('gusto_boostNotes', boostNotes); showSaveStatus(); }
         async function saveApiConfig() {
             await Promise.all([
                 localforage.setItem('gusto_geminiKey', geminiApiKey),
                 localforage.setItem('gusto_geminiModel', geminiModel),
+                localforage.setItem('gusto_geminiThinking', geminiThinkingLevel),
                 localforage.setItem('gusto_boostPrompt', boostCustomPrompt)
             ]);
             showSaveStatus();
@@ -2274,13 +2272,15 @@
                 const keys = [
                     'gusto_notes', 'gusto_todos', 'gusto_team', 'gusto_team_baseline',
                     'gusto_alarms', 'gusto_custom_alarms', 'gusto_boostNotes',
-                    'gusto_settings', 'gusto_geminiKey', 'gusto_geminiModel', 'gusto_boostPrompt'
+                    'gusto_settings', 'gusto_geminiKey', 'gusto_geminiModel',
+                    'gusto_geminiThinking', 'gusto_boostPrompt'
                 ];
 
                 const [
                     pNotes, pTodos, pTeam, pTeamBaseline,
                     pAlarms, pCustomAlarms, pBoost,
-                    pSettings, pApiKey, pApiModel, pBoostPrompt
+                    pSettings, pApiKey, pApiModel,
+                    pThinkingLevel, pBoostPrompt
                 ] = isImport
                     ? keys.map(k => providedData[k.replace('gusto_', '')])
                     : await Promise.all(keys.map(k => localforage.getItem(k)));
@@ -2294,6 +2294,7 @@
                 boostNotes = pBoost || {};
                 if (pApiKey) geminiApiKey = pApiKey;
                 if (pApiModel) geminiModel = pApiModel;
+                geminiThinkingLevel = pThinkingLevel || 'default';
                 boostCustomPrompt = pBoostPrompt || '';
                 
                 customAlarmsData = Array.isArray(pCustomAlarms)
@@ -2310,15 +2311,23 @@
                         use24HourFormat = pSettings.use24HourFormat;
                         formatToggle.checked = use24HourFormat;
                     }
-                    document.body.classList.toggle('wide-mode', Boolean(pSettings.isWideMode));
-                    document.body.classList.toggle('scroll-enabled', Boolean(pSettings.isScrollEnabled));
+                    if (pSettings.isWideMode) {
+                        document.body.classList.add('wide-mode');
+                        toggleWidthText.textContent = 'Disable Wide Mode';
+                    }
+                    if (pSettings.isScrollEnabled) {
+                        document.body.classList.add('scroll-enabled');
+                        toggleScrollText.textContent = 'Disable Full Page Scroll';
+                    }
                     if (pSettings.showHoldTimer !== undefined) {
                         showHoldTimer = pSettings.showHoldTimer;
                         holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
+                        toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
                     }
                     if (pSettings.showStatusBarClock !== undefined) {
                         showStatusBarClock = pSettings.showStatusBarClock;
                         statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
+                        toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
                     }
                     if (pSettings.colWidths) {
                         colWidths = pSettings.colWidths;
@@ -2328,8 +2337,8 @@
                     }
                 }
 
-                syncQuickSettingsTileStates();
                 updateActiveTimezoneButtons();
+                syncQuickSettingTileStates();
 
                 const loadedAlarms = pAlarms || {};
                 const mapping = {
@@ -2361,7 +2370,7 @@
                 renderTodoWeek();
                 renderTeamList();
                 updateTeamAlarms();
-                updateToolsNotificationDot();
+                updateToolsNotifBadge();
             } catch (error) {
                 console.warn('Database load failed:', error);
             }
@@ -2372,7 +2381,8 @@
             const [
                 notes, todosVal, team, teamBaseline,
                 alarmsVal, customAlarms, boostNotesVal,
-                settings, geminiKey, geminiModelVal, boostPrompt
+                settings, geminiKey, geminiModelVal,
+                geminiThinking, boostPrompt
             ] = await Promise.all([
                 localforage.getItem('gusto_notes'),
                 localforage.getItem('gusto_todos'),
@@ -2384,6 +2394,7 @@
                 localforage.getItem('gusto_settings'),
                 localforage.getItem('gusto_geminiKey'),
                 localforage.getItem('gusto_geminiModel'),
+                localforage.getItem('gusto_geminiThinking'),
                 localforage.getItem('gusto_boostPrompt')
             ]);
 
@@ -2398,6 +2409,7 @@
                 settings,
                 geminiKey,
                 geminiModel: geminiModelVal,
+                geminiThinking,
                 boostPrompt
             };
             
@@ -2454,7 +2466,7 @@
         copyWfmBtn.addEventListener('click', () => {
             const content = wfmAnalysisOutput.innerText;
             if (content) {
-                copyTextSafely(content).then(() => {
+                navigator.clipboard.writeText(content).then(() => {
                     copyWfmBtn.textContent = 'Copied!';
                     setTimeout(() => { copyWfmBtn.textContent = 'Copy Report'; }, 2000);
                 });
@@ -2535,7 +2547,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    body: JSON.stringify(buildGeminiRequestBody(prompt))
                 });
 
                 const resData = await response.json();
@@ -2558,7 +2570,20 @@ ${sanitizedCsv.substring(0, 100000)}`;
             e.stopPropagation();
             toggleNotificationPanel(true);
             apiKeyInput.value = geminiApiKey;
-            modelSelectGroup.style.display = 'none';
+            thinkingSelect.value = geminiThinkingLevel || 'default';
+            
+            if (geminiModel) {
+                modelSelect.innerHTML = '';
+                const opt = document.createElement('option');
+                opt.value = geminiModel;
+                opt.textContent = geminiModel.replace('models/', '');
+                modelSelect.appendChild(opt);
+                modelSelect.value = geminiModel;
+                modelSelectGroup.style.display = 'block';
+            } else {
+                modelSelectGroup.style.display = 'none';
+            }
+            
             apiKeyStatus.textContent = '';
             apiKeyModal.classList.add('show');
         });
@@ -2613,7 +2638,8 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         saveApiKeyBtn.addEventListener('click', () => {
             geminiApiKey = apiKeyInput.value.trim();
-            geminiModel = modelSelect.value || '';
+            if (modelSelect.value) geminiModel = modelSelect.value;
+            geminiThinkingLevel = thinkingSelect.value || 'default';
             saveApiConfig();
             apiKeyModal.classList.remove('show');
         });
@@ -2665,8 +2691,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
         
             const todayStr = getLocalYMD(getShiftDateObj());
             if (!selectedTodoDateStr) selectedTodoDateStr = todayStr;
-
-            todoTodayBtn.classList.toggle('is-current', selectedTodoDateStr === todayStr);
         
             const frag = document.createDocumentFragment();
             for (let i = 0; i < 7; i++) {
@@ -2722,16 +2746,16 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 });
             });
 
-            if (combinedTasks.length === 0) {
-                todoProgressPill.classList.remove('visible', 'all-done');
+            const doneCount = combinedTasks.filter(t => t.done).length;
+            const totalCount = combinedTasks.length;
+            todoProgressPill.textContent = `${doneCount}/${totalCount}`;
+            todoProgressPill.classList.toggle('all-done', totalCount > 0 && doneCount === totalCount);
+            updateToolsNotifBadge();
+        
+            if (totalCount === 0) {
                 todoList.innerHTML = '<li style="text-align:center; color: var(--secondary-text-color); font-size: 0.9rem; padding: 1rem 0;">No tasks for this day.</li>';
                 return;
             }
-
-            const completedCount = combinedTasks.filter(t => t.done).length;
-            todoProgressPill.textContent = `${completedCount}/${combinedTasks.length}`;
-            todoProgressPill.classList.add('visible');
-            todoProgressPill.classList.toggle('all-done', completedCount === combinedTasks.length);
         
             const frag = document.createDocumentFragment();
             combinedTasks.forEach(task => {
@@ -2935,7 +2959,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${endpoint}:generateContent?key=${geminiApiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: finalPromptText }] }] })
+                    body: JSON.stringify(buildGeminiRequestBody(finalPromptText))
                 });
                 const data = await response.json();
                 if (data.error) throw new Error(data.error.message || 'API Error');
@@ -3174,6 +3198,10 @@ ${sanitizedCsv.substring(0, 100000)}`;
             if (e.target.classList.contains('selectable-cell')) clearCellSelection();
         });
 
+        // Clear stale cell selections whenever Notepad is focused or clicked
+        textarea.addEventListener('focus', clearCellSelection);
+        textarea.addEventListener('mousedown', clearCellSelection);
+
         // Delegated Excel TSV paste handler for team grid
         teamListContainer.addEventListener('paste', (e) => {
             const field = e.target.dataset && e.target.dataset.field;
@@ -3183,13 +3211,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
         });
 
-        // Guarded copy handler: only intercepts when My Team tab is visible and focus is not in Notepad/text input
+        // Scoped copy handler: NEVER hijacks Notepad or other text inputs
         document.addEventListener('copy', (e) => {
             if (teamView.classList.contains('hidden-view')) return;
-            const activeEl = document.activeElement;
-            if (activeEl && (activeEl.tagName === 'TEXTAREA' || (activeEl.tagName === 'INPUT' && !activeEl.classList.contains('selectable-cell')))) {
-                return;
-            }
+            const active = document.activeElement;
+            if (active === textarea || (active && active.closest && active.closest('.modal-overlay'))) return;
 
             const selected = teamListContainer.querySelectorAll('.cell-selected');
             if (selected.length > 1) {
@@ -3433,11 +3459,12 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
                 list.forEach(task => {
                     if (!task.done) {
+                        const isOverdue = isPast;
                         items.push({
                             type: 'todo',
-                            isOverdue: isPast,
+                            isOverdue,
                             title: task.text,
-                            desc: isPast ? `Overdue (${formatShortDate(task.createdDate || dateKey)})` : 'Today'
+                            desc: isOverdue ? `Overdue (${formatShortDate(task.createdDate || dateKey)})` : 'Today'
                         });
                     }
                 });
@@ -3446,15 +3473,15 @@ ${sanitizedCsv.substring(0, 100000)}`;
             return items;
         }
 
-        function updateToolsNotificationDot() {
-            const hasNotifs = collectPendingNotifications().length > 0;
-            toolsNotifDot.classList.toggle('visible', hasNotifs);
+        function updateToolsNotifBadge() {
+            const pending = collectPendingNotifications();
+            toolsNotifDot.classList.toggle('show', pending.length > 0);
         }
 
         // Populate Notifications List (Today + Overdue Tasks)
         function populatePanelNotifications() {
             const items = collectPendingNotifications();
-            toolsNotifDot.classList.toggle('visible', items.length > 0);
+            toolsNotifDot.classList.toggle('show', items.length > 0);
 
             if (items.length === 0) {
                 panelNotifList.innerHTML = '<div style="text-align:center; padding: 16px 0; font-size: 0.8rem; color: var(--secondary-text-color);">You have no pending notifications.</div>';
@@ -3521,14 +3548,16 @@ ${sanitizedCsv.substring(0, 100000)}`;
             requestNotificationPermission();
             showHoldTimer = !showHoldTimer;
             holdTimerContainer.style.display = showHoldTimer ? 'block' : 'none';
-            syncQuickSettingsTileStates();
+            toggleHoldTimerText.textContent = showHoldTimer ? 'Disable Hold Timer' : 'Enable Hold Timer';
+            syncQuickSettingTileStates();
             saveSettings();
         });
         
         toggleStatusBarClockButton.addEventListener('click', () => {
             showStatusBarClock = !showStatusBarClock;
             statusClock.style.display = showStatusBarClock ? 'flex' : 'none';
-            syncQuickSettingsTileStates();
+            toggleStatusBarClockText.textContent = showStatusBarClock ? 'Hide Status Bar Clock' : 'Show Status Bar Clock';
+            syncQuickSettingTileStates();
             if (showStatusBarClock) updateClock();
             saveSettings();
         });
@@ -3672,7 +3701,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 }
             });
 
-            updateToolsNotificationDot();
+            updateToolsNotifBadge();
         }
 
         function updateClock() {
@@ -3690,7 +3719,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                     processAndSetAlarms(buildCombinedAlarmsMap(standardOnly));
                     updateTeamAlarms();
                     updateAlarmsView();
-                    updateToolsNotificationDot();
+                    updateToolsNotifBadge();
                 }
             }
 
@@ -3727,7 +3756,6 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         tzButtons.forEach(button => button.addEventListener('click', () => {
             activeTimezone = button.dataset.tz;
-            selectedHolidayDay = null;
             updateActiveTimezoneButtons();
             updateClock();
             saveSettings();
@@ -3738,15 +3766,14 @@ ${sanitizedCsv.substring(0, 100000)}`;
             saveSettings();
         });
         
-        // TABS
+        // TABS & NOTEPAD COPY PILL
         function switchWorkspaceTab(target) {
-            if (target !== 'team') {
-                clearCellSelection();
-            }
+            clearCellSelection();
             tabNotepad.classList.toggle('active', target === 'notepad');
             tabTodo.classList.toggle('active', target === 'todo');
             tabTeam.classList.toggle('active', target === 'team');
-            notepadWrapper.classList.toggle('hidden-view', target !== 'notepad');
+            textarea.classList.toggle('hidden-view', target !== 'notepad');
+            notepadCopyBtn.classList.toggle('hidden-view', target !== 'notepad');
             todoView.classList.toggle('hidden-view', target !== 'todo');
             teamView.classList.toggle('hidden-view', target !== 'team');
             if (target === 'todo') renderTodoWeek();
@@ -3756,24 +3783,21 @@ ${sanitizedCsv.substring(0, 100000)}`;
         tabTodo.addEventListener('click', () => switchWorkspaceTab('todo'));
         tabTeam.addEventListener('click', () => switchWorkspaceTab('team'));
 
-        // Floating Notepad Copy Pill (preserves exact selection range without blurring textarea)
-        copyNotesBtn.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-        });
-        copyNotesBtn.addEventListener('click', () => {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const hasSelection = typeof start === 'number' && typeof end === 'number' && start !== end;
-            const textToCopy = hasSelection ? textarea.value.slice(start, end) : textarea.value;
+        let copyPillTimeout;
+        notepadCopyBtn.addEventListener('click', () => {
+            const hasSelection = textarea.selectionStart !== textarea.selectionEnd;
+            const textToCopy = hasSelection
+                ? textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)
+                : textarea.value;
             if (!textToCopy) return;
 
-            copyTextSafely(textToCopy).then(() => {
-                copyNotesBtn.classList.add('copied');
-                copyNotesLabel.textContent = hasSelection ? 'Copied Selection' : 'Copied All';
-                clearTimeout(copyNotesFeedbackTimeout);
-                copyNotesFeedbackTimeout = setTimeout(() => {
-                    copyNotesBtn.classList.remove('copied');
-                    copyNotesLabel.textContent = 'Copy';
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                notepadCopyBtn.classList.add('copied');
+                notepadCopySpan.textContent = hasSelection ? 'Copied Selection!' : 'Copied!';
+                clearTimeout(copyPillTimeout);
+                copyPillTimeout = setTimeout(() => {
+                    notepadCopyBtn.classList.remove('copied');
+                    notepadCopySpan.textContent = 'Copy';
                 }, 1800);
             }).catch(err => console.error('Failed to copy notepad text:', err));
         });
@@ -3863,7 +3887,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
             updateAlarmsView();
             resetVisualAlarmState();
-            updateToolsNotificationDot();
+            updateToolsNotifBadge();
         }
 
         function updateTeamAlarms() {
@@ -3899,7 +3923,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 }
             });
             updateUpcomingView();
-            updateToolsNotificationDot();
+            updateToolsNotifBadge();
         }
 
         function resetVisualAlarmState() {
@@ -4006,7 +4030,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             updateAlarmsView();
             updateUpcomingView();
-            updateToolsNotificationDot();
+            updateToolsNotifBadge();
             
             const now = new Date(synchronizedTime);
             now.setMinutes(now.getMinutes() + 1);
@@ -4029,7 +4053,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 updateAlarmsView();
                 updateUpcomingView();
                 updateTopBarTitle(synchronizedTime);
-                updateToolsNotificationDot();
+                updateToolsNotifBadge();
             }
             currentlyTriggeredAlarmLabel = null;
         });
@@ -4086,7 +4110,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
                 });
                 updateAlarmsView();
                 updateUpcomingView();
-                updateToolsNotificationDot();
+                updateToolsNotifBadge();
                 return;
             }
             
@@ -4270,7 +4294,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
         showCalcBtn.addEventListener('click', () => switchCardView(showCalcBtn, calculatorContainer));
         toggleCardsBtn.addEventListener('click', () => cardViewerArea.classList.toggle('cards-collapsed'));
 
-        // CALENDAR (With Holiday & Render Caching + Interactive Holiday Banner)
+        // CALENDAR (With Holiday Caching & Interactive Holiday Banner)
         const holidaysCache = {};
 
         function getNthWeekdayOfMonth(year, month, dayOfWeek, n) {
@@ -4362,16 +4386,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
             return holidays;
         }
 
-        function renderHolidayBanner(holidayList) {
-            if (!holidayList || holidayList.length === 0) {
-                calendarHolidayBanner.classList.remove('visible');
-                calendarHolidayBanner.innerHTML = '';
-                return;
-            }
-            calendarHolidayBanner.innerHTML = holidayList.map(h =>
-                `<span class="holiday-country-tag ${h.country.toLowerCase()}">${escapeHTML(h.country)}</span><span>${escapeHTML(h.name)}</span>`
-            ).join('<span style="opacity:0.4;">•</span>');
-            calendarHolidayBanner.classList.add('visible');
+        function hideCalendarHolidayBanner() {
+            selectedHolidayDay = null;
+            calendarHolidayBanner.className = 'calendar-holiday-banner';
+            calendarHolidayBanner.textContent = '';
+            daysEl.querySelectorAll('.selected-holiday').forEach(el => el.classList.remove('selected-holiday'));
         }
 
         function generateCalendar(now, force = false) {
@@ -4383,12 +4402,11 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
-            const isViewingCurrentMonth = (year === activeYear && month === activeMonth);
-            calendarTodayBtn.classList.toggle('is-current', isViewingCurrentMonth);
-
-            const renderKey = `${year}-${month}|${activeYear}-${activeMonth}-${activeDay}|${selectedHolidayDay}`;
+            const renderKey = `${year}-${month}|${activeYear}-${activeMonth}-${activeDay}`;
             if (!force && renderKey === lastCalendarRenderKey) return;
             lastCalendarRenderKey = renderKey;
+
+            hideCalendarHolidayBanner();
 
             const holidaysInMonth = getHolidaysForMonth(year, month + 1);
             monthYearEl.innerText = `${calendarDate.toLocaleString('en-US', { month: 'long' })} ${year}`;
@@ -4403,57 +4421,46 @@ ${sanitizedCsv.substring(0, 100000)}`;
             }
             for (let i = 1; i <= lastDate; i++) {
                 const classes = [];
-                let title = '', content = i, dayAttr = '';
-                if (i === activeDay && isViewingCurrentMonth) classes.push('current-day');
+                let title = '', content = i, dataAttrs = '';
+                if (i === activeDay && month === activeMonth && year === activeYear) classes.push('current-day');
                 if (holidaysInMonth[i]) {
                     const info = holidaysInMonth[i];
-                    classes.push(info[0].country === 'US' ? 'us-holiday' : 'ph-holiday');
-                    if (selectedHolidayDay === i) classes.push('selected-holiday');
+                    const primaryCountry = info[0].country.toLowerCase();
+                    classes.push(primaryCountry === 'us' ? 'us-holiday' : 'ph-holiday');
+                    const labelText = info.map(h => `[${h.country}] ${h.name}`).join(' • ');
                     title = info.map(h => `[${h.country}] - ${h.name}`).join('\n');
                     content = `${i}<sup class="holiday-marker">H</sup>`;
-                    dayAttr = ` data-holiday-day="${i}"`;
+                    dataAttrs = `data-day="${i}" data-country="${primaryCountry}" data-holiday="${escapeHTML(labelText)}"`;
                 }
-                cells.push(`<div class="${classes.join(' ')}" title="${title}"${dayAttr}>${content}</div>`);
+                cells.push(`<div class="${classes.join(' ')}" title="${title}" ${dataAttrs}>${content}</div>`);
             }
             daysEl.innerHTML = cells.join('');
-
-            if (selectedHolidayDay && holidaysInMonth[selectedHolidayDay]) {
-                renderHolidayBanner(holidaysInMonth[selectedHolidayDay]);
-            } else if (isViewingCurrentMonth && holidaysInMonth[activeDay]) {
-                renderHolidayBanner(holidaysInMonth[activeDay]);
-            } else {
-                renderHolidayBanner(null);
-            }
         }
 
         daysEl.addEventListener('click', (e) => {
-            const holidayCell = e.target.closest('[data-holiday-day]');
-            if (holidayCell) {
-                const clickedDay = parseInt(holidayCell.dataset.holidayDay, 10);
-                selectedHolidayDay = (selectedHolidayDay === clickedDay) ? null : clickedDay;
-            } else {
-                selectedHolidayDay = null;
+            const cell = e.target.closest('div');
+            if (!cell) return;
+            const holidayText = cell.dataset.holiday;
+            const dayNum = cell.dataset.day;
+            if (!holidayText) {
+                hideCalendarHolidayBanner();
+                return;
             }
-            generateCalendar(synchronizedTime, true);
+            if (selectedHolidayDay === dayNum) {
+                hideCalendarHolidayBanner();
+                return;
+            }
+            daysEl.querySelectorAll('.selected-holiday').forEach(el => el.classList.remove('selected-holiday'));
+            cell.classList.add('selected-holiday');
+            selectedHolidayDay = dayNum;
+            calendarHolidayBanner.textContent = holidayText;
+            calendarHolidayBanner.className = `calendar-holiday-banner show ${cell.dataset.country || ''}`;
         });
 
-        prevMonthBtn.addEventListener('click', () => {
-            selectedHolidayDay = null;
-            calendarDate.setMonth(calendarDate.getMonth() - 1);
-            generateCalendar(synchronizedTime, true);
-        });
-        nextMonthBtn.addEventListener('click', () => {
-            selectedHolidayDay = null;
-            calendarDate.setMonth(calendarDate.getMonth() + 1);
-            generateCalendar(synchronizedTime, true);
-        });
+        prevMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); generateCalendar(synchronizedTime, true); });
+        nextMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); generateCalendar(synchronizedTime, true); });
         calendarTodayBtn.addEventListener('click', () => {
-            const { tzPartsFmt } = getActiveFormatters();
-            const tzParts = tzPartsFmt.formatToParts(synchronizedTime);
-            const activeYear = parseInt(tzParts.find(p => p.type === 'year').value, 10);
-            const activeMonth = parseInt(tzParts.find(p => p.type === 'month').value, 10) - 1;
-            selectedHolidayDay = null;
-            calendarDate = new Date(activeYear, activeMonth, 1);
+            calendarDate = new Date(synchronizedTime);
             generateCalendar(synchronizedTime, true);
         });
 
@@ -4567,7 +4574,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             csvOutput.value = csvStr;
             
             if (csvStr) {
-                copyTextSafely(csvStr).then(() => {
+                navigator.clipboard.writeText(csvStr).then(() => {
                     const originalText = generateCsvButton.textContent;
                     generateCsvButton.textContent = 'Copied to Clipboard!';
                     generateCsvButton.style.backgroundColor = 'var(--success-color)';
@@ -4585,13 +4592,15 @@ ${sanitizedCsv.substring(0, 100000)}`;
 
         toggleWidthButton.addEventListener('click', () => {
             document.body.classList.toggle('wide-mode');
-            syncQuickSettingsTileStates();
+            toggleWidthText.textContent = document.body.classList.contains('wide-mode') ? 'Disable Wide Mode' : 'Enable Wide Mode';
+            syncQuickSettingTileStates();
             saveSettings();
         });
         
         toggleScrollButton.addEventListener('click', () => {
             document.body.classList.toggle('scroll-enabled');
-            syncQuickSettingsTileStates();
+            toggleScrollText.textContent = document.body.classList.contains('scroll-enabled') ? 'Disable Full Page Scroll' : 'Enable Full Page Scroll';
+            syncQuickSettingTileStates();
             saveSettings();
         });
 
@@ -4621,7 +4630,7 @@ ${sanitizedCsv.substring(0, 100000)}`;
             updateTeamAlarms();
             updateAlarmsView();
             renderCustomAlarmFormRows();
-            updateToolsNotificationDot();
+            updateToolsNotifBadge();
             
             initBattery();
             updateNetworkStatus();
